@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\RichContentImageController;
@@ -13,6 +14,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::view('dashboard', 'admin.dashboard')->name('dashboard');
     Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::resource('destinations', DestinationController::class)->except('show');
+    Route::resource('faqs', FaqController::class)->except('show');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
     Route::get('packages', [PackageController::class, 'index'])->name('packages.index');
     Route::get('packages/{slug}', [PackageController::class, 'show'])->name('packages.show');

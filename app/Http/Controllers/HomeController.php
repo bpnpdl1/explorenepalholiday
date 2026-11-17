@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destination;
+use App\Models\Faq;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
@@ -18,6 +19,13 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        return view('site.home', compact('destinations'));
+        $faqs = Faq::query()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->limit(6)
+            ->get();
+
+        return view('site.home', compact('destinations', 'faqs'));
     }
 }

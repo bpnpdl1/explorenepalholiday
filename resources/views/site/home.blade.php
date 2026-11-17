@@ -823,6 +823,14 @@
         </div>
         <div class="faq-side">
           <div class="faq-list" data-aos="fade-left">
+          @if ($faqs->isNotEmpty())
+            @foreach ($faqs as $faq)
+              <details id="faq-{{ $faq->id }}">
+                <summary><span>{{ sprintf('%02d', $loop->iteration) }}</span><strong>{{ $faq->question }}</strong><span class="plus" aria-hidden="true">+</span></summary>
+                <p style="white-space: pre-line;">{{ $faq->answer }}</p>
+              </details>
+            @endforeach
+          @else
           <details id="best-time">
             <summary><span>01</span><strong>When is a good time to visit Nepal?</strong><span class="plus"
                 aria-hidden="true">+</span></summary>
@@ -859,6 +867,7 @@
             <p>The form collects the details needed to shape your enquiry. Final submission should be connected to email
               or a CRM before launch.</p>
           </details>
+          @endif
           </div>
         </div>
       </div>
