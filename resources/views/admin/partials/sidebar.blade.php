@@ -1,12 +1,12 @@
 <div class="app-menu navbar-menu">
     <div class="navbar-brand-box">
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
-            <span class="logo-sm"><i class="ri-mountain-line fs-24 text-primary"></i></span>
-            <span class="logo-lg fw-bold text-primary">Explore Nepal Holidays</span>
+            <span class="logo-sm"><img src="{{ asset('site/assets/logo-mark.png') }}" alt=""></span>
+            <span class="logo-lg"><img class="admin-sidebar-wordmark admin-sidebar-wordmark--dark" src="{{ asset('site/assets/logo-footer-small.png') }}" alt="Explore Nepal Holidays" width="64" height="64"></span>
         </a>
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
-            <span class="logo-sm"><i class="ri-mountain-line fs-24 text-white"></i></span>
-            <span class="logo-lg fw-bold text-white">Explore Nepal Holidays</span>
+            <span class="logo-sm"><img src="{{ asset('site/assets/logo-mark.png') }}" alt=""></span>
+            <span class="logo-lg"><img class="admin-sidebar-wordmark" src="{{ asset('site/assets/footer-logo.png') }}" alt="Explore Nepal Holidays" width="180"></span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover" aria-label="Toggle compact sidebar hover mode">
             <i class="ri-record-circle-line"></i>

@@ -4,6 +4,37 @@ html[data-layout="vertical"] .admin-brand-mark {
     gap: 0.5rem;
 }
 
+html[data-layout="vertical"] .navbar-brand-box .logo {
+    line-height: 70px;
+    vertical-align: middle;
+}
+
+html[data-layout="vertical"] .navbar-brand-box .logo-sm img {
+    height: 38px;
+    object-fit: contain;
+    vertical-align: middle;
+    width: 38px;
+}
+
+html[data-layout="vertical"] .navbar-brand-box .logo-lg {
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+html[data-layout="vertical"] .admin-sidebar-wordmark {
+    height: auto;
+    max-height: 64px;
+    max-width: 100%;
+    object-fit: contain;
+    vertical-align: middle;
+    width: 180px;
+}
+
+html[data-layout="vertical"] .admin-sidebar-wordmark--dark {
+    height: 64px;
+    width: 64px;
+}
+
 #admin-bookings-chart {
     min-height: 320px;
 }
