@@ -27,9 +27,7 @@
                     <span aria-current="page">{{ $destination->name }}</span>
                 </nav>
 
-                @if ($destination->region)
-                    <p class="destination-hero__eyebrow">{{ $destination->region }}</p>
-                @endif
+                <p class="destination-hero__eyebrow">Explore Nepal</p>
                 <h1 id="destination-title">{{ $destination->name }}</h1>
                 @if ($destination->summary)
                     <p class="destination-hero__summary">{{ $destination->summary }}</p>
@@ -78,9 +76,6 @@
                             <a class="destination-related-card" href="{{ route('destinations.show', $relatedDestination) }}">
                                 <img src="{{ $relatedImage }}" alt="{{ $relatedDestination->name }}" loading="lazy">
                                 <span>
-                                    @if ($relatedDestination->region)
-                                        <small>{{ $relatedDestination->region }}</small>
-                                    @endif
                                     <strong>{{ $relatedDestination->name }}</strong>
                                 </span>
                                 <span class="destination-related-card__arrow" aria-hidden="true">↗</span>

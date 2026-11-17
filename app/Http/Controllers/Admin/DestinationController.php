@@ -25,7 +25,6 @@ class DestinationController extends Controller
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('region', 'like', "%{$search}%")
                         ->orWhere('slug', 'like', "%{$search}%");
                 });
             })
@@ -42,7 +41,6 @@ class DestinationController extends Controller
             'status' => in_array($status, ['published', 'draft'], true) ? $status : '',
             'destinationCount' => Destination::count(),
             'publishedCount' => Destination::where('is_published', true)->count(),
-            'featuredCount' => Destination::where('is_featured', true)->count(),
         ]);
     }
 
@@ -55,7 +53,6 @@ class DestinationController extends Controller
     {
         $data = $request->safe()->except('cover_image');
         $data['is_published'] = $request->boolean('is_published');
-        $data['is_featured'] = $request->boolean('is_featured');
         $data['description'] = $this->richContentSanitizer->sanitize($data['description'] ?? null);
 
         $destination = Destination::create($data);
@@ -79,7 +76,6 @@ class DestinationController extends Controller
     {
         $data = $request->safe()->except('cover_image');
         $data['is_published'] = $request->boolean('is_published');
-        $data['is_featured'] = $request->boolean('is_featured');
         $data['description'] = $this->richContentSanitizer->sanitize($data['description'] ?? null);
 
         $destination->update($data);

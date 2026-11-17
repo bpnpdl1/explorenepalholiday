@@ -18,7 +18,6 @@ class DestinationController extends Controller
             ->where('is_published', true)
             ->whereKeyNot($destination->getKey())
             ->with('media')
-            ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->limit(3)

@@ -4,7 +4,7 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <div>
                     <h4 class="mb-sm-0">Destinations</h4>
-                    <p class="text-muted mb-0 mt-1">Manage the places and regions featured across your travel website.</p>
+                    <p class="text-muted mb-0 mt-1">Manage the places featured across your travel website.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <ol class="breadcrumb m-0 d-none d-md-flex">
@@ -17,10 +17,9 @@
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3 mb-3">
+    <div class="row row-cols-1 row-cols-sm-2 g-3 mb-3">
         <div class="col"><x-admin::stat-card label="Total destinations" :value="$destinationCount" change="All records" icon="ri-map-pin-line" tone="primary" /></div>
         <div class="col"><x-admin::stat-card label="Published" :value="$publishedCount" change="Visible on website" icon="ri-checkbox-circle-line" tone="success" /></div>
-        <div class="col"><x-admin::stat-card label="Featured" :value="$featuredCount" change="Highlighted destinations" icon="ri-star-line" tone="warning" /></div>
     </div>
 
     <div class="card">
@@ -36,7 +35,7 @@
                 <div class="col-md-6 col-lg-5">
                     <label class="visually-hidden" for="destination-search">Search destinations</label>
                     <div class="search-box">
-                        <input id="destination-search" type="search" name="search" value="{{ $search }}" class="form-control" placeholder="Search name, region, or slug...">
+                    <input id="destination-search" type="search" name="search" value="{{ $search }}" class="form-control" placeholder="Search name or slug...">
                         <i class="ri-search-line search-icon"></i>
                     </div>
                 </div>
@@ -61,10 +60,8 @@
                     <thead class="table-light text-muted">
                         <tr>
                             <th scope="col">Destination</th>
-                            <th scope="col">Region</th>
                             <th scope="col">Order</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Featured</th>
                             <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -84,10 +81,8 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $destination->region ?: '—' }}</td>
                                 <td>{{ $destination->sort_order }}</td>
                                 <td><span class="badge bg-{{ $destination->is_published ? 'success' : 'warning' }}-subtle text-{{ $destination->is_published ? 'success' : 'warning' }}">{{ $destination->is_published ? 'Published' : 'Draft' }}</span></td>
-                                <td>{{ $destination->is_featured ? 'Yes' : '—' }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('admin.destinations.edit', $destination) }}" class="btn btn-soft-primary btn-sm" aria-label="Edit {{ $destination->name }}"><i class="ri-pencil-line align-bottom"></i></a>
                                     <form action="{{ route('admin.destinations.destroy', $destination) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this destination? This action cannot be undone.')">
@@ -98,7 +93,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="text-center py-5 text-muted">No destinations found. <a href="{{ route('admin.destinations.create') }}">Add your first destination</a>.</td></tr>
+                            <tr><td colspan="4" class="text-center py-5 text-muted">No destinations found. <a href="{{ route('admin.destinations.create') }}">Add your first destination</a>.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

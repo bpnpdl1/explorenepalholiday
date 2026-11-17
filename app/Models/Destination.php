@@ -12,11 +12,9 @@ use Spatie\Sluggable\SlugOptions;
 
 #[Fillable([
     'name',
-    'region',
     'summary',
     'description',
     'is_published',
-    'is_featured',
     'sort_order',
 ])]
 class Destination extends Model implements HasMedia
@@ -42,7 +40,6 @@ class Destination extends Model implements HasMedia
     {
         return [
             'is_published' => 'boolean',
-            'is_featured' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

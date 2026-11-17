@@ -579,7 +579,7 @@
               <img src="{{ $destinationImage }}" alt="{{ $destination->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
               <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-                <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">{{ $destination->region ?: 'Explore Nepal' }}</span>
+                <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">Explore Nepal</span>
                 <h3 class="text-2xl font-bold text-white mb-2">{{ $destination->name }}</h3>
                 @if ($destinationSummary !== '')
                   <p class="text-slate-300 text-sm leading-relaxed mb-3">{{ $destinationSummary }}</p>
