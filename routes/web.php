@@ -8,6 +8,7 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
 Route::view('/about-us', 'site.about')->name('about');
 Route::view('/our-team', 'site.team')->name('team');
+Route::view('/guest-reviews', 'site.guest-reviews')->name('guest-reviews');
 Route::view('/faq', 'site.faq')->name('faq');
 Route::view('/contact-us', 'site.contact')->name('contact');
 Route::view('/packages/langtang-valley-trek', 'site.package')->name('packages.show');

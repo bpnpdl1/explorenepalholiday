@@ -97,7 +97,7 @@
             data-nav-trigger="company" @click="openNav='company'" :aria-expanded="(openNav==='company').toString()"
             aria-controls="nav-company">Company <span class="nav-chevron" aria-hidden="true"></span></button>
           <div id="nav-company" class="nav-panel dropdown-panel" x-show="openNav==='company'" x-cloak><a href="{{ route('about') }}" @click="closeNav()">About Us ↗</a><a href="{{ route('team') }}" @click="closeNav()">Our Team ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why travel with us ↗</a><a
-              href="{{ route('home') }}#why-nepal" @click="closeNav()">Our approach ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why choose us ↗</a><a href="{{ route('home') }}#testimonials" @click="closeNav()">Guest reviews ↗</a></div>
+              href="{{ route('home') }}#why-nepal" @click="closeNav()">Our approach ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why choose us ↗</a><a href="{{ route('guest-reviews') }}" @click="closeNav()" @if (request()->routeIs('guest-reviews')) aria-current="page" @endif>Guest reviews ↗</a></div>
         </div>
         <div class="nav-item compact" @mouseenter="openNav='info'"
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button" data-nav-trigger="info"
@@ -168,7 +168,7 @@
             aria-hidden="true">+</span></button>
         <div id="mobile-company" class="mobile-subnav" x-show="mobileSection==='company'" x-cloak><a href="{{ route('about') }}" @click="menuOpen=false">About Us</a><a href="{{ route('team') }}" @click="menuOpen=false">Our Team</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Why travel with us</a><a href="{{ route('home') }}#why-nepal"
             @click="menuOpen=false">Our approach</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Why choose us</a><a
-            href="{{ route('home') }}#testimonials" @click="menuOpen=false">Guest reviews</a></div>
+            href="{{ route('guest-reviews') }}" @click="menuOpen=false" @if (request()->routeIs('guest-reviews')) aria-current="page" @endif>Guest reviews</a></div>
       </div>
       <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('info')"
           :aria-expanded="(mobileSection==='info').toString()" aria-controls="mobile-info">Travel Info <span

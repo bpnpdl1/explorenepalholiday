@@ -18,7 +18,7 @@
           <a href="{{ route('home') }}#expeditions">Flagship expeditions</a>
           <a href="{{ route('home') }}#regions">Regions</a>
           <a href="{{ route('home') }}#why-choose">Why choose us</a>
-          <a href="{{ route('home') }}#testimonials">Guest reviews</a>
+          <a href="{{ route('guest-reviews') }}">Guest reviews</a>
           <a href="{{ route('home') }}#newsletter">Newsletter</a>
           <a href="{{ route('faq') }}">FAQs</a>
         </nav>
