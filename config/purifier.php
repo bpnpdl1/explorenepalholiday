@@ -6,6 +6,7 @@ $richContentSettings = [
         'h1[class|style]',
         'h2[class|style]',
         'h3[class|style]',
+        'h4[class|style]',
         'p[class|style]',
         'div[class|style]',
         'br',
@@ -33,7 +34,7 @@ $richContentSettings = [
         'tr',
         'th[colspan|rowspan|class]',
         'td[colspan|rowspan|class]',
-        'iframe[src|class|frameborder|allowfullscreen]',
+        'iframe[src|class|frameborder]',
     ]),
     'CSS.AllowedProperties' => [
         'color' => true,
@@ -66,9 +67,5 @@ return [
     'settings' => [
         'default' => $richContentSettings,
         'rich_content' => $richContentSettings,
-    ],
-    'custom_attributes' => [
-        ['iframe', 'allowfullscreen', 'Bool'],
-        ['iframe', 'frameborder', 'Number'],
     ],
 ];
