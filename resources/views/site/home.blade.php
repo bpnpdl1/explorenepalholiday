@@ -7,188 +7,7 @@
 
 @section('content')
 <a class="skip-link" href="#main">Skip to content</a>
-  <div class="topbar">
-    <div class="container topbar-inner"><span>20 Years Experience</span><a
-        href="https://wa.me/9779800000000" target="_blank" rel="noopener noreferrer">+977-9800000000 · WhatsApp ↗</a></div>
-  </div>
-  <header class="site-header" :class="headerCompact ? 'is-compact' : ''" @mouseleave="openNav=null">
-    <div class="container header-primary">
-      <a class="brand" href="#top" aria-label="Explore Nepal Holidays, home"><span class="brand-mark"><img
-            src="{{ asset('site/assets/logo-mark.png') }}" alt="" width="78" height="63"></span><span class="brand-name">EXPLORE
-          <small>NEPAL HOLIDAYS</small></span></a>
-      <div class="header-actions flex items-center gap-3"><button
-          class="header-find inline-flex items-center gap-2 font-medium transition-colors" type="button"
-          @click="openTripSearch()">
-          <img class="icon-img icon-img--light" src="{{ asset('site/assets/icons/search.svg') }}" alt="">Find a Trip</button><a
-          class="header-cta inline-flex items-center justify-center font-semibold text-white bg-orange-brand hover:bg-orange-hover transition-colors rounded-brand"
-          href="#plan">Plan your journey <span aria-hidden="true">↗</span></a></div>
-      <button class="mobile-find" type="button" @click="openTripSearch()" aria-label="Find a trip">
-      <img class="icon-img icon-img--light" src="{{ asset('site/assets/icons/search.svg') }}" alt=""></button>
-      <button class="menu-toggle" type="button" @click="menuOpen=!menuOpen;mobileSection=null;mobileRegion=null"
-        :aria-expanded="menuOpen.toString()" aria-controls="mobile-menu"
-        aria-label="Toggle menu"><span></span><span></span><span></span></button>
-    </div>
-    <div class="header-nav-row">
-      <nav class="container desktop-nav" aria-label="Primary navigation">
-        <a class="compact-brand" href="#top" aria-label="Explore Nepal Holidays, back to top"><img
-            src="{{ asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
-        <div class="nav-item cascade" @mouseenter="openNav='trekking';openRegion=trekRegions[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="trekking" @click="openNav='trekking';openRegion=trekRegions[0].id"
-            :aria-expanded="(openNav==='trekking').toString()" aria-controls="nav-trekking">Trekking in Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-trekking" class="nav-panel cascade-panel" x-show="openNav==='trekking'" x-cloak>
-            <div class="cascade-heading">TREKKING REGIONS <span x-text="trekRegions.length + ' categories'"></span>
-            </div>
-            <template x-for="region in trekRegions" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id">
-                <button type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' trek ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Open a trek to see itinerary highlights. Routes and availability
-                    need confirmation.</div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="nav-item cascade" @mouseenter="openNav='tours';openRegion=tourGroups[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="tours" @click="openNav='tours';openRegion=tourGroups[0].id"
-            :aria-expanded="(openNav==='tours').toString()" aria-controls="nav-tours">Tours in Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-tours" class="nav-panel cascade-panel tour-cascade" x-show="openNav==='tours'" x-cloak>
-            <div class="cascade-heading">TOUR STYLES <span x-text="tourGroups.length + ' categories'"></span></div>
-            <template x-for="region in tourGroups" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id"><button
-                  type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'tour-region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'tour-region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' tour ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Open a tour to see itinerary highlights.</div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="nav-item cascade" @mouseenter="openNav='climbing';openRegion=climbingGroups[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="climbing" @click="openNav='climbing';openRegion=climbingGroups[0].id"
-            :aria-expanded="(openNav==='climbing').toString()" aria-controls="nav-climbing">Peak Climbing Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-climbing" class="nav-panel cascade-panel climbing-cascade" x-show="openNav==='climbing'" x-cloak>
-            <div class="cascade-heading">CLIMBING REGIONS <span x-text="climbingGroups.length + ' categories'"></span>
-            </div>
-            <template x-for="region in climbingGroups" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id"><button
-                  type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'climb-region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'climb-region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' peak ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Climbing plans depend on experience, conditions and permits.</div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="nav-item compact" @mouseenter="openNav='company'"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button"
-            data-nav-trigger="company" @click="openNav='company'" :aria-expanded="(openNav==='company').toString()"
-            aria-controls="nav-company">Company <span class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-company" class="nav-panel dropdown-panel" x-show="openNav==='company'" x-cloak><a href="{{ route('about') }}" @click="closeNav()">About Us ↗</a><a href="{{ route('team') }}" @click="closeNav()">Our Team ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why travel with us ↗</a><a
-              href="#why-nepal" @click="closeNav()">Our approach ↗</a><a href="#why-choose" @click="closeNav()">Why choose us ↗</a><a href="{{ route('home') }}#testimonials" @click="closeNav()">Guest reviews ↗</a></div>
-        </div>
-        <div class="nav-item compact" @mouseenter="openNav='info'"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button" data-nav-trigger="info"
-            @click="openNav='info'" :aria-expanded="(openNav==='info').toString()" aria-controls="nav-info">Travel Info
-            <span class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-info" class="nav-panel dropdown-panel" x-show="openNav==='info'" x-cloak><a href="{{ route('faq') }}#planning"
-              @click="closeNav()">Best time to visit ↗</a><a href="{{ route('faq') }}#trekking" @click="closeNav()">Trekking
-              experience ↗</a><a href="#combine-trips" @click="closeNav()">Combining experiences ↗</a><a href="{{ route('faq') }}"
-              @click="closeNav()">Frequently asked questions ↗</a></div>
-        </div>
-        <a class="nav-contact" href="{{ route('contact') }}" @mouseenter="openNav=null">Contact Us <span aria-hidden="true">↗</span></a>
-        <button class="nav-find" type="button" @click="openTripSearch()" aria-label="Find a trip">
-        <img class="icon-img icon-img--light" src="{{ asset('site/assets/icons/search.svg') }}" alt=""></button>
-      </nav>
-    </div>
-    <nav id="mobile-menu" class="mobile-nav" aria-label="Mobile navigation" x-show="menuOpen" x-cloak>
-      <div class="mobile-menu-intro">EXPLORE NEPAL YOUR WAY</div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('trekking')"
-          :aria-expanded="(mobileSection==='trekking').toString()" aria-controls="mobile-trekking">Trekking in Nepal
-          <span aria-hidden="true">+</span></button>
-        <div id="mobile-trekking" class="mobile-subnav" x-show="mobileSection==='trekking'" x-cloak>
-          <p>Explore trek ideas by region.</p><template x-for="region in trekRegions" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-region-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-region-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
-                    x-text="trip"></a></template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('tours')"
-          :aria-expanded="(mobileSection==='tours').toString()" aria-controls="mobile-tours">Tours in Nepal <span
-            aria-hidden="true">+</span></button>
-        <div id="mobile-tours" class="mobile-subnav" x-show="mobileSection==='tours'" x-cloak>
-          <p>Explore tour ideas by theme.</p><template x-for="region in tourGroups" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-tour-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-tour-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
-                    x-text="trip"></a></template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('climbing')"
-          :aria-expanded="(mobileSection==='climbing').toString()" aria-controls="mobile-climbing">Peak Climbing Nepal
-          <span aria-hidden="true">+</span></button>
-        <div id="mobile-climbing" class="mobile-subnav" x-show="mobileSection==='climbing'" x-cloak>
-          <p>Explore climbing ideas by region.</p><template x-for="region in climbingGroups" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-climb-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-climb-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
-                    x-text="trip"></a></template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('company')"
-          :aria-expanded="(mobileSection==='company').toString()" aria-controls="mobile-company">Company <span
-            aria-hidden="true">+</span></button>
-        <div id="mobile-company" class="mobile-subnav" x-show="mobileSection==='company'" x-cloak><a href="{{ route('about') }}" @click="menuOpen=false">About Us</a><a href="{{ route('team') }}" @click="menuOpen=false">Our Team</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Why travel with us</a><a href="#why-nepal"
-            @click="menuOpen=false">Our approach</a><a href="#why-choose" @click="menuOpen=false">Why choose us</a><a
-            href="{{ route('home') }}#testimonials" @click="menuOpen=false">Guest reviews</a></div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('info')"
-          :aria-expanded="(mobileSection==='info').toString()" aria-controls="mobile-info">Travel Info <span
-            aria-hidden="true">+</span></button>
-        <div id="mobile-info" class="mobile-subnav" x-show="mobileSection==='info'" x-cloak><a href="{{ route('faq') }}#planning"
-            @click="menuOpen=false">Best time to visit</a><a href="{{ route('faq') }}#trekking" @click="menuOpen=false">Trekking
-            experience</a><a href="{{ route('faq') }}" @click="menuOpen=false">All FAQs</a></div>
-      </div>
-      <a class="mobile-contact" href="{{ route('contact') }}" @click="menuOpen=false">Contact Us <span aria-hidden="true">↗</span></a>
-    </nav>
-  </header>
+  @include('site.partials.header')
   <main id="main">
     <section class="hero hero--expedition" id="top" aria-labelledby="hero-title">
       <!-- Background Image -->
@@ -744,63 +563,38 @@
         <div class="text-center mb-12">
           <span class="text-amber-500 text-xs font-bold tracking-widest uppercase mb-2 block">Where to Go</span>
           <h2 id="destinations-title" class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Destinations</h2>
-          <p class="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">Beyond Nepal, we also craft journeys across the Himalayan plateau and the kingdom of Bhutan.</p>
+          <p class="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">Discover the places and regions that make every journey through Nepal unique.</p>
         </div>
 
-        <!-- 3-Column Destination Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-          <!-- Card 1: Nepal -->
-          <a href="#journeys" class="group relative h-[420px] rounded-2xl border border-slate-200/80 shadow-lg overflow-hidden cursor-pointer">
-            <img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}" alt="Nepal Himalayan panorama" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">The Himalayan Kingdom</span>
-              <h3 class="text-2xl font-bold text-white mb-2">Nepal</h3>
-              <p class="text-slate-300 text-sm leading-relaxed mb-3">World-class trekking, ancient cities, wildlife lowlands and the highest peaks on Earth.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Explore journeys
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-          <!-- Card 2: Tibet Tours -->
-          <a href="#plan" class="group relative h-[420px] rounded-2xl border border-slate-200/80 shadow-lg overflow-hidden cursor-pointer">
-            <img src="{{ asset('site/assets/kathmandu-stupa.jpg') }}" alt="Tibetan Buddhist stupa with prayer flags" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-orange-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">The Roof of the World</span>
-              <h3 class="text-2xl font-bold text-white mb-2">Tibet Tours</h3>
-              <p class="text-slate-300 text-sm leading-relaxed mb-3">Sacred monasteries, vast high-altitude landscapes and the spiritual heart of the Himalayas.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Plan a Tibet journey
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-          <!-- Card 3: Bhutan Tours -->
-          <a href="#plan" class="group relative h-[420px] rounded-2xl border border-slate-200/80 shadow-lg overflow-hidden cursor-pointer">
-            <img src="{{ asset('site/assets/everest-hikers.jpg') }}" alt="Bhutan Himalayan landscape" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">The Last Shangri-La</span>
-              <h3 class="text-2xl font-bold text-white mb-2">Bhutan Tours</h3>
-              <p class="text-slate-300 text-sm leading-relaxed mb-3">Dramatic fortresses, pristine valleys and a kingdom measured by Gross National Happiness.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Plan a Bhutan journey
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
+          @forelse ($destinations as $destination)
+            @php
+              $destinationImage = $destination->getFirstMediaUrl('cover', 'card')
+                  ?: $destination->getFirstMediaUrl('cover')
+                  ?: asset('site/assets/annapurna-sunrise.jpg');
+              $destinationSummary = $destination->summary
+                  ?: \Illuminate\Support\Str::limit(strip_tags($destination->description ?? ''), 150);
+            @endphp
+            <a href="{{ route('destinations.show', $destination) }}" class="group relative h-[420px] rounded-2xl border border-slate-200/80 shadow-lg overflow-hidden cursor-pointer">
+              <img src="{{ $destinationImage }}" alt="{{ $destination->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
+              <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
+                <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">{{ $destination->region ?: 'Explore Nepal' }}</span>
+                <h3 class="text-2xl font-bold text-white mb-2">{{ $destination->name }}</h3>
+                @if ($destinationSummary !== '')
+                  <p class="text-slate-300 text-sm leading-relaxed mb-3">{{ $destinationSummary }}</p>
+                @endif
+                <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
+                  Explore journeys
+                  <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          @empty
+            <p class="md:col-span-3 text-center text-slate-500 py-10">New destinations are coming soon. Check back to discover more of Nepal.</p>
+          @endforelse
         </div>
 
       </div>
@@ -1111,97 +905,7 @@
       </div>
     </section>
   </main>
-  <footer class="footer" id="footer">
-    <div class="footer-main">
-      <div class="container footer-main-grid">
-        <div class="footer-about">
-          <a class="footer-logo" href="#top" aria-label="Explore Nepal Holidays, back to top"><img
-              src="{{ asset('site/assets/footer-logo-compact.png') }}" alt="Explore Nepal Holidays" width="620" height="207"
-              loading="lazy"></a>
-          <p>For mountain days, meaningful encounters, and all the moments in between. Find your own way into Nepal.</p>
-          <a class="footer-plan" href="#plan">Start planning your journey <span aria-hidden="true">↗</span></a>
-        </div>
-        <nav class="footer-nav" aria-label="Footer exploration links">
-          <h2>Explore Nepal</h2>
-          <a href="{{ route('about') }}">About Us</a>
-          <a href="{{ route('team') }}">Our Team</a>
-          <a href="{{ route('home') }}#why-choose">Why travel with us</a>
-          <a href="{{ route('contact') }}">Contact Us</a>
-          <a href="#journeys">Featured journeys</a>
-          <a href="#expeditions">Flagship expeditions</a>
-          <a href="#regions">Regions</a>
-          <a href="#why-choose">Why choose us</a>
-          <a href="{{ route('home') }}#testimonials">Guest reviews</a>
-          <a href="#newsletter">Newsletter</a>
-          <a href="{{ route('faq') }}">FAQs</a>
-        </nav>
-        <nav class="footer-nav" aria-label="Footer planning links">
-          <h2>Plan your trip</h2>
-          <a href="#journeys" @click="activeFilter='trekking'">Trekking journeys</a>
-          <a href="#journeys" @click="activeFilter='culture'">Culture &amp; heritage</a>
-          <a href="#journeys" @click="activeFilter='wildlife'">Wildlife escapes</a>
-          <a href="#plan">Tell us your ideas</a>
-        </nav>
-        <div class="footer-contact-card">
-          <h2>Contact</h2>
-          <address class="footer-contact"><span>VISIT US</span>Thamel, Kathmandu, Nepal <small>Office address</small><span class="footer-contact-label">CALL US</span><a href="tel:+9779800000000">+977
-              980-000-0000</a><small>Trip planning desk</small></address>
-          <div class="footer-social" aria-label="Social media">
-            <span class="footer-social-label">FIND US ONLINE</span>
-            <div class="footer-social-icons">
-              <span class="social-icon social-pending" role="img" aria-label="Facebook profile link pending"
-                title="Facebook profile link pending"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/facebook.svg') }}" alt=""></span>
-              <span class="social-icon social-pending" role="img" aria-label="Instagram profile link pending"
-                title="Instagram profile link pending"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/instagram.svg') }}" alt=""></span>
-              <span class="social-icon social-pending" role="img" aria-label="TikTok profile link pending"
-                title="TikTok profile link pending"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/tiktok.svg') }}" alt=""></span>
-              <span class="social-icon social-pending" role="img" aria-label="YouTube channel link pending"
-                title="YouTube channel link pending"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/youtube.svg') }}" alt=""></span>
-              <a class="social-icon"
-                href="https://wa.me/?text=I%27m%20planning%20a%20Nepal%20trip%20with%20Explore%20Nepal%20Holidays."
-                target="_blank" rel="noopener noreferrer" aria-label="Share your Nepal trip plans on WhatsApp"
-                title="Share your trip plans on WhatsApp"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt=""></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="footer-resources">
-      <div class="container footer-resources-grid">
-        <div class="footer-resource-intro"><span class="eyebrow dark">PLAN WITH GOOD INFORMATION</span>
-          <h2>Nepal travel resources</h2>
-          <p>External organizations for travel, conservation and trekking guidance.</p>
-        </div>
-        <div class="resource-logos" aria-label="Independent Nepal travel organizations">
-          <a href="https://tourism.gov.np/" target="_blank" rel="noopener noreferrer"
-            title="Government of Nepal tourism ministry"><img src="{{ asset('site/assets/nepal-goverment.svg') }}"
-              alt="Government of Nepal tourism ministry" width="226" height="194" loading="lazy"></a>
-          <a href="https://ntb.gov.np/" target="_blank" rel="noopener noreferrer" title="Nepal Tourism Board"><img
-              src="{{ asset('site/assets/ntb.svg') }}" alt="Nepal Tourism Board" width="169" height="172" loading="lazy"></a>
-          <a href="https://www.nepalmountaineering.org/" target="_blank" rel="noopener noreferrer"
-            title="Nepal Mountaineering Association"><img src="{{ asset('site/assets/nma.svg') }}" alt="Nepal Mountaineering Association"
-              width="248" height="212" loading="lazy"></a>
-          <a href="https://www.taan.org.np/" target="_blank" rel="noopener noreferrer"
-            title="Trekking Agencies' Association of Nepal"><img src="{{ asset('site/assets/taan.svg') }}"
-              alt="Trekking Agencies' Association of Nepal" width="158" height="213" loading="lazy"></a>
-          <a href="https://keepnepal.org/" target="_blank" rel="noopener noreferrer"
-            title="Kathmandu Environmental Education Project"><img src="{{ asset('site/assets/keep.webp') }}"
-              alt="Kathmandu Environmental Education Project" width="124" height="48" loading="lazy"></a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-base">
-      <div class="container footer-base-top">
-        <div><span class="footer-base-label">PAYMENT OPTIONS</span>
-          <p>Card networks shown as examples. Accepted methods are confirmed before you pay.</p>
-        </div><img src="{{ asset('site/assets/pay-cards01.svg') }}"
-          alt="Examples of card networks: Visa, Mastercard, American Express and UnionPay" width="276" height="38"
-          loading="lazy">
-      </div>
-      <div class="container footer-base-bottom"><span>© 2026 Explore Nepal Holidays.</span><a href="#top">Back to top
-          <span aria-hidden="true">↑</span></a></div>
-    </div>
-  </footer>
+  @include('site.partials.footer')
   <div class="trip-search-backdrop" x-show="tripSearchOpen" x-cloak @click.self="closeTripSearch()"
     @keydown.tab="trapSearchTab($event)" @keydown.escape.stop="closeTripSearch()">
     <section class="trip-search-dialog" x-ref="tripSearchDialog" role="dialog" aria-modal="true"

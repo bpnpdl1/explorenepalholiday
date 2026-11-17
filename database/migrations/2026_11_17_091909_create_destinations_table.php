@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('region')->nullable();
             $table->text('summary')->nullable();
             $table->longText('description')->nullable();
             $table->boolean('is_published')->default(false);
-            $table->boolean('is_featured')->default(false);
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
         });

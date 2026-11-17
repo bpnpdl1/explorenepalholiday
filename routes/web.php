@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'site.home')->name('home');
+Route::get('/', HomeController::class)->name('home');
+Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
 Route::view('/about-us', 'site.about')->name('about');
 Route::view('/our-team', 'site.team')->name('team');
 Route::view('/faq', 'site.faq')->name('faq');
