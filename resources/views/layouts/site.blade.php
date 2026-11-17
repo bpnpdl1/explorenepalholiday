@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0b2b50">
+    @hasSection('meta_robots')
+        <meta name="robots" content="@yield('meta_robots')">
+    @endif
     <meta name="description" content="@yield('meta_description', 'Discover Nepal with Explore Nepal Holidays.')">
     <meta property="og:title" content="@yield('page_title', config('app.name', 'Explore Nepal Holidays'))">
     <meta property="og:description" content="@yield('meta_description', 'Discover Nepal with Explore Nepal Holidays.')">

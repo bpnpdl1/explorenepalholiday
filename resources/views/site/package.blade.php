@@ -116,7 +116,7 @@
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button"
             data-nav-trigger="company" @click="openNav='company'" :aria-expanded="(openNav==='company').toString()"
             aria-controls="nav-company">Company <span class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-company" class="nav-panel dropdown-panel" x-show="openNav==='company'" x-cloak><a href="{{ route('home') }}#why-nepal" @click="closeNav()">About Us ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Our Team ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why travel with us ↗</a><a
+          <div id="nav-company" class="nav-panel dropdown-panel" x-show="openNav==='company'" x-cloak><a href="{{ route('about') }}" @click="closeNav()">About Us ↗</a><a href="{{ route('team') }}" @click="closeNav()">Our Team ↗</a><a href="{{ route('home') }}#why-choose" @click="closeNav()">Why travel with us ↗</a><a
               href="{{ route('home') }}#why-nepal" @click="closeNav()">Our approach ↗</a><a href="{{ route('home') }}#intro"
               @click="closeNav()">Why travel
               Nepal ↗</a><a href="{{ route('home') }}#testimonials" @click="closeNav()">Traveller stories ↗</a></div>
@@ -126,12 +126,12 @@
             @click="openNav='info'" :aria-expanded="(openNav==='info').toString()" aria-controls="nav-info">Travel Info
             <span class="nav-chevron" aria-hidden="true"></span></button>
           <div id="nav-info" class="nav-panel dropdown-panel" x-show="openNav==='info'" x-cloak><a
-              href="{{ route('home') }}#faq#planning" @click="closeNav()">Best time to visit ↗</a><a
-              href="{{ route('home') }}#faq#trekking" @click="closeNav()">Trekking
+              href="{{ route('faq') }}#planning" @click="closeNav()">Best time to visit ↗</a><a
+              href="{{ route('faq') }}#trekking" @click="closeNav()">Trekking
               experience ↗</a><a href="{{ route('home') }}#combine-trips" @click="closeNav()">Combining experiences ↗</a><a
-              href="{{ route('home') }}#faq" @click="closeNav()">Frequently asked questions ↗</a></div>
+              href="{{ route('faq') }}" @click="closeNav()">Frequently asked questions ↗</a></div>
         </div>
-        <a class="nav-contact" href="{{ route('home') }}#plan" @mouseenter="openNav=null">Contact Us <span
+        <a class="nav-contact" href="{{ route('contact') }}" @mouseenter="openNav=null">Contact Us <span
             aria-hidden="true">↗</span></a>
         <button class="nav-find" type="button" @click="openTripSearch()" aria-label="Find a trip">
         <img class="package-icon-image package-icon-image--search" src="{{ asset('site/assets/icons/search.svg') }}" alt=""></button>
@@ -190,7 +190,7 @@
       <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('company')"
           :aria-expanded="(mobileSection==='company').toString()" aria-controls="mobile-company">Company <span
             aria-hidden="true">+</span></button>
-        <div id="mobile-company" class="mobile-subnav" x-show="mobileSection==='company'" x-cloak><a href="{{ route('home') }}#why-nepal" @click="menuOpen=false">About Us</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Our Team</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Why travel with us</a><a
+        <div id="mobile-company" class="mobile-subnav" x-show="mobileSection==='company'" x-cloak><a href="{{ route('about') }}" @click="menuOpen=false">About Us</a><a href="{{ route('team') }}" @click="menuOpen=false">Our Team</a><a href="{{ route('home') }}#why-choose" @click="menuOpen=false">Why travel with us</a><a
             href="{{ route('home') }}#why-nepal" @click="menuOpen=false">Our approach</a><a href="{{ route('home') }}#intro"
             @click="menuOpen=false">Why Nepal</a><a href="{{ route('home') }}#testimonials" @click="menuOpen=false">Traveller
             stories</a></div>
@@ -199,11 +199,11 @@
           :aria-expanded="(mobileSection==='info').toString()" aria-controls="mobile-info">Travel Info <span
             aria-hidden="true">+</span></button>
         <div id="mobile-info" class="mobile-subnav" x-show="mobileSection==='info'" x-cloak><a
-            href="{{ route('home') }}#faq#planning" @click="menuOpen=false">Best time to visit</a><a
-            href="{{ route('home') }}#faq#trekking" @click="menuOpen=false">Trekking
-            experience</a><a href="{{ route('home') }}#faq" @click="menuOpen=false">All FAQs</a></div>
+            href="{{ route('faq') }}#planning" @click="menuOpen=false">Best time to visit</a><a
+            href="{{ route('faq') }}#trekking" @click="menuOpen=false">Trekking
+            experience</a><a href="{{ route('faq') }}" @click="menuOpen=false">All FAQs</a></div>
       </div>
-      <a class="mobile-contact" href="{{ route('home') }}#plan" @click="menuOpen=false">Contact Us <span aria-hidden="true">↗</span></a>
+      <a class="mobile-contact" href="{{ route('contact') }}" @click="menuOpen=false">Contact Us <span aria-hidden="true">↗</span></a>
     </nav>
   </header>
   <main id="main">
@@ -583,16 +583,16 @@
         </div>
         <nav class="footer-nav" aria-label="Footer exploration links">
           <h2>Explore Nepal</h2>
-          <a href="{{ route('home') }}#why-nepal">About Us</a>
-          <a href="{{ route('home') }}#why-choose">Our Team</a>
+          <a href="{{ route('about') }}">About Us</a>
+          <a href="{{ route('team') }}">Our Team</a>
           <a href="{{ route('home') }}#why-choose">Why travel with us</a>
-          <a href="{{ route('home') }}#plan">Contact Us</a>
+          <a href="{{ route('contact') }}">Contact Us</a>
           <a href="{{ route('home') }}#journeys">Featured journeys</a>
           <a href="{{ route('home') }}#experiences">Ways to travel</a>
           <a href="{{ route('home') }}#why-nepal">Our approach</a>
           <a href="{{ route('home') }}#testimonials">Traveller stories</a>
           <a href="{{ route('home') }}#newsletter">Newsletter</a>
-          <a href="{{ route('home') }}#faq">FAQs</a>
+          <a href="{{ route('faq') }}">FAQs</a>
         </nav>
         <nav class="footer-nav" aria-label="Footer planning links">
           <h2>Plan your trip</h2>
