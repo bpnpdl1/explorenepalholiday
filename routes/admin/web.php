@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GuestReviewController;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::view('dashboard', 'admin.dashboard')->name('dashboard');
     Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('destinations', DestinationController::class)->except('show');
     Route::resource('faqs', FaqController::class)->except('show');
     Route::resource('guest-reviews', GuestReviewController::class)
