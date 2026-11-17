@@ -70,17 +70,17 @@
                 </li>
                 <li class="nav-item">
                     <a
-                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
+                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
                         href="#sidebarMaster"
                         data-bs-toggle="collapse"
                         role="button"
-                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'true' : 'false' }}"
                         aria-controls="sidebarMaster"
                     >
                         <i class="ri-database-2-line"></i><span>Master</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
                         <ul class="nav nav-sm flex-column">
                             <li class="menu-title"><span>Travel content</span></li>
                             <li class="nav-item">
@@ -94,6 +94,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.subcategories.*') ? 'active' : '' }}" href="{{ route('admin.subcategories.index') }}">Subcategories</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link disabled" href="javascript:void(0)" aria-disabled="true">Activities <span class="badge bg-secondary-subtle text-secondary ms-auto">Soon</span></a>

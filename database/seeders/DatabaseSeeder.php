@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DestinationSeeder::class,
+            CategorySeeder::class,
+            SubcategorySeeder::class,
             GuestReviewSeeder::class,
             AdminSeeder::class,
         ]);
