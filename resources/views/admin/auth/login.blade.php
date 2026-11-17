@@ -1,6 +1,6 @@
 <x-admin-layouts::auth :title="__('Admin sign in')">
     <main class="auth-page-wrapper pt-5">
-        <div class="auth-one-bg-position auth-one-bg" id="admin-auth-background">
+        <div class="auth-one-bg-position auth-one-bg" id="admin-auth-background" style="background-image: url('{{ asset('site/assets/annapurna-sunrise.jpg') }}'); background-position: center;">
             <div class="bg-overlay"></div>
             <div class="shape">
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1440 120" aria-hidden="true">

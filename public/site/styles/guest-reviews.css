@@ -28,6 +28,7 @@
   letter-spacing: -.03em;
 }
 .guest-review-intro p, .guest-review-cta p { max-width: 650px; margin: 0; color: #3f4c57; font-size: 1.05rem; line-height: 1.75; }
+.guest-review-summary { margin: 0 auto 20px; color: #718092; font-size: .88rem; }
 .guest-tripadvisor-link, .guest-review-source {
   color: #0b4b77;
   font-size: .9rem;
@@ -54,6 +55,7 @@
 }
 .guest-review-card-top { display:flex; justify-content:space-between; align-items:center; color:#7b8998; font-size:.78rem; }
 .guest-review-stars { color:#eaa842; font-size:1rem; letter-spacing:.13em; }
+.guest-review-stars-empty { color:#d8e0e7; }
 .guest-review-card blockquote { flex:1; margin:24px 0; color:#33485d; font-size:1rem; line-height:1.7; }
 .guest-review-meta { display:flex; align-items:center; gap:12px; padding-top:18px; border-top:1px solid #edf1f4; }
 .guest-review-avatar { display:grid; flex:none; width:42px; height:42px; place-items:center; border-radius:50%; color:#0b2b50; background:#e9f1f5; font-size:.78rem; font-weight:700; }
@@ -62,6 +64,14 @@
 .guest-review-meta span { margin-top:3px; color:#526579; font-size:.78rem; }
 .guest-review-meta small { margin-top:3px; color:#8a98a6; font-size:.72rem; }
 .guest-review-source { display:inline-block; margin-top:18px; font-size:.8rem; }
+.guest-review-empty { grid-column: 1 / -1; padding: 48px 24px; border: 1px solid #e3eaf0; border-radius: var(--radius-card); background: #fff; text-align: center; }
+.guest-review-empty h2 { margin: 0 0 10px; color: #0b2b50; font: 700 1.5rem/1.2 Outfit, sans-serif; }
+.guest-review-empty p { margin: 0; color: #526579; line-height: 1.65; }
+.guest-review-empty .guest-review-source { margin-top: 16px; }
+.guest-review-pagination { display:flex; align-items:center; justify-content:center; gap:20px; padding: 0 0 72px; color:#526579; font-size:.9rem; }
+.guest-review-pagination a, .guest-review-pagination-disabled { padding:9px 14px; border:1px solid #dce5eb; border-radius:8px; color:#0b4b77; font-weight:700; text-decoration:none; }
+.guest-review-pagination a:hover { border-color:#0b4b77; }
+.guest-review-pagination-disabled { color:#9aa6b2; }
 .guest-review-cta { padding:55px 0; background:#f1f6f8; }
 .guest-review-cta .container { display:flex; align-items:center; justify-content:space-between; gap:30px; }
 .guest-review-cta h2 { margin-top:9px; }

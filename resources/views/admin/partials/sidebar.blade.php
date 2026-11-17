@@ -70,17 +70,17 @@
                 </li>
                 <li class="nav-item">
                     <a
-                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
+                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
                         href="#sidebarMaster"
                         data-bs-toggle="collapse"
                         role="button"
-                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.seo.*') ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'true' : 'false' }}"
                         aria-controls="sidebarMaster"
                     >
                         <i class="ri-database-2-line"></i><span>Master</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
                         <ul class="nav nav-sm flex-column">
                             <li class="menu-title"><span>Travel content</span></li>
                             <li class="nav-item">
@@ -88,6 +88,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">FAQs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.guest-reviews.*') ? 'active' : '' }}" href="{{ route('admin.guest-reviews.index') }}">Guest reviews</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link disabled" href="javascript:void(0)" aria-disabled="true">Tour categories <span class="badge bg-secondary-subtle text-secondary ms-auto">Soon</span></a>

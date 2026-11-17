@@ -28,44 +28,68 @@
         <div>
             <span class="guest-reviews-eyebrow">REAL TRAVELLER STORIES</span>
             <h2>Experiences shared in their own words</h2>
-            <p>These excerpts come from guest reviews on our Tripadvisor listing. Each story links to the original source.</p>
+            <p>Read travel stories shared by our guests. Each review includes the trip details and a link to its original source when available.</p>
         </div>
         <a class="guest-tripadvisor-link" href="https://www.tripadvisor.in/Attraction_Review-g293890-d19900205-Reviews-Explore_Nepal_Holidays-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Central_Region.html" target="_blank" rel="noopener noreferrer">
             See the Tripadvisor listing <span aria-hidden="true">↗</span>
         </a>
     </section>
 
+    <p class="guest-review-summary container">
+        @if ($reviews->total() > 0)
+            Showing {{ $reviews->firstItem() }}–{{ $reviews->lastItem() }} of {{ $reviews->total() }} guest {{ \Illuminate\Support\Str::plural('review', $reviews->total()) }}
+            <span aria-hidden="true">·</span> {{ number_format($averageRating ?? 0, 1) }} / 5 average rating
+        @else
+            Guest reviews will appear here as they are added.
+        @endif
+    </p>
+
     <section class="guest-review-grid container" aria-label="Guest review excerpts">
-        <article class="guest-review-card">
-            <div class="guest-review-card-top"><span class="guest-review-stars" aria-label="5 out of 5 stars">★★★★★</span><span>September 2026</span></div>
-            <blockquote>Our trek to Poon Hill with ABC Camp was simply incredible and a true once-in-a-lifetime experience! From start to finish, everything was perfectly organized.</blockquote>
-            <div class="guest-review-meta">
-                <div class="guest-review-avatar" aria-hidden="true">KN</div>
-                <div><strong>K N</strong><span>Poon Hill and Annapurna Base Camp</span><small>Annapurna region</small></div>
+        @forelse ($reviews as $review)
+            <article class="guest-review-card">
+                <div class="guest-review-card-top">
+                    <span class="guest-review-stars" aria-label="{{ $review->rating }} out of 5 stars">{{ str_repeat('★', $review->rating) }}<span class="guest-review-stars-empty">{{ str_repeat('☆', 5 - $review->rating) }}</span></span>
+                    <span>{{ $review->reviewed_at?->format('F Y') ?? 'Date not listed' }}</span>
+                </div>
+                <blockquote>{{ $review->review_text }}</blockquote>
+                <div class="guest-review-meta">
+                    <div class="guest-review-avatar" aria-hidden="true">{{ $review->display_initials }}</div>
+                    <div>
+                        <strong>{{ $review->reviewer_name }}</strong>
+                        <span>{{ $review->trip_name ?: 'Nepal travel experience' }}</span>
+                        @if ($review->region_name)
+                            <small>{{ $review->region_name }}</small>
+                        @endif
+                    </div>
+                </div>
+                @if ($review->source_url)
+                    <a class="guest-review-source" href="{{ $review->source_url }}" target="_blank" rel="noopener noreferrer">Read source review <span aria-hidden="true">↗</span></a>
+                @endif
+            </article>
+        @empty
+            <div class="guest-review-empty">
+                <h2>Reviews are on their way</h2>
+                <p>We’re gathering guest stories. Please check back soon, or explore our trips while you’re here.</p>
+                <a class="guest-review-source" href="{{ route('home') }}#plan">Start planning a trip <span aria-hidden="true">↗</span></a>
             </div>
-            <a class="guest-review-source" href="https://www.tripadvisor.in/Attraction_Review-g293890-d19900205-Reviews-Explore_Nepal_Holidays-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Central_Region.html" target="_blank" rel="noopener noreferrer">Read source review <span aria-hidden="true">↗</span></a>
-        </article>
-
-        <article class="guest-review-card">
-            <div class="guest-review-card-top"><span class="guest-review-stars" aria-label="5 out of 5 stars">★★★★★</span><span>December 2025</span></div>
-            <blockquote>I thoroughly enjoyed my time with my guide Ram Kumar he was very knowledgeable on Nepali history and the landscape of each place we went. Ram made me feel very welcome and made my time in Nepal very easy.</blockquote>
-            <div class="guest-review-meta">
-                <div class="guest-review-avatar" aria-hidden="true">DL</div>
-                <div><strong>Denver L</strong><span>Kathmandu sightseeing and the Nagarkot trek</span><small>Kathmandu Valley</small></div>
-            </div>
-            <a class="guest-review-source" href="https://www.tripadvisor.in/Attraction_Review-g293890-d19900205-Reviews-Explore_Nepal_Holidays-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Central_Region.html" target="_blank" rel="noopener noreferrer">Read source review <span aria-hidden="true">↗</span></a>
-        </article>
-
-        <article class="guest-review-card">
-            <div class="guest-review-card-top"><span class="guest-review-stars" aria-label="5 out of 5 stars">★★★★★</span><span>March 2026</span></div>
-            <blockquote>A friend and I completed the Tsum Valley and Manaslu trek (18 days) with them. Our guide Subarna was great, he helped us through the whole trip, providing us with interesting information. He took great care of us and showed flexibility and ability to adapt to our needs.</blockquote>
-            <div class="guest-review-meta">
-                <div class="guest-review-avatar" aria-hidden="true">AS</div>
-                <div><strong>Asier</strong><span>Tsum Valley and Manaslu trek</span><small>Manaslu and Tsum Valley</small></div>
-            </div>
-            <a class="guest-review-source" href="https://www.tripadvisor.in/Attraction_Review-g293890-d19900205-Reviews-Explore_Nepal_Holidays-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Central_Region.html" target="_blank" rel="noopener noreferrer">Read source review <span aria-hidden="true">↗</span></a>
-        </article>
+        @endforelse
     </section>
+
+    @if ($reviews->hasPages())
+        <nav class="guest-review-pagination container" aria-label="Guest review pages">
+            @if ($reviews->onFirstPage())
+                <span class="guest-review-pagination-disabled" aria-disabled="true">Previous</span>
+            @else
+                <a href="{{ $reviews->previousPageUrl() }}" rel="prev">Previous</a>
+            @endif
+            <span aria-current="page">Page {{ $reviews->currentPage() }} of {{ $reviews->lastPage() }}</span>
+            @if ($reviews->hasMorePages())
+                <a href="{{ $reviews->nextPageUrl() }}" rel="next">Next</a>
+            @else
+                <span class="guest-review-pagination-disabled" aria-disabled="true">Next</span>
+            @endif
+        </nav>
+    @endif
 
     <section class="guest-review-cta">
         <div class="container">
