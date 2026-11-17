@@ -1,0 +1,15 @@
+html[data-layout="vertical"] .admin-brand-mark {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+#admin-bookings-chart {
+    min-height: 320px;
+}
+
+.admin-stat-note {
+    color: var(--vz-secondary-color);
+    font-size: 0.75rem;
+}
+

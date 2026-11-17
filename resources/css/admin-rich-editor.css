@@ -1,0 +1,46 @@
+@import "quill/dist/quill.snow.css";
+
+.admin-rich-editor .ql-toolbar.ql-snow {
+    border: 1px solid var(--vz-border-color, #e9ebec);
+    border-radius: 0.375rem 0.375rem 0 0;
+    background: var(--vz-light, #f3f6f9);
+}
+
+.admin-rich-editor .ql-container.ql-snow {
+    border: 1px solid var(--vz-border-color, #e9ebec);
+    border-top: 0;
+    border-radius: 0 0 0.375rem 0.375rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+}
+
+.admin-rich-editor .ql-editor {
+    min-height: 260px;
+    color: var(--vz-body-color, #212529);
+    line-height: 1.65;
+}
+
+.admin-rich-editor .ql-editor.ql-blank::before {
+    color: var(--vz-secondary-color, #878a99);
+    font-style: normal;
+}
+
+.admin-rich-editor .ql-editor img,
+.admin-rich-editor .ql-editor video {
+    max-width: 100%;
+}
+
+.admin-rich-editor .ql-editor table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-rich-editor .ql-editor td {
+    border: 1px solid var(--vz-border-color, #e9ebec);
+    padding: 0.5rem;
+}
+
+.admin-rich-editor .ql-insertTable i {
+    font-size: 1rem;
+    vertical-align: middle;
+}
