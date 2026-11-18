@@ -70,17 +70,17 @@
                 </li>
                 <li class="nav-item">
                     <a
-                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
+                        class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*', 'admin.seo.*') ? 'active' : 'collapsed' }}"
                         href="#sidebarMaster"
                         data-bs-toggle="collapse"
                         role="button"
-                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.seo.*') ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*', 'admin.seo.*') ? 'true' : 'false' }}"
                         aria-controls="sidebarMaster"
                     >
                         <i class="ri-database-2-line"></i><span>Master</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
                         <ul class="nav nav-sm flex-column">
                             <li class="menu-title"><span>Travel content</span></li>
                             <li class="nav-item">
@@ -112,7 +112,7 @@
                             </li>
                             <li class="menu-title"><span>Configuration</span></li>
                             <li class="nav-item">
-                                <a class="nav-link disabled" href="javascript:void(0)" aria-disabled="true">Site settings <span class="badge bg-secondary-subtle text-secondary ms-auto">Soon</span></a>
+                                <a class="nav-link {{ request()->routeIs('admin.site-settings.*') ? 'active' : '' }}" href="{{ route('admin.site-settings.edit') }}">Site settings</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link disabled" href="javascript:void(0)" aria-disabled="true">Booking settings <span class="badge bg-secondary-subtle text-secondary ms-auto">Soon</span></a>
