@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Destination;
 use App\Models\Faq;
+use App\Models\WhyTravelReason;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
@@ -26,6 +27,13 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        return view('site.home', compact('destinations', 'faqs'));
+        $whyTravelReasons = WhyTravelReason::query()
+            ->where('is_published', true)
+            ->with('media')
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        return view('site.home', compact('destinations', 'faqs', 'whyTravelReasons'));
     }
 }

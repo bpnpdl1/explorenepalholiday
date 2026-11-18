@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             SubcategorySeeder::class,
             GuestReviewSeeder::class,
             TeamMemberSeeder::class,
+            WhyTravelReasonSeeder::class,
             AdminSeeder::class,
         ]);
     }

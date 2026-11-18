@@ -74,13 +74,13 @@
                         href="#sidebarMaster"
                         data-bs-toggle="collapse"
                         role="button"
-                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.seo.*') ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.seo.*') ? 'true' : 'false' }}"
                         aria-controls="sidebarMaster"
                     >
                         <i class="ri-database-2-line"></i><span>Master</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.seo.*') ? 'show' : '' }}" id="sidebarMaster">
                         <ul class="nav nav-sm flex-column">
                             <li class="menu-title"><span>Travel content</span></li>
                             <li class="nav-item">
@@ -94,6 +94,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.team-members.*') ? 'active' : '' }}" href="{{ route('admin.team-members.index') }}">Team members</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.why-travel-reasons.*') ? 'active' : '' }}" href="{{ route('admin.why-travel-reasons.index') }}">Why travel with us</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">Categories</a>

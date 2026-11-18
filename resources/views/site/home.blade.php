@@ -168,51 +168,48 @@
 
         <!-- 4-Column Feature Card Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-          <!-- Card 1: Medical Logs -->
-          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
-            <div>
-              <div class="bg-teal-50 text-teal-600 p-4 rounded-xl w-fit mx-auto mb-5">
-                <i data-lucide="heart-pulse" class="w-8 h-8" aria-hidden="true"></i>
+          @if ($whyTravelReasons->isNotEmpty())
+            @foreach ($whyTravelReasons as $reason)
+              <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
+                <div>
+                  <div class="bg-teal-50 p-4 rounded-xl w-fit mx-auto mb-5">
+                    <img src="{{ $reason->getFirstMediaUrl('icon') }}" alt="" class="w-8 h-8 object-contain" loading="lazy">
+                  </div>
+                  <h3 class="text-lg font-bold text-slate-900 mb-2">{{ $reason->title }}</h3>
+                  <p class="text-slate-500 text-xs leading-relaxed">{{ $reason->description }}</p>
+                </div>
               </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2">Altitude-aware pacing</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Higher routes need sensible acclimatization days, realistic walking hours and a plan that can flex with weather and energy.</p>
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
-            <div>
-              <div class="bg-amber-50 text-amber-600 p-4 rounded-xl w-fit mx-auto mb-5">
-                <i data-lucide="bed-double" class="w-8 h-8" aria-hidden="true"></i>
+            @endforeach
+          @else
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
+              <div>
+                <div class="bg-teal-50 text-teal-600 p-4 rounded-xl w-fit mx-auto mb-5"><i data-lucide="heart-pulse" class="w-8 h-8" aria-hidden="true"></i></div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Altitude-aware pacing</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Higher routes need sensible acclimatization days, realistic walking hours and a plan that can flex with weather and energy.</p>
               </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2">Comfort matched to route</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Some journeys suit simple teahouses, others call for more comfort in the cities or a private lodge-style approach where available.</p>
             </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
-            <div>
-              <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl w-fit mx-auto mb-5">
-                <i data-lucide="map" class="w-8 h-8" aria-hidden="true"></i>
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
+              <div>
+                <div class="bg-amber-50 text-amber-600 p-4 rounded-xl w-fit mx-auto mb-5"><i data-lucide="bed-double" class="w-8 h-8" aria-hidden="true"></i></div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Comfort matched to route</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Some journeys suit simple teahouses, others call for more comfort in the cities or a private lodge-style approach where available.</p>
               </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2">Local context first</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Routes make more sense when culture, festivals, transport windows and mountain conditions are considered from the start.</p>
             </div>
-          </div>
-
-          <!-- Card 4: Porter Welfare -->
-          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
-            <div>
-              <div class="bg-rose-50 text-rose-600 p-4 rounded-xl w-fit mx-auto mb-5">
-                <i data-lucide="leaf" class="w-8 h-8" aria-hidden="true"></i>
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
+              <div>
+                <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl w-fit mx-auto mb-5"><i data-lucide="map" class="w-8 h-8" aria-hidden="true"></i></div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Local context first</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Routes make more sense when culture, festivals, transport windows and mountain conditions are considered from the start.</p>
               </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2">Responsible travel cues</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">We make space for crew welfare, lower-impact choices and respectful encounters to be part of the conversation before booking.</p>
             </div>
-          </div>
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between">
+              <div>
+                <div class="bg-rose-50 text-rose-600 p-4 rounded-xl w-fit mx-auto mb-5"><i data-lucide="leaf" class="w-8 h-8" aria-hidden="true"></i></div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Responsible travel cues</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">We make space for crew welfare, lower-impact choices and respectful encounters to be part of the conversation before booking.</p>
+              </div>
+            </div>
+          @endif
         </div>
 
         <!-- Lead Guide Banner -->
