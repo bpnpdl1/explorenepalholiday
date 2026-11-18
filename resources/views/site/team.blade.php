@@ -263,41 +263,25 @@
         <header class="team-section-heading">
           <span>MEET THE PEOPLE</span>
           <h2 id="team-section-title">How our team can help</h2>
-          <p class="team-sample-note">Sample names and roles shown for layout; replace with confirmed team details.</p>
+          <p>Meet the people ready to help you plan your journey.</p>
         </header>
         <div class="team-card-grid">
-          <article class="team-card">
-            <img src="{{ asset('site/assets/person2.png') }}" alt="Sample portrait for the trip planner profile" width="1254" height="1254" loading="lazy">
-            <div class="team-card-copy">
-              <span>TRIP PLANNER</span>
-              <h3>Asha Gurung</h3>
-              <p>Route, season and pace guidance shaped around your plans.</p>
-            </div>
-          </article>
-          <article class="team-card">
-            <img src="{{ asset('site/assets/person3.jpg') }}" alt="Sample portrait for the trekking guide profile" width="803" height="871" loading="lazy">
-            <div class="team-card-copy">
-              <span>TREKKING GUIDE</span>
-              <h3>Tenzing Sherpa</h3>
-              <p>Walking day, altitude and trail advice for your trek.</p>
-            </div>
-          </article>
-          <article class="team-card">
-            <img src="{{ asset('site/assets/person3.png') }}" alt="Sample portrait for the culture and wildlife guide profile" width="1254" height="1254" loading="lazy">
-            <div class="team-card-copy">
-              <span>CULTURE &amp; WILDLIFE GUIDE</span>
-              <h3>Pema Tamang</h3>
-              <p>Ideas for heritage visits and wildlife experiences in Nepal.</p>
-            </div>
-          </article>
-          <article class="team-card">
-            <img src="{{ asset('site/assets/male-7275452_1280.jpg') }}" alt="Sample portrait for the guest support profile" width="429" height="514" loading="lazy">
-            <div class="team-card-copy">
-              <span>GUEST SUPPORT</span>
-              <h3>Rajan Lama</h3>
-              <p>Answers to practical questions as you prepare to travel.</p>
-            </div>
-          </article>
+          @forelse ($teamMembers as $teamMember)
+            <article class="team-card">
+              @if ($teamMember->getFirstMediaUrl('portrait'))
+                <img src="{{ $teamMember->getFirstMediaUrl('portrait') }}" alt="Portrait of {{ $teamMember->name }}" loading="lazy">
+              @endif
+              <div class="team-card-copy">
+                <span>{{ $teamMember->role }}</span>
+                <h3>{{ $teamMember->name }}</h3>
+                @if ($teamMember->bio)
+                  <p>{{ $teamMember->bio }}</p>
+                @endif
+              </div>
+            </article>
+          @empty
+            <p>Our team profiles are being updated. <a href="{{ route('contact') }}">Contact us</a> to start planning your trip.</p>
+          @endforelse
         </div>
       </div>
     </section>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\RichContentImageController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SubcategoryController;
+use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
         ->except('show')
         ->parameters(['guest-reviews' => 'guestReview']);
     Route::resource('subcategories', SubcategoryController::class)->except('show');
+    Route::resource('team-members', TeamMemberController::class)
+        ->except('show')
+        ->parameters(['team-members' => 'teamMember']);
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
     Route::get('packages', [PackageController::class, 'index'])->name('packages.index');
     Route::get('packages/{slug}', [PackageController::class, 'show'])->name('packages.show');
