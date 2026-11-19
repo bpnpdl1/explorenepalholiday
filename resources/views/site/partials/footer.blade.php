@@ -3,7 +3,7 @@
       <div class="container footer-main-grid">
         <div class="footer-about">
           <a class="footer-logo" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, back to top"><img
-              src="{{ $siteSetting?->getFirstMediaUrl('logo') ?: asset('site/assets/footer-logo-compact.png') }}" alt="{{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}" width="620" height="207"
+              src="{{ $siteSetting?->logo_url ?: asset('site/assets/footer-logo-compact.png') }}" alt="{{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}" width="620" height="207"
               loading="lazy"></a>
           <p>{{ $siteSetting?->description ?: 'For mountain days, meaningful encounters, and all the moments in between. Find your own way into Nepal.' }}</p>
           <a class="footer-plan" href="{{ route('home') }}#plan">Start planning your journey <span aria-hidden="true">↗</span></a>

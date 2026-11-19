@@ -4,7 +4,7 @@
   <header class="site-header" :class="headerCompact ? 'is-compact' : ''" @mouseleave="openNav=null">
     <div class="container header-primary">
       <a class="brand" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, home"><span class="brand-mark"><img
-            src="{{ $siteSetting?->getFirstMediaUrl('logo') ?: asset('site/assets/logo-mark.png') }}" alt="" width="78" height="63"></span><span class="brand-name">{{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}</span></a>
+            src="{{ $siteSetting?->logo_url ?: asset('site/assets/logo-mark.png') }}" alt="" width="78" height="63"></span><span class="brand-name">{{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}</span></a>
       <div class="header-actions flex items-center gap-3"><button
           class="header-find inline-flex items-center gap-2 font-medium transition-colors" type="button"
           @click="openTripSearch()">
@@ -20,7 +20,7 @@
     <div class="header-nav-row">
       <nav class="container desktop-nav" aria-label="Primary navigation">
         <a class="compact-brand" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, back to top"><img
-            src="{{ $siteSetting?->getFirstMediaUrl('logo') ?: asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
+            src="{{ $siteSetting?->logo_url ?: asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
         <div class="nav-item cascade" @mouseenter="openNav='trekking';openRegion=trekRegions[0].id"
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
           <button type="button" data-nav-trigger="trekking" @click="openNav='trekking';openRegion=trekRegions[0].id"

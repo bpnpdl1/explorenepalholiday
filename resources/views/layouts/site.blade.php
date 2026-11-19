@@ -18,7 +18,7 @@
         <link rel="canonical" href="{{ $siteSetting->canonical_url }}">
     @endif
     <title>@yield('page_title', $siteSetting?->meta_title ?: $siteSetting?->name ?: config('app.name', 'Explore Nepal Holidays'))</title>
-    <link rel="icon" type="image/png" href="{{ $siteSetting?->getFirstMediaUrl('favicon') ?: asset('site/assets/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ $siteSetting?->favicon_url ?: asset('site/assets/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">

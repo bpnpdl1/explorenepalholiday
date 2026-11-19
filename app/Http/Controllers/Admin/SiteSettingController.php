@@ -47,7 +47,7 @@ class SiteSettingController extends Controller
         );
 
         $siteSetting->update($data);
-        Cache::forget('site-settings');
+        Cache::forget(SiteSetting::CACHE_KEY);
 
         if ($logo = $request->file('logo')) {
             $this->mediaLibraryService->storeImage($siteSetting, $logo, 'logo');
@@ -57,7 +57,7 @@ class SiteSettingController extends Controller
             $this->mediaLibraryService->storeImage($siteSetting, $favicon, 'favicon');
         }
 
-        Cache::forget('site-settings');
+        Cache::forget(SiteSetting::CACHE_KEY);
 
         return to_route('admin.site-settings.edit')
             ->with('success', 'Site settings updated successfully.');

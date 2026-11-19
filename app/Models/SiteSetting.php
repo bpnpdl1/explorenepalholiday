@@ -25,6 +25,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 ])]
 class SiteSetting extends Model implements HasMedia
 {
+    public const CACHE_KEY = 'site-settings-v2';
+
     use HasFactory;
     use InteractsWithMedia;
 
