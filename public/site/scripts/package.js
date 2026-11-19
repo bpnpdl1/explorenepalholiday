@@ -6,7 +6,8 @@ function packageBookingSidebar() {
       if (!form.reportValidity()) return;
       const data = new FormData(form);
       const draft = {
-        tripId: '114',
+        tripId: form.dataset.packageSlug || window.location.pathname.split('/').filter(Boolean).pop(),
+        packageSlug: form.dataset.packageSlug || '',
         name: data.get('sidebar-booking-name'),
         email: data.get('sidebar-booking-email'),
         phone: data.get('sidebar-booking-phone'),
@@ -227,7 +228,7 @@ function packageBookingSidebar() {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(document.title + ' ' + window.location.href)}`,
-      email: `mailto:?subject=${encodeURIComponent(document.title)}&body=${encodeURIComponent('I thought you might like this trek: ' + window.location.href)}`
+      email: `mailto:?subject=${encodeURIComponent(document.title)}&body=${encodeURIComponent('I thought you might like this trip: ' + window.location.href)}`
     };
     link.href = shareLinks[shareType] || '#';
   });
@@ -370,7 +371,7 @@ function packageBookingSidebar() {
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      status.textContent = 'This demo form does not send your details. Contact us on WhatsApp to continue.';
+      status.textContent = form.dataset.successMessage || 'This form does not send your details. Contact us on WhatsApp to continue.';
       status.hidden = false;
       status.setAttribute('tabindex', '-1');
       status.focus();

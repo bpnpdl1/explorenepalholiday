@@ -37,7 +37,7 @@
                 <div class="cascade-flyout" :id="'region-'+region.id" x-show="openRegion===region.id" x-cloak>
                   <div class="flyout-heading"><strong x-text="region.name"></strong><span
                       x-text="region.trips.length + ' trek ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
+                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
                   <div class="flyout-note">Open a trek to see itinerary highlights. Routes and availability
                     need confirmation.</div>
                 </div>
@@ -60,7 +60,7 @@
                 <div class="cascade-flyout" :id="'tour-region-'+region.id" x-show="openRegion===region.id" x-cloak>
                   <div class="flyout-heading"><strong x-text="region.name"></strong><span
                       x-text="region.trips.length + ' tour ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
+                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
                   <div class="flyout-note">Open a tour to see itinerary highlights.</div>
                 </div>
               </div>
@@ -83,7 +83,7 @@
                 <div class="cascade-flyout" :id="'climb-region-'+region.id" x-show="openRegion===region.id" x-cloak>
                   <div class="flyout-heading"><strong x-text="region.name"></strong><span
                       x-text="region.trips.length + ' peak ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}" x-text="trip"></a></template></div>
+                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
                   <div class="flyout-note">Climbing plans depend on experience, conditions and permits.</div>
                 </div>
               </div>
@@ -122,7 +122,7 @@
                 :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-region-'+region.id"><span
                   x-text="region.name"></span><span aria-hidden="true">+</span></button>
               <div class="mobile-trip-list" :id="'mobile-region-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
+                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
                     x-text="trip"></a></template>
               </div>
             </div>
@@ -138,7 +138,7 @@
                 :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-tour-'+region.id"><span
                   x-text="region.name"></span><span aria-hidden="true">+</span></button>
               <div class="mobile-trip-list" :id="'mobile-tour-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
+                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
                     x-text="trip"></a></template>
               </div>
             </div>
@@ -154,7 +154,7 @@
                 :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-climb-'+region.id"><span
                   x-text="region.name"></span><span aria-hidden="true">+</span></button>
               <div class="mobile-trip-list" :id="'mobile-climb-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('packages.show') }}"
+                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
                     x-text="trip"></a></template>
               </div>
             </div>

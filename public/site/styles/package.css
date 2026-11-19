@@ -3975,6 +3975,12 @@ html {
   object-position: center;
 }
 
+.package-route-map__visual--link {
+  display: grid;
+  min-height: clamp(360px, 52cqi, 520px);
+  place-items: center;
+}
+
 /* Package hero gallery */
 .package-hero {
   display: block;

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,6 +12,86 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('packages')) {
+            $existingColumns = Schema::getColumnListing('packages');
+
+            Schema::table('packages', function (Blueprint $table) use ($existingColumns): void {
+                if (! in_array('duration_nights', $existingColumns, true)) {
+                    $table->unsignedSmallInteger('duration_nights')->nullable();
+                }
+
+                if (! in_array('difficulty', $existingColumns, true)) {
+                    $table->string('difficulty', 50)->nullable();
+                }
+
+                if (! in_array('max_altitude_meters', $existingColumns, true)) {
+                    $table->unsignedSmallInteger('max_altitude_meters')->nullable();
+                }
+
+                if (! in_array('min_group_size', $existingColumns, true)) {
+                    $table->unsignedSmallInteger('min_group_size')->nullable();
+                }
+
+                if (! in_array('max_group_size', $existingColumns, true)) {
+                    $table->unsignedSmallInteger('max_group_size')->nullable();
+                }
+
+                if (! in_array('price_from', $existingColumns, true)) {
+                    $table->decimal('price_from', 10, 2)->nullable();
+                }
+
+                if (! in_array('compare_at_price', $existingColumns, true)) {
+                    $table->decimal('compare_at_price', 10, 2)->nullable();
+                }
+
+                if (! in_array('price_qualifier', $existingColumns, true)) {
+                    $table->string('price_qualifier')->nullable();
+                }
+
+                if (! in_array('route_map_url', $existingColumns, true)) {
+                    $table->string('route_map_url', 2048)->nullable();
+                }
+
+                if (! in_array('accommodation', $existingColumns, true)) {
+                    $table->text('accommodation')->nullable();
+                }
+
+                if (! in_array('fitness_guidance', $existingColumns, true)) {
+                    $table->longText('fitness_guidance')->nullable();
+                }
+
+                if (! in_array('permit_notes', $existingColumns, true)) {
+                    $table->longText('permit_notes')->nullable();
+                }
+
+                if (! in_array('safety_notes', $existingColumns, true)) {
+                    $table->longText('safety_notes')->nullable();
+                }
+
+                if (! in_array('weather_notes', $existingColumns, true)) {
+                    $table->longText('weather_notes')->nullable();
+                }
+
+                if (! in_array('meta_title', $existingColumns, true)) {
+                    $table->string('meta_title')->nullable();
+                }
+
+                if (! in_array('meta_description', $existingColumns, true)) {
+                    $table->text('meta_description')->nullable();
+                }
+
+                if (! in_array('is_featured', $existingColumns, true)) {
+                    $table->boolean('is_featured')->default(false);
+                }
+            });
+
+            if (in_array('price', $existingColumns, true) && ! in_array('price_from', $existingColumns, true)) {
+                DB::table('packages')->whereNotNull('price')->update(['price_from' => DB::raw('price')]);
+            }
+
+            return;
+        }
+
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subcategory_id')->constrained()->cascadeOnDelete();
@@ -50,6 +131,35 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::hasTable('packages') && Schema::hasColumn('packages', 'price')) {
+            $legacyColumns = [
+                'duration_nights',
+                'difficulty',
+                'max_altitude_meters',
+                'min_group_size',
+                'max_group_size',
+                'price_from',
+                'compare_at_price',
+                'price_qualifier',
+                'route_map_url',
+                'accommodation',
+                'fitness_guidance',
+                'permit_notes',
+                'safety_notes',
+                'weather_notes',
+                'meta_title',
+                'meta_description',
+                'is_featured',
+            ];
+            $columnsToRemove = array_values(array_intersect($legacyColumns, Schema::getColumnListing('packages')));
+
+            if ($columnsToRemove !== []) {
+                Schema::table('packages', fn (Blueprint $table) => $table->dropColumn($columnsToRemove));
+            }
+
+            return;
+        }
+
         Schema::dropIfExists('packages');
     }
 };

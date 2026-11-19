@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SiteSettingSeeder::class,
             CategorySeeder::class,
             SubcategorySeeder::class,
+            PackageSeeder::class,
             GuestReviewSeeder::class,
             TeamMemberSeeder::class,
             WhyTravelReasonSeeder::class,

@@ -40,6 +40,7 @@ class PackageController extends Controller
         'weather_notes',
         'meta_title',
         'meta_description',
+        'tags',
         'sort_order',
     ];
 
@@ -106,6 +107,7 @@ class PackageController extends Controller
     {
         $validated = $request->validated();
         $attributes = Arr::only($validated, self::PACKAGE_ATTRIBUTES);
+        $attributes['tags'] = $validated['tags'] ?? [];
         $attributes['is_published'] = $request->boolean('is_published');
         $attributes['is_featured'] = $request->boolean('is_featured');
 
@@ -150,6 +152,7 @@ class PackageController extends Controller
     {
         $validated = $request->validated();
         $attributes = Arr::only($validated, self::PACKAGE_ATTRIBUTES);
+        $attributes['tags'] = $validated['tags'] ?? [];
         $attributes['is_published'] = $request->boolean('is_published');
         $attributes['is_featured'] = $request->boolean('is_featured');
 

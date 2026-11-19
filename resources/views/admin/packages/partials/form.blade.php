@@ -1,6 +1,7 @@
 @php
     $hasOldInput = session()->hasOldInput();
     $seasons = old('seasons', $package->seasons->map(fn ($season) => $season->season->value)->all());
+    $tags = old('tags', $package->tags ?? []);
 @endphp
 
 <form action="{{ $action }}" method="POST" enctype="multipart/form-data">
@@ -56,6 +57,19 @@
                     <label for="description" class="form-label">Overview</label>
                     <textarea id="description" name="description" rows="5" class="form-control @error('description') is-invalid @enderror">{{ old('description', $package->description) }}</textarea>
                     @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-12">
+                    <span class="form-label d-block">Package tags</span>
+                    <div class="d-flex flex-wrap gap-4">
+                        @foreach (['trekking' => 'Trekking', 'challenging' => 'Challenging', 'featured journey' => 'Featured journey'] as $value => $label)
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $value }}" @checked(in_array($value, $tags, true))>
+                                <span class="form-check-label">{{ $label }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('tags')<div class="text-danger small">{{ $message }}</div>@enderror
+                    @error('tags.*')<div class="text-danger small">{{ $message }}</div>@enderror
                 </div>
             </div>
         </div>

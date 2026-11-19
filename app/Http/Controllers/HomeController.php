@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Destination;
 use App\Models\Faq;
+use App\Models\Package;
 use App\Models\WhyTravelReason;
 use Illuminate\Contracts\View\View;
 
@@ -34,6 +35,51 @@ class HomeController extends Controller
             ->orderBy('title')
             ->get();
 
-        return view('site.home', compact('destinations', 'faqs', 'whyTravelReasons'));
+        $packages = Package::query()
+            ->where('is_published', true)
+            ->with([
+                'subcategory.category.destination',
+                'seasons',
+                'media',
+            ])
+            ->orderByDesc('is_featured')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(18)
+            ->get();
+
+        $featuredPackages = $packages->where('is_featured', true)->values();
+
+        if ($featuredPackages->isEmpty()) {
+            $featuredPackages = $packages->take(6)->values();
+        }
+
+        $featuredPackageCategories = $featuredPackages
+            ->map(fn (Package $package): string => $package->subcategory->category->name)
+            ->unique()
+            ->values();
+
+        $packageCategories = $packages
+            ->map(fn (Package $package): string => $package->subcategory->category->name)
+            ->unique()
+            ->values();
+
+        $packageSearchItems = $packages->map(fn (Package $package): array => [
+            'name' => $package->name,
+            'category' => $package->subcategory->category->destination->name.' / '.$package->subcategory->category->name,
+            'activity' => $package->subcategory->category->name,
+            'url' => route('packages.show', $package),
+        ])->values();
+
+        return view('site.home', compact(
+            'destinations',
+            'faqs',
+            'whyTravelReasons',
+            'packages',
+            'featuredPackages',
+            'featuredPackageCategories',
+            'packageCategories',
+            'packageSearchItems',
+        ));
     }
 }

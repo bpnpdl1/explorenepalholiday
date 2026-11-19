@@ -35,6 +35,7 @@ use Spatie\Sluggable\SlugOptions;
     'weather_notes',
     'meta_title',
     'meta_description',
+    'tags',
     'is_published',
     'is_featured',
     'sort_order',
@@ -115,6 +116,7 @@ class Package extends Model implements HasMedia
             'compare_at_price' => 'decimal:2',
             'is_published' => 'boolean',
             'is_featured' => 'boolean',
+            'tags' => 'array',
             'sort_order' => 'integer',
         ];
     }

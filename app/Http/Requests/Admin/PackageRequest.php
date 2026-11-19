@@ -43,6 +43,8 @@ abstract class PackageRequest extends FormRequest
             'weather_notes' => ['nullable', 'string', 'max:20000'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:1000'],
+            'tags' => ['nullable', 'array', 'max:10'],
+            'tags.*' => ['required', 'string', 'max:50', 'distinct', Rule::in(['trekking', 'challenging', 'featured journey'])],
             'is_published' => ['sometimes', 'boolean'],
             'is_featured' => ['sometimes', 'boolean'],
             'sort_order' => ['required', 'integer', 'between:0,65535'],

@@ -73,6 +73,7 @@
                         <dt class="col-7">Duration</dt>
                         <dd class="col-5 text-end">{{ $package->duration_days ? $package->duration_days.' days' : '-' }}{{ $package->duration_nights ? ' / '.$package->duration_nights.' nights' : '' }}</dd>
                         <dt class="col-7">Difficulty</dt><dd class="col-5 text-end">{{ $package->difficulty ?: '-' }}</dd>
+                        <dt class="col-7">Tags</dt><dd class="col-5 text-end">{{ collect($package->tags ?? [])->map(fn ($tag) => \Illuminate\Support\Str::headline($tag))->implode(', ') ?: '-' }}</dd>
                         <dt class="col-7">Maximum altitude</dt><dd class="col-5 text-end">{{ $package->max_altitude_meters ? number_format($package->max_altitude_meters).' m' : '-' }}</dd>
                         <dt class="col-7">Minimum group</dt><dd class="col-5 text-end">{{ $package->min_group_size ?: '-' }}</dd>
                         <dt class="col-7">Maximum group</dt><dd class="col-5 text-end">{{ $package->max_group_size ?: '-' }}</dd>

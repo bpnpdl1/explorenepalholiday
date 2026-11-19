@@ -236,237 +236,54 @@
       </div>
     </section>
 
-    <section id="expeditions" class="bg-slate-50 py-16 lg:py-20" aria-labelledby="expeditions-title" x-data="expeditionTabs()">
+    <section id="expeditions" class="bg-slate-50 py-16 lg:py-20" aria-labelledby="expeditions-title" x-data="{ activeCategory: 'all' }">
       <div class="max-w-7xl mx-auto px-4 md:px-8">
-
-        <!-- Section Header -->
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
           <div>
-            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-amber-600 mb-3">Featured journey ideas</span>
+            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-amber-600 mb-3">Featured journeys</span>
             <h2 id="expeditions-title" class="text-2xl lg:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">Nepal trips to compare</h2>
-            <p class="text-slate-500 text-sm lg:text-base max-w-2xl mt-3 leading-relaxed">A curated set of trek and peak-climbing concepts with useful cues for region, duration, altitude and starting price. Final routes, inclusions and dates are confirmed during enquiry.</p>
+            <p class="text-slate-500 text-sm lg:text-base max-w-2xl mt-3 leading-relaxed">Compare published trips by category, duration, altitude, and starting price. Final details are confirmed with our team.</p>
           </div>
-
-          <!-- Filter Tabs -->
-          <div class="journey-tabs flex flex-wrap items-center gap-2">
-            <template x-for="tab in tabs" :key="tab.id">
-              <button
-                @click="activeTab = tab.id"
-                :class="activeTab === tab.id
-                  ? 'bg-slate-900 text-white font-medium shadow'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200"
-                x-text="tab.label">
-              </button>
-            </template>
+          <div class="journey-tabs flex flex-wrap items-center gap-2" role="group" aria-label="Filter featured packages">
+            <button type="button" @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">All featured</button>
+            @foreach ($featuredPackageCategories as $category)
+              @php
+                  $categoryKey = \Illuminate\Support\Str::slug($category);
+              @endphp
+              <button type="button" @click="activeCategory = '{{ $categoryKey }}'" :class="activeCategory === '{{ $categoryKey }}' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">{{ $category }}</button>
+            @endforeach
           </div>
         </div>
 
-        <!-- Card Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-
-          <!-- Card 1: Everest Base Camp -->
-          <article x-show="activeTab === 'all' || activeTab === 'everest'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <!-- Image -->
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/everest-hikers.jpg') }}" alt="Everest Base Camp trek" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <!-- Top Left Badges -->
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-amber-400 text-amber-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Classic route</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Detailed itinerary</span>
-              </div>
-              <!-- Altitude Badge -->
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 5,555m</span>
-            </div>
-            <!-- Body -->
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">16 Days &bull; Everest Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Popular</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Everest Base Camp Trek</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">The classic high-altitude trek through Sherpa heartland to the foot of the world's highest peak.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Sherpa villages</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Kala Patthar Sunrise</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Altitude planning</span>
-              </div>
-              <!-- Footer -->
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$2,490 <span class="text-xs font-medium text-slate-400">USD</span></div>
+          @forelse ($featuredPackages as $package)
+            @php
+                $categoryKey = \Illuminate\Support\Str::slug($package->subcategory->category->name);
+            @endphp
+            <article x-show="activeCategory === 'all' || activeCategory === '{{ $categoryKey }}'" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
+              <a href="{{ route('packages.show', $package) }}" class="relative h-52 overflow-hidden block">
+                <img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" class="w-full h-full object-cover" loading="lazy">
+                <span class="absolute top-3 left-3 bg-amber-400 text-amber-950 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Featured</span>
+                @if ($package->max_altitude_meters)<span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max {{ number_format($package->max_altitude_meters) }} m</span>@endif
+              </a>
+              <div class="flex flex-col flex-1 p-5">
+                <div class="flex items-center justify-between gap-2 mb-2"><span class="text-xs font-bold text-slate-700">{{ $package->subcategory->category->name }} &bull; {{ $package->subcategory->category->destination->name }}</span><span class="text-xs text-amber-600 font-semibold">{{ $package->difficulty ?: 'All levels' }}</span></div>
+                <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors"><a href="{{ route('packages.show', $package) }}">{{ $package->name }}</a></h3>
+                <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">{{ $package->summary }}</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">@if ($package->duration_days)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $package->duration_days }} days</span>@endif @foreach ($package->seasons->take(2) as $season)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $season->season->label() }}</span>@endforeach</div>
+                <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between gap-3">
+                  <div><div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{{ $package->price_from !== null ? 'From' : 'Ask for price' }}</div>@if ($package->price_from !== null)<div class="text-lg font-extrabold text-slate-900">{{ $package->currency }} {{ number_format((float) $package->price_from, 0) }}</div>@endif</div>
+                  <a href="{{ route('packages.show', $package) }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View package</a>
                 </div>
-                <a href="{{ route('packages.show') }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
               </div>
-            </div>
-          </article>
-
-          <!-- Card 2: Annapurna Base Camp -->
-          <article x-show="activeTab === 'all' || activeTab === 'annapurna'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}" alt="Annapurna Base Camp trek" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-emerald-400 text-emerald-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Top High Pass</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Natural Hot Springs</span>
-              </div>
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 4,130m</span>
-            </div>
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">14 Days &bull; Annapurna Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Scenic</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Annapurna Base Camp Trek</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">A natural amphitheatre of towering peaks, rhododendron forests and traditional Gurung villages.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Hot Springs at Jhinu</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Machhapuchhre View</span>
-              </div>
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$1,890 <span class="text-xs font-medium text-slate-400">USD</span></div>
-                </div>
-                <a href="{{ route('packages.show') }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 3: Manaslu Circuit -->
-          <article x-show="activeTab === 'all' || activeTab === 'manaslu'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/manaslu-trekker.webp') }}" alt="Trekker facing snowy peaks on the Manaslu Circuit" width="1200" height="927" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-orange-400 text-orange-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Wilderness Permit</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Restricted Area</span>
-              </div>
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 5,160m</span>
-            </div>
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">18 Days &bull; Manaslu Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Remote</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Manaslu Circuit Trek</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">A remote and dramatic circuit around the world's 8th highest peak, crossing the challenging Larkya La pass.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Larkya La Pass</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Tsum Valley Extension</span>
-              </div>
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$2,190 <span class="text-xs font-medium text-slate-400">USD</span></div>
-                </div>
-                <a href="{{ route('packages.show') }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 4: Island Peak Climbing -->
-          <article x-show="activeTab === 'all' || activeTab === 'peak'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/island-peak-climbers.webp') }}" alt="Climbers on a snowy trail in the Everest region at dusk" width="800" height="800" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-amber-400 text-amber-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">#1 Best Seller</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Climbing skills</span>
-              </div>
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 6,189m</span>
-            </div>
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">20 Days &bull; Everest Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Technical</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Island Peak Climbing</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">Nepal's most popular trekking peak — a perfect introduction to Himalayan mountaineering.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Glacier Training</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Summit Certificate</span>
-              </div>
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$2,890 <span class="text-xs font-medium text-slate-400">USD</span></div>
-                </div>
-                <a href="{{ route('packages.show') }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 5: Everest Three Passes -->
-          <article x-show="activeTab === 'all' || activeTab === 'everest'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/1670824549-nepal-everest-base-camp-trek.jpg') }}" alt="Everest Three Passes trek" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-emerald-400 text-emerald-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Top High Pass</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Three 5,000m Passes</span>
-              </div>
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 5,545m</span>
-            </div>
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">21 Days &bull; Everest Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Advanced</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Everest Three Passes Trek</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">The ultimate Everest region trek — crossing Kongma La, Cho La and Renjo La in one epic journey.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Gokyo Lakes</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Cho La Glacier</span>
-              </div>
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$2,790 <span class="text-xs font-medium text-slate-400">USD</span></div>
-                </div>
-                <a href="{{ route('packages.show') }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 6: Mera Peak Climbing -->
-          <article x-show="activeTab === 'all' || activeTab === 'peak'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-            <div class="relative h-52 overflow-hidden">
-              <img src="{{ asset('site/assets/mera-peak.webp') }}" alt="Snow-covered peaks in the Mera Peak area" width="1067" height="1600" class="w-full h-full object-cover" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="bg-orange-400 text-orange-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Wilderness Permit</span>
-                <span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Highest Trekking Peak</span>
-              </div>
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max 6,476m</span>
-            </div>
-            <div class="flex flex-col flex-1 p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-700">18 Days &bull; Everest Region</span>
-                <span class="text-xs text-amber-500 font-semibold">Expedition</span>
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors">Mera Peak Climbing</h3>
-              <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">Nepal's highest trekking peak with panoramic views of five 8,000m giants from the summit.</p>
-              <div class="flex flex-wrap gap-1.5 mt-3">
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Panoramic Summit</span>
-                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">Glacier Skills</span>
-              </div>
-              <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">From</div>
-                  <div class="text-lg font-extrabold text-slate-900">$2,590 <span class="text-xs font-medium text-slate-400">USD</span></div>
-                </div>
-                <a href="{{ route('packages.show') }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
-              </div>
-            </div>
-          </article>
-
+            </article>
+          @empty
+            <p class="col-span-full rounded-2xl bg-white p-8 text-center text-slate-600">New journeys are being prepared. Contact our team and we’ll help plan your trip.</p>
+          @endforelse
         </div>
-
       </div>
     </section>
+
 
     <section id="regions" class="bg-slate-950 text-white py-20 px-4 md:px-8" aria-labelledby="regions-title">
       <div class="max-w-7xl mx-auto">
@@ -482,7 +299,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
           <!-- Card 1: Everest Region -->
-          <a href="{{ route('packages.show') }}" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
+          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
             <img src="{{ asset('site/assets/everest-hikers.jpg') }}" alt="Everest Region" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
             <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
             <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
@@ -499,7 +316,7 @@
           </a>
 
           <!-- Card 2: Annapurna Sanctuary -->
-          <a href="{{ route('packages.show') }}" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
+          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
             <img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}" alt="Annapurna Sanctuary" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
             <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
             <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
@@ -516,7 +333,7 @@
           </a>
 
           <!-- Card 3: Manaslu & Tsum -->
-          <a href="{{ route('packages.show') }}" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
+          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
             <img src="{{ asset('site/assets/manaslu-birendra-lake.webp') }}" alt="Turquoise Birendra Lake below snowy mountains near Samagaun" width="1200" height="800" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
             <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
             <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
@@ -533,7 +350,7 @@
           </a>
 
           <!-- Card 4: Langtang & Helambu -->
-          <a href="{{ route('packages.show') }}" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
+          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
             <img src="{{ asset('site/assets/langtang-kyanjin-village.webp') }}" alt="Kyanjin Gompa village beneath the mountains of Langtang Valley" width="1200" height="900" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
             <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
             <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
@@ -733,83 +550,45 @@
 
 
 
-    <section id="journeys" class="journeys section" aria-labelledby="journeys-title">
+    <section id="journeys" class="journeys section" aria-labelledby="journeys-title" x-data="{ activeFilter: 'all' }">
       <div class="container">
         <div class="section-heading" data-aos="fade-up">
-          <div><span class="eyebrow dark">THE JOURNEY IS THE REWARD</span>
-            <h2 id="journeys-title">Find your next <em>chapter.</em></h2>
-          </div>
-          <p>Mountain paths, living heritage, and the wilder side of Nepal. Start with the kind of experience that
-            speaks to you.</p>
+          <div><span class="eyebrow dark">PUBLISHED TRIPS</span><h2 id="journeys-title">Find your next <em>chapter.</em></h2></div>
+          <p>Browse current trips across Nepal. Each package page includes its latest details, seasons, and enquiry options.</p>
         </div>
-        <div class="filter-row" role="group" aria-label="Filter journeys"><button type="button"
-            :class="activeFilter==='all' ? 'active' : ''" @click="activeFilter='all'"
-            :aria-pressed="(activeFilter==='all').toString()">All journeys</button><button type="button"
-            :class="activeFilter==='trekking' ? 'active' : ''" @click="activeFilter='trekking'"
-            :aria-pressed="(activeFilter==='trekking').toString()">Trekking</button><button type="button"
-            :class="activeFilter==='culture' ? 'active' : ''" @click="activeFilter='culture'"
-            :aria-pressed="(activeFilter==='culture').toString()">Culture</button><button type="button"
-            :class="activeFilter==='wildlife' ? 'active' : ''" @click="activeFilter='wildlife'"
-            :aria-pressed="(activeFilter==='wildlife').toString()">Wildlife</button></div>
-        <p class="result-count" aria-live="polite" x-text="visibleCount() + ' journeys'">4 journeys</p>
+        <div class="filter-row" role="group" aria-label="Filter packages by category">
+          <button type="button" @click="activeFilter = 'all'" :class="activeFilter === 'all' ? 'active' : ''" :aria-pressed="(activeFilter === 'all').toString()">All packages</button>
+          @foreach ($packageCategories as $category)
+            @php
+                $categoryKey = \Illuminate\Support\Str::slug($category);
+            @endphp
+            <button type="button" @click="activeFilter = '{{ $categoryKey }}'" :class="activeFilter === '{{ $categoryKey }}' ? 'active' : ''" :aria-pressed="(activeFilter === '{{ $categoryKey }}').toString()">{{ $category }}</button>
+          @endforeach
+        </div>
+        <p class="result-count" aria-live="polite">{{ $packages->count() }} published packages</p>
         <div class="trip-grid">
-          <article id="trip-annapurna" class="trip-card" x-show="activeFilter==='all'||activeFilter==='trekking'">
-            <div class="trip-image"><img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}"
-                alt="Sunrise reaching snowy peaks in the Annapurna region" width="1400" height="933"
-                loading="lazy"><span class="trip-category">MOUNTAIN TREK</span></div>
-            <div class="trip-content">
-              <div class="trip-meta"><span>ANNAPURNA REGION</span><span>01 / 04</span></div>
-              <h3>Annapurna Sanctuary</h3>
-              <p>Walk through rhododendron forest and mountain villages into a spectacular natural amphitheatre.</p>
-              <div class="trip-facts"><span>◷ &nbsp; 10–14 days*</span><span>↗ &nbsp; Challenging</span></div>
-              <p class="trip-price"><span class="trip-price__from">From</span> USD 1,240
-                <small>per person*</small></p><a href="{{ route('packages.show') }}">View this itinerary ↗</a>
-            </div>
-          </article>
-          <article id="trip-everest" class="trip-card" x-show="activeFilter==='all'||activeFilter==='trekking'">
-            <div class="trip-image"><img src="{{ asset('site/assets/everest-hikers.jpg') }}"
-                alt="Hikers on a trail in Nepal's Everest region" width="1200" height="800" loading="lazy"><span
-                class="trip-category">ICONIC TREK</span></div>
-            <div class="trip-content">
-              <div class="trip-meta"><span>EVEREST REGION</span><span>02 / 04</span></div>
-              <h3>Everest Base Camp</h3>
-              <p>Follow the trail through Sherpa communities, high valleys, and extraordinary Himalayan scenery.</p>
-              <div class="trip-facts"><span>◷ &nbsp; 12–16 days*</span><span>↗ &nbsp; Challenging</span></div>
-              <p class="trip-price"><span class="trip-price__from">From</span> USD 1,690
-                <small>per person*</small></p><a href="{{ route('packages.show') }}">View this itinerary ↗</a>
-            </div>
-          </article>
-          <article id="trip-valley" class="trip-card" x-show="activeFilter==='all'||activeFilter==='culture'">
-            <div class="trip-image"><img src="{{ asset('site/assets/kathmandu-stupa.jpg') }}"
-                alt="Boudhanath Stupa and prayer flags in Kathmandu" width="1200" height="800" loading="lazy"><span
-                class="trip-category">CULTURAL JOURNEY</span></div>
-            <div class="trip-content">
-              <div class="trip-meta"><span>KATHMANDU VALLEY</span><span>03 / 04</span></div>
-              <h3>Valley &amp; Heritage</h3>
-              <p>Slow down among old city squares, sacred spaces, artisan lanes, and living traditions.</p>
-              <div class="trip-facts"><span>◷ &nbsp; 4–7 days*</span><span>↗ &nbsp; Easy going</span></div>
-              <p class="trip-price"><span class="trip-price__from">From</span> USD 620
-                <small>per person*</small></p><a href="{{ route('packages.show') }}">View this itinerary ↗</a>
-            </div>
-          </article>
-          <article id="trip-chitwan" class="trip-card" x-show="activeFilter==='all'||activeFilter==='wildlife'">
-            <div class="trip-image"><img src="{{ asset('site/assets/chitwan-rhinos.jpg') }}"
-                alt="Two one-horned rhinoceroses in Chitwan National Park" width="1200" height="800"
-                loading="lazy"><span class="trip-category">WILDLIFE ESCAPE</span></div>
-            <div class="trip-content">
-              <div class="trip-meta"><span>CHITWAN LOWLANDS</span><span>04 / 04</span></div>
-              <h3>Into the Wild</h3>
-              <p>Trade mountain air for river mornings, forest walks, and the rich wildlife of the Terai.</p>
-              <div class="trip-facts"><span>◷ &nbsp; 3–5 days*</span><span>↗ &nbsp; Easy going</span></div>
-              <p class="trip-price"><span class="trip-price__from">From</span> USD 480
-                <small>per person*</small></p><a href="{{ route('packages.show') }}">View this itinerary ↗</a>
-            </div>
-          </article>
+          @forelse ($packages as $package)
+            @php
+                $categoryKey = \Illuminate\Support\Str::slug($package->subcategory->category->name);
+            @endphp
+            <article class="trip-card" data-category="{{ $categoryKey }}" x-show="activeFilter === 'all' || activeFilter === '{{ $categoryKey }}'">
+              <a class="trip-image" href="{{ route('packages.show', $package) }}"><img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" loading="lazy"><span class="trip-category">{{ $package->subcategory->category->name }}</span></a>
+              <div class="trip-content">
+                <div class="trip-meta"><span>{{ $package->subcategory->category->destination->name }} / {{ $package->subcategory->name }}</span>@if ($package->is_featured)<span>FEATURED</span>@endif</div>
+                <h3>{{ $package->name }}</h3>
+                <p>{{ $package->summary }}</p>
+                <div class="trip-facts"><span>{{ $package->duration_days ? $package->duration_days.' days' : 'Flexible duration' }}</span><span>{{ $package->difficulty ?: 'Ask us' }}</span></div>
+                <p class="trip-price">@if ($package->price_from !== null)<span class="trip-price__from">From</span> {{ $package->currency }} {{ number_format((float) $package->price_from, 0) }} @if ($package->price_qualifier)<small>{{ $package->price_qualifier }}</small>@endif @else<span class="trip-price__from">Ask us for pricing</span>@endif</p>
+                <a href="{{ route('packages.show', $package) }}">View package <span aria-hidden="true">↗</span></a>
+              </div>
+            </article>
+          @empty
+            <p class="trip-search-empty">There are no published packages yet. Please check back soon.</p>
+          @endforelse
         </div>
-        <p class="price-note">* Journey lengths and starting prices are indicative per person and depend on group size,
-          season and the route you choose. Routes, inclusions and availability are confirmed when you enquire.</p>
       </div>
     </section>
+
 
     <section id="faq" class="faq section" aria-labelledby="faq-title">
       <div class="container faq-grid">
@@ -928,21 +707,18 @@
         <span class="sr-only">Search trips and regions</span><input x-ref="tripSearchInput" type="search"
           x-model.debounce.150ms="tripSearchQuery" placeholder="Try Annapurna, wildlife or Island Peak"
           autocomplete="off"></label>
-      <div class="trip-search-filters" role="group" aria-label="Filter by journey type"><button type="button"
-          @click="tripSearchActivity='all'" :aria-pressed="(tripSearchActivity==='all').toString()"
-          :class="tripSearchActivity==='all' ? 'active' : ''">All journeys</button><button type="button"
-          @click="tripSearchActivity='Trekking'" :aria-pressed="(tripSearchActivity==='Trekking').toString()"
-          :class="tripSearchActivity==='Trekking' ? 'active' : ''">Trekking</button><button type="button"
-          @click="tripSearchActivity='Tours'" :aria-pressed="(tripSearchActivity==='Tours').toString()"
-          :class="tripSearchActivity==='Tours' ? 'active' : ''">Tours</button><button type="button"
-          @click="tripSearchActivity='Peak climbing'" :aria-pressed="(tripSearchActivity==='Peak climbing').toString()"
-          :class="tripSearchActivity==='Peak climbing' ? 'active' : ''">Peak climbing</button></div>
+      <div class="trip-search-filters" role="group" aria-label="Filter by package category">
+        <button type="button" @click="tripSearchActivity='all'" :aria-pressed="(tripSearchActivity==='all').toString()" :class="tripSearchActivity==='all' ? 'active' : ''">All packages</button>
+        @foreach ($packageCategories as $category)
+          <button type="button" data-activity="{{ $category }}" @click="tripSearchActivity = $el.dataset.activity" :aria-pressed="tripSearchActivity === $el.dataset.activity" :class="tripSearchActivity === $el.dataset.activity ? 'active' : ''">{{ $category }}</button>
+        @endforeach
+      </div>
       <div class="trip-search-results-head"><span
           x-text="tripSearchQuery ? 'SEARCH RESULTS' : 'IDEAS TO GET YOU STARTED'">IDEAS TO GET YOU STARTED</span><span
-          x-text="filteredSearchTrips().length + ' ideas'">9 ideas</span></div>
+          x-text="filteredSearchTrips().length + ' ideas'">{{ $packages->count() }} ideas</span></div>
       <div class="trip-search-results" aria-live="polite">
         <template x-for="trip in filteredSearchTrips()" :key="trip.activity + trip.category + trip.name"><a
-            class="trip-search-result" href="{{ route('packages.show') }}"><span
+            class="trip-search-result" :href="trip.url || '{{ route('home') }}#journeys'"><span
               class="trip-search-result-meta"><span x-text="trip.activity">Trekking</span><span
                 x-text="trip.category">Annapurna Region Trekking</span></span><strong x-text="trip.name">14 Day
               Annapurna Base Camp Trek</strong><span class="trip-search-result-arrow"
@@ -962,3 +738,9 @@
       title="Share your trip plans on WhatsApp"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt=""></a>
   </div>
 @endsection
+
+@push('page_scripts')
+  <script>
+    window.NEPAL_PACKAGES = @json($packageSearchItems);
+  </script>
+@endpush

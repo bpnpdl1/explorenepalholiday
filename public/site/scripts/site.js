@@ -12,10 +12,10 @@ function site() {
     trekRegions: window.NEPAL_MENU.trekRegions,
     tourGroups: window.NEPAL_MENU.tourGroups,
     climbingGroups: window.NEPAL_MENU.climbingGroups,
-    searchItems: [
+    searchItems: Array.isArray(window.NEPAL_PACKAGES) ? window.NEPAL_PACKAGES : [
       ...window.NEPAL_MENU.trekRegions.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Trekking' }))),
       ...window.NEPAL_MENU.tourGroups.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Tours' }))),
-      ...window.NEPAL_MENU.climbingGroups.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Peak climbing' })))
+      ...window.NEPAL_MENU.climbingGroups.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Peak Climbing' })))
     ],
     activeFilter: 'all',
     selectedTrip: '',
@@ -87,21 +87,7 @@ function site() {
         const matchesQuery = !query || `${trip.name} ${trip.category} ${trip.activity}`.toLocaleLowerCase().includes(query);
         return matchesActivity && matchesQuery;
       });
-      if (query || this.tripSearchActivity !== 'all') return matching.slice(0, 9);
-      const categories = ['Trekking', 'Tours', 'Peak climbing'].map((activity) => matching.filter((trip) => trip.activity === activity));
-      const mixed = [];
-      for (let index = 0; mixed.length < 9; index += 1) {
-        let added = false;
-        for (const category of categories) {
-          if (category[index]) {
-            mixed.push(category[index]);
-            added = true;
-            if (mixed.length === 9) break;
-          }
-        }
-        if (!added) break;
-      }
-      return mixed;
+      return matching.slice(0, 9);
     },
     selectSearchTrip(trip) {
       this.selectedTrip = trip.name;
