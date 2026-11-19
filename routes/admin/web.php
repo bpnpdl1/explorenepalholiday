@@ -35,8 +35,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::get('site-settings', [SiteSettingController::class, 'edit'])->name('site-settings.edit');
     Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
-    Route::get('packages', [PackageController::class, 'index'])->name('packages.index');
-    Route::get('packages/{slug}', [PackageController::class, 'show'])->name('packages.show');
+    Route::resource('packages', PackageController::class);
     Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('rich-content/images', RichContentImageController::class)

@@ -3,113 +3,214 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StorePackageRequest;
+use App\Http\Requests\Admin\UpdatePackageRequest;
+use App\Models\Package;
+use App\Models\Subcategory;
+use App\Services\MediaLibraryService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class PackageController extends Controller
 {
-    public function index(): View
+    private const PACKAGE_ATTRIBUTES = [
+        'subcategory_id',
+        'name',
+        'summary',
+        'description',
+        'duration_days',
+        'duration_nights',
+        'difficulty',
+        'max_altitude_meters',
+        'min_group_size',
+        'max_group_size',
+        'price_from',
+        'compare_at_price',
+        'currency',
+        'price_qualifier',
+        'route_map_url',
+        'accommodation',
+        'fitness_guidance',
+        'permit_notes',
+        'safety_notes',
+        'weather_notes',
+        'meta_title',
+        'meta_description',
+        'sort_order',
+    ];
+
+    public function __construct(private readonly MediaLibraryService $mediaLibraryService) {}
+
+    public function index(Request $request): View
     {
-        $packages = $this->packages();
+        $search = trim($request->string('search')->toString());
+        $status = $request->string('status')->toString();
+        $subcategoryId = $request->integer('subcategory_id');
+        $featured = $request->string('featured')->toString();
+
+        $packages = Package::query()
+            ->with([
+                'subcategory:id,category_id,name',
+                'subcategory.category:id,destination_id,name',
+                'subcategory.category.destination:id,name',
+                'media' => fn ($query) => $query->where('collection_name', 'cover'),
+            ])
+            ->when($search !== '', function ($query) use ($search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%")
+                        ->orWhere('summary', 'like', "%{$search}%")
+                        ->orWhereHas('subcategory', fn ($subcategoryQuery) => $subcategoryQuery->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->when($status === 'published', fn ($query) => $query->where('is_published', true))
+            ->when($status === 'draft', fn ($query) => $query->where('is_published', false))
+            ->when($subcategoryId > 0, fn ($query) => $query->where('subcategory_id', $subcategoryId))
+            ->when($featured === 'yes', fn ($query) => $query->where('is_featured', true))
+            ->when($featured === 'no', fn ($query) => $query->where('is_featured', false))
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('admin.packages.index', [
             'packages' => $packages,
-            'categories' => array_values(array_unique(array_column($packages, 'category'))),
-            'packageCount' => count($packages),
-            'publishedCount' => count(array_filter($packages, fn (array $package): bool => $package['status'] === 'Published')),
-            'draftCount' => count(array_filter($packages, fn (array $package): bool => $package['status'] === 'Draft')),
-            'bookingCount' => array_sum(array_column($packages, 'bookings')),
+            'subcategories' => $this->subcategoriesForForm(),
+            'search' => $search,
+            'status' => in_array($status, ['published', 'draft'], true) ? $status : '',
+            'subcategoryId' => $subcategoryId,
+            'featured' => in_array($featured, ['yes', 'no'], true) ? $featured : '',
+            'packageCount' => Package::count(),
+            'publishedCount' => Package::where('is_published', true)->count(),
+            'draftCount' => Package::where('is_published', false)->count(),
+            'featuredCount' => Package::where('is_featured', true)->count(),
         ]);
     }
 
-    public function show(string $slug): View
+    public function create(): View
     {
-        $package = collect($this->packages())->firstWhere('slug', $slug);
+        return view('admin.packages.create', [
+            'package' => new Package([
+                'currency' => 'USD',
+                'sort_order' => 0,
+            ]),
+            'subcategories' => $this->subcategoriesForForm(),
+        ]);
+    }
 
-        abort_unless($package, 404);
+    public function store(StorePackageRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $attributes = Arr::only($validated, self::PACKAGE_ATTRIBUTES);
+        $attributes['is_published'] = $request->boolean('is_published');
+        $attributes['is_featured'] = $request->boolean('is_featured');
 
-        return view('admin.packages.show', ['package' => $package]);
+        $package = DB::transaction(function () use ($attributes, $validated): Package {
+            $package = Package::create($attributes);
+            $this->syncSeasons($package, $validated['seasons'] ?? []);
+
+            return $package;
+        });
+
+        $this->storeMedia($request, $package);
+
+        return to_route('admin.packages.show', $package)
+            ->with('success', 'Package created successfully.');
+    }
+
+    public function show(Package $package): View
+    {
+        $package->load([
+            'subcategory.category.destination',
+            'seasons',
+            'media',
+        ]);
+
+        return view('admin.packages.show', compact('package'));
+    }
+
+    public function edit(Package $package): View
+    {
+        $package->load([
+            'seasons',
+            'media',
+        ]);
+
+        return view('admin.packages.edit', [
+            'package' => $package,
+            'subcategories' => $this->subcategoriesForForm(),
+        ]);
+    }
+
+    public function update(UpdatePackageRequest $request, Package $package): RedirectResponse
+    {
+        $validated = $request->validated();
+        $attributes = Arr::only($validated, self::PACKAGE_ATTRIBUTES);
+        $attributes['is_published'] = $request->boolean('is_published');
+        $attributes['is_featured'] = $request->boolean('is_featured');
+
+        DB::transaction(function () use ($package, $attributes, $validated): void {
+            $package->update($attributes);
+            $this->syncSeasons($package, $validated['seasons'] ?? []);
+        });
+
+        $this->storeMedia($request, $package);
+
+        return to_route('admin.packages.show', $package)
+            ->with('success', 'Package updated successfully.');
+    }
+
+    public function destroy(Package $package): RedirectResponse
+    {
+        $package->delete();
+
+        return to_route('admin.packages.index')
+            ->with('success', 'Package deleted successfully.');
     }
 
     /**
-     * Static package records used until the package catalog is connected to storage.
-     *
-     * @return array<int, array{name: string, slug: string, category: string, destination: string, duration: string, price: string, bookings: int, status: string, status_class: string, description: string}>
+     * @param  array<int, string>  $seasons
      */
-    private function packages(): array
+    private function syncSeasons(Package $package, array $seasons): void
     {
-        return [
-            [
-                'name' => 'Everest Base Camp Trek',
-                'slug' => 'everest-base-camp-trek',
-                'category' => 'Trekking',
-                'destination' => 'Khumbu Region',
-                'duration' => '14 days',
-                'price' => 'USD 1,450',
-                'bookings' => 42,
-                'status' => 'Published',
-                'status_class' => 'success',
-                'description' => 'A classic trek through Sherpa villages to the base of the world’s highest mountain.',
-            ],
-            [
-                'name' => 'Annapurna Circuit Trek',
-                'slug' => 'annapurna-circuit-trek',
-                'category' => 'Trekking',
-                'destination' => 'Annapurna Region',
-                'duration' => '12 days',
-                'price' => 'USD 1,150',
-                'bookings' => 36,
-                'status' => 'Published',
-                'status_class' => 'success',
-                'description' => 'A high mountain circuit with Himalayan scenery and traditional villages.',
-            ],
-            [
-                'name' => 'Chitwan Wildlife Safari',
-                'slug' => 'chitwan-wildlife-safari',
-                'category' => 'Wildlife',
-                'destination' => 'Chitwan',
-                'duration' => '3 days',
-                'price' => 'USD 420',
-                'bookings' => 28,
-                'status' => 'Published',
-                'status_class' => 'success',
-                'description' => 'Explore the forests and wildlife of Chitwan National Park with a local guide.',
-            ],
-            [
-                'name' => 'Kathmandu Heritage Tour',
-                'slug' => 'kathmandu-heritage-tour',
-                'category' => 'Cultural',
-                'destination' => 'Kathmandu Valley',
-                'duration' => '4 days',
-                'price' => 'USD 360',
-                'bookings' => 19,
-                'status' => 'Published',
-                'status_class' => 'success',
-                'description' => 'Visit historic squares, temples, and cultural sites across the Kathmandu Valley.',
-            ],
-            [
-                'name' => 'Manaslu Circuit Trek',
-                'slug' => 'manaslu-circuit-trek',
-                'category' => 'Trekking',
-                'destination' => 'Manaslu Region',
-                'duration' => '16 days',
-                'price' => 'USD 1,780',
-                'bookings' => 0,
-                'status' => 'Draft',
-                'status_class' => 'warning',
-                'description' => 'A remote circuit through mountain settlements and high Himalayan passes.',
-            ],
-            [
-                'name' => 'Pokhara Adventure Escape',
-                'slug' => 'pokhara-adventure-escape',
-                'category' => 'Adventure',
-                'destination' => 'Pokhara',
-                'duration' => '5 days',
-                'price' => 'USD 510',
-                'bookings' => 0,
-                'status' => 'Draft',
-                'status_class' => 'warning',
-                'description' => 'A short adventure stay with lake activities and views of the Annapurna range.',
-            ],
-        ];
+        $package->seasons()->delete();
+        $package->seasons()->createMany(array_map(
+            fn (string $season): array => ['season' => $season],
+            array_values(array_unique($seasons)),
+        ));
+    }
+
+    private function storeMedia(StorePackageRequest|UpdatePackageRequest $request, Package $package): void
+    {
+        if ($cover = $request->file('cover')) {
+            $this->mediaLibraryService->storeImage($package, $cover, 'cover');
+        }
+
+        foreach ($request->file('gallery', []) as $image) {
+            $this->mediaLibraryService->storeImage($package, $image, 'gallery');
+        }
+
+        $removeIds = $request->validated('remove_gallery', []);
+
+        if ($removeIds !== []) {
+            $package->media()
+                ->where('collection_name', 'gallery')
+                ->whereIn('id', $removeIds)
+                ->get()
+                ->each
+                ->delete();
+        }
+    }
+
+    private function subcategoriesForForm(): Collection
+    {
+        return Subcategory::query()
+            ->with(['category:id,destination_id,name', 'category.destination:id,name'])
+            ->orderBy('name')
+            ->get(['id', 'category_id', 'name']);
     }
 }

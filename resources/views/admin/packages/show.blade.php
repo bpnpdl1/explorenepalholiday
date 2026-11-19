@@ -1,121 +1,97 @@
-<x-admin-layouts::app :title="$package['name']">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <div>
-                    <h4 class="mb-sm-0">Package details</h4>
-                    <p class="text-muted mb-0 mt-1">Review the package information and performance.</p>
-                </div>
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.packages.index') }}">Packages</a></li>
-                        <li class="breadcrumb-item active">{{ $package['name'] }}</li>
-                    </ol>
-                </div>
-            </div>
+<x-admin-layouts::app :title="$package->name">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="mb-sm-0">{{ $package->name }}</h4>
+            <p class="text-muted mb-0 mt-1">Package fields and media.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-primary"><i class="ri-pencil-line me-1"></i>Edit package</a>
+            <a href="{{ route('admin.packages.index') }}" class="btn btn-light">Back to packages</a>
         </div>
     </div>
 
     <div class="row g-3">
         <div class="col-xl-8">
             <div class="card">
-                <div class="card-body p-4">
-                    <div class="d-flex flex-wrap align-items-start gap-3">
-                        <div class="avatar-lg flex-shrink-0">
-                            <span class="avatar-title rounded bg-primary-subtle text-primary fs-1"><i class="ri-landscape-line"></i></span>
-                        </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap align-items-start gap-4">
+                        @if ($package->getFirstMediaUrl('cover'))
+                            <img src="{{ $package->getFirstMediaUrl('cover', 'card') }}" alt="{{ $package->name }} cover" class="img-fluid rounded" style="max-width: 280px; max-height: 190px; object-fit: cover">
+                        @endif
                         <div class="flex-grow-1">
-                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                <span class="badge bg-{{ $package['status_class'] }}-subtle text-{{ $package['status_class'] }}">{{ $package['status'] }}</span>
-                                <span class="badge bg-light text-body">{{ $package['category'] }}</span>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="badge bg-{{ $package->is_published ? 'success' : 'warning' }}-subtle text-{{ $package->is_published ? 'success' : 'warning' }}">{{ $package->is_published ? 'Published' : 'Draft' }}</span>
+                                @if ($package->is_featured)<span class="badge bg-warning-subtle text-warning">Featured</span>@endif
                             </div>
-                            <h3 class="mb-2">{{ $package['name'] }}</h3>
-                            <p class="text-muted mb-3">{{ $package['description'] }}</p>
-                            <div class="d-flex flex-wrap gap-3 text-muted">
-                                <span><i class="ri-map-pin-line text-primary me-1"></i>{{ $package['destination'] }}</span>
-                                <span><i class="ri-time-line text-primary me-1"></i>{{ $package['duration'] }}</span>
-                            </div>
+                            <h3>{{ $package->name }}</h3>
+                            <p class="text-muted">{{ $package->summary }}</p>
+                            <div class="text-muted">{{ $package->subcategory->category->destination->name }} / {{ $package->subcategory->category->name }} / {{ $package->subcategory->name }}</div>
+                            <div class="small mt-1">URL slug: <code>{{ $package->slug }}</code></div>
                         </div>
                     </div>
+
+                    @if ($package->description)
+                        <hr>
+                        <h5>Overview</h5>
+                        <div class="text-body" style="white-space: pre-line">{{ $package->description }}</div>
+                    @endif
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Package overview</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted mb-0">{{ $package['description'] }}</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h5 class="card-title mb-0 flex-grow-1">Travel details</h5>
-                    <i class="ri-route-line text-primary fs-18"></i>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-sm-6">
-                            <p class="text-muted mb-1">Destination</p>
-                            <h6 class="mb-0">{{ $package['destination'] }}</h6>
-                        </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted mb-1">Package category</p>
-                            <h6 class="mb-0">{{ $package['category'] }}</h6>
-                        </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted mb-1">Duration</p>
-                            <h6 class="mb-0">{{ $package['duration'] }}</h6>
-                        </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted mb-1">Starting price</p>
-                            <h6 class="mb-0">{{ $package['price'] }} <span class="text-muted fw-normal">per person</span></h6>
+            @if ($package->getMedia('gallery')->isNotEmpty())
+                <div class="card">
+                    <div class="card-header"><h5 class="card-title mb-0">Gallery</h5></div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @foreach ($package->getMedia('gallery') as $image)
+                                <div class="col-6 col-md-4"><img src="{{ $image->getUrl('card') }}" alt="{{ $package->name }} gallery image {{ $loop->iteration }}" class="img-fluid rounded"></div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
+
+            @foreach ([
+                'Route map URL' => $package->route_map_url,
+                'Accommodation' => $package->accommodation,
+                'Fitness guidance' => $package->fitness_guidance,
+                'Permit notes' => $package->permit_notes,
+                'Safety notes' => $package->safety_notes,
+                'Weather notes' => $package->weather_notes,
+            ] as $label => $value)
+                @if ($value)
+                    <div class="card"><div class="card-header"><h5 class="card-title mb-0">{{ $label }}</h5></div><div class="card-body">@if ($label === 'Route map URL')<a href="{{ $value }}" target="_blank" rel="noopener noreferrer">{{ $value }}</a>@else<div style="white-space: pre-line">{{ $value }}</div>@endif</div></div>
+                @endif
+            @endforeach
         </div>
 
         <div class="col-xl-4">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Package status</h5>
-                </div>
+                <div class="card-header"><h5 class="card-title mb-0">Package fields</h5></div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <span class="text-muted">Visibility</span>
-                        <span class="badge bg-{{ $package['status_class'] }}-subtle text-{{ $package['status_class'] }}">{{ $package['status'] }}</span>
-                    </div>
-                    <div class="alert alert-{{ $package['status_class'] === 'success' ? 'success' : 'warning' }} border-0 mb-0" role="note">
-                        <i class="ri-information-line me-1 align-middle"></i>
-                        {{ $package['status'] === 'Published' ? 'This package is published in the sample catalog.' : 'This package is a draft and is not visible in the sample catalog.' }}
-                    </div>
+                    <dl class="row mb-0">
+                        <dt class="col-7">Duration</dt>
+                        <dd class="col-5 text-end">{{ $package->duration_days ? $package->duration_days.' days' : '-' }}{{ $package->duration_nights ? ' / '.$package->duration_nights.' nights' : '' }}</dd>
+                        <dt class="col-7">Difficulty</dt><dd class="col-5 text-end">{{ $package->difficulty ?: '-' }}</dd>
+                        <dt class="col-7">Maximum altitude</dt><dd class="col-5 text-end">{{ $package->max_altitude_meters ? number_format($package->max_altitude_meters).' m' : '-' }}</dd>
+                        <dt class="col-7">Minimum group</dt><dd class="col-5 text-end">{{ $package->min_group_size ?: '-' }}</dd>
+                        <dt class="col-7">Maximum group</dt><dd class="col-5 text-end">{{ $package->max_group_size ?: '-' }}</dd>
+                        <dt class="col-7">Price from</dt><dd class="col-5 text-end">{{ $package->price_from !== null ? $package->currency.' '.number_format((float) $package->price_from, 2) : '-' }}</dd>
+                        <dt class="col-7">Previous price</dt><dd class="col-5 text-end">{{ $package->compare_at_price !== null ? $package->currency.' '.number_format((float) $package->compare_at_price, 2) : '-' }}</dd>
+                        <dt class="col-7">Price note</dt><dd class="col-5 text-end">{{ $package->price_qualifier ?: '-' }}</dd>
+                        <dt class="col-7">Best seasons</dt><dd class="col-5 text-end">{{ $package->seasons->pluck('season')->map(fn ($season) => $season->label())->implode(', ') ?: '-' }}</dd>
+                        <dt class="col-7">Display order</dt><dd class="col-5 text-end">{{ $package->sort_order }}</dd>
+                    </dl>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Package performance</h5>
-                </div>
+                <div class="card-header"><h5 class="card-title mb-0">Search engine details</h5></div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="avatar-sm bg-primary-subtle rounded me-3 d-flex align-items-center justify-content-center text-primary">
-                            <i class="ri-calendar-check-line fs-20"></i>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-1">Bookings</p>
-                            <h4 class="mb-0">{{ $package['bookings'] }}</h4>
-                        </div>
-                    </div>
-                    <p class="text-muted mb-0">Booking totals are sample figures for this preview.</p>
+                    <p class="mb-1"><strong>{{ $package->meta_title ?: $package->name }}</strong></p>
+                    <p class="text-muted mb-0">{{ $package->meta_description ?: 'No meta description set.' }}</p>
                 </div>
             </div>
-
-            <a href="{{ route('admin.packages.index') }}" class="btn btn-light w-100">
-                <i class="ri-arrow-left-line me-1 align-bottom"></i>Back to packages
-            </a>
         </div>
     </div>
 </x-admin-layouts::app>
