@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\SiteSetting;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -26,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
     {
         Blade::anonymousComponentPath(resource_path('views/admin/layouts'), 'admin-layouts');
         Blade::anonymousComponentPath(resource_path('views/admin/partials'), 'admin');
+
+        view()->composer(['layouts.site', 'site.*'], function (View $view): void {
+            $siteSetting = Cache::rememberForever('site-settings', fn () => SiteSetting::query()
+                ->with('media')
+                ->first());
+
+            $view->with('siteSetting', $siteSetting);
+        });
 
         $this->configureDefaults();
     }

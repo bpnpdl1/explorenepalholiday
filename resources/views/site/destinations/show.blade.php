@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('page_title'){{ $destination->name }} | Explore Nepal Holidays@endsection
+@section('page_title'){{ $destination->name }} | {{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}@endsection
 @section('meta_description'){{ $metaDescription }}@endsection
 @section('og_image', $coverImage)
 @section('body_class', 'destination-page')

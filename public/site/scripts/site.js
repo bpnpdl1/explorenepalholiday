@@ -210,7 +210,7 @@ function site() {
       return labels[value] || value;
     },
     getDepartureLabel(value) {
-      const labels = { 'autumn-2026': 'Autumn 2026', 'spring-2027': 'Spring 2027', 'winter-2026': 'Winter 2026/27', 'monsoon-2027': 'Monsoon 2027' };
+      const labels = { autumn: 'Autumn', spring: 'Spring', winter: 'Winter', monsoon: 'Monsoon' };
       return labels[value] || value;
     },
 

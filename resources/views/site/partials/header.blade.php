@@ -1,12 +1,10 @@
   <div class="topbar">
-    <div class="container topbar-inner"><span>20 Years Experience</span><a
-        href="https://wa.me/9779800000000" target="_blank" rel="noopener noreferrer">+977-9800000000 · WhatsApp ↗</a></div>
+    <div class="container topbar-inner"><span>{{ $siteSetting?->tagline ?: 'Thoughtful journeys across Nepal' }}</span>@if ($siteSetting?->whatsapp_number)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSetting->whatsapp_number) }}" target="_blank" rel="noopener noreferrer">{{ $siteSetting->whatsapp_number }} &middot; WhatsApp</a>@endif</div>
   </div>
   <header class="site-header" :class="headerCompact ? 'is-compact' : ''" @mouseleave="openNav=null">
     <div class="container header-primary">
-      <a class="brand" href="{{ route('home') }}#top" aria-label="Explore Nepal Holidays, home"><span class="brand-mark"><img
-            src="{{ asset('site/assets/logo-mark.png') }}" alt="" width="78" height="63"></span><span class="brand-name">EXPLORE
-          <small>NEPAL HOLIDAYS</small></span></a>
+      <a class="brand" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, home"><span class="brand-mark"><img
+            src="{{ $siteSetting?->getFirstMediaUrl('logo') ?: asset('site/assets/logo-mark.png') }}" alt="" width="78" height="63"></span><span class="brand-name">{{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}</span></a>
       <div class="header-actions flex items-center gap-3"><button
           class="header-find inline-flex items-center gap-2 font-medium transition-colors" type="button"
           @click="openTripSearch()">
@@ -21,8 +19,8 @@
     </div>
     <div class="header-nav-row">
       <nav class="container desktop-nav" aria-label="Primary navigation">
-        <a class="compact-brand" href="{{ route('home') }}#top" aria-label="Explore Nepal Holidays, back to top"><img
-            src="{{ asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
+        <a class="compact-brand" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, back to top"><img
+            src="{{ $siteSetting?->getFirstMediaUrl('logo') ?: asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
         <div class="nav-item cascade" @mouseenter="openNav='trekking';openRegion=trekRegions[0].id"
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
           <button type="button" data-nav-trigger="trekking" @click="openNav='trekking';openRegion=trekRegions[0].id"

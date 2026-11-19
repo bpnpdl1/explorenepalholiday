@@ -1,7 +1,9 @@
 @extends('layouts.site')
 
-@section('page_title', 'Explore Nepal Holidays | Treks, Tours & Tailor-Made Journeys')
-@section('meta_description', "Explore Nepal's mountain trails, cultural cities and wild lowlands. Discover handpicked journeys and plan a trip shaped around you.")
+@section('page_title', $siteSetting?->meta_title ?: (($siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays')).' | Treks, Tours & Tailor-Made Journeys'))
+@section('meta_description', $siteSetting?->meta_description ?: "Explore Nepal's mountain trails, cultural cities and wild lowlands. Discover handpicked journeys and plan a trip shaped around you.")
+@section('og_title', $siteSetting?->og_title ?: $siteSetting?->meta_title ?: $siteSetting?->name)
+@section('og_description', $siteSetting?->og_description ?: $siteSetting?->meta_description ?: $siteSetting?->description)
 @section('og_image', asset('site/assets/annapurna-sunrise.jpg'))
 @section('body_class', 'home-page')
 
@@ -102,10 +104,9 @@
               <label for="exp-departure">Best Season</label>
               <select id="exp-departure" x-model="expeditionFilters.departure" class="hero-select">
                 <option value="any">Any Season</option>
-                <option value="autumn-2026">Autumn (Oct - Nov)</option>
-                <option value="spring-2027">Spring (Mar - Apr)</option>
-                <option value="winter-2026">Winter (Dec - Feb)</option>
-                <option value="monsoon-2027">Monsoon (Jun - Sep)</option>
+                @foreach (\App\Enums\Season::cases() as $season)
+                  <option value="{{ $season->value }}">{{ $season->label() }}</option>
+                @endforeach
               </select>
             </div>
 

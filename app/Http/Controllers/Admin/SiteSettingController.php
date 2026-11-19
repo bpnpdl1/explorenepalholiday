@@ -8,6 +8,7 @@ use App\Models\SiteSetting;
 use App\Services\MediaLibraryService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 
 class SiteSettingController extends Controller
 {
@@ -46,6 +47,7 @@ class SiteSettingController extends Controller
         );
 
         $siteSetting->update($data);
+        Cache::forget('site-settings');
 
         if ($logo = $request->file('logo')) {
             $this->mediaLibraryService->storeImage($siteSetting, $logo, 'logo');
@@ -54,6 +56,8 @@ class SiteSettingController extends Controller
         if ($favicon = $request->file('favicon')) {
             $this->mediaLibraryService->storeImage($siteSetting, $favicon, 'favicon');
         }
+
+        Cache::forget('site-settings');
 
         return to_route('admin.site-settings.edit')
             ->with('success', 'Site settings updated successfully.');

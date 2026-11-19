@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('page_title', 'Guest Reviews | Explore Nepal Holidays')
+@section('page_title', 'Guest Reviews | '.($siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays')))
 @section('meta_description', 'Read guest stories about trekking and exploring Nepal with Explore Nepal Holidays.')
 @section('og_image', asset('site/assets/annapurna-sunrise.jpg'))
 @section('body_class', 'bg-paper text-ink font-sans')
