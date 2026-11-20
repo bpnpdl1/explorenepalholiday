@@ -41,6 +41,7 @@ class UpdateSiteSettingRequest extends FormRequest
             'og_title' => ['nullable', 'string', 'max:255'],
             'og_description' => ['nullable', 'string', 'max:1000'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
+            'footer_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
             'favicon' => ['nullable', 'image', 'mimes:png', 'max:2048', 'dimensions:min_width=16,min_height=16,max_width=512,max_height=512'],
         ];
     }

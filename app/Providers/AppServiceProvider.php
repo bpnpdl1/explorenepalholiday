@@ -56,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
                     'og_title' => $siteSetting->og_title,
                     'og_description' => $siteSetting->og_description,
                     'logo_url' => $siteSetting->getFirstMediaUrl('logo'),
+                    'footer_logo_url' => $siteSetting->getFirstMediaUrl('footer-logo'),
                     'favicon_url' => $siteSetting->getFirstMediaUrl('favicon'),
                 ];
             });

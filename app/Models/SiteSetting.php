@@ -25,7 +25,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 ])]
 class SiteSetting extends Model implements HasMedia
 {
-    public const CACHE_KEY = 'site-settings-v2';
+    public const CACHE_KEY = 'site-settings-v3';
 
     use HasFactory;
     use InteractsWithMedia;
@@ -45,6 +45,11 @@ class SiteSetting extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('logo')
+            ->singleFile()
+            ->useDisk(config('media-library.disk_name'))
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
+
+        $this->addMediaCollection('footer-logo')
             ->singleFile()
             ->useDisk(config('media-library.disk_name'))
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);

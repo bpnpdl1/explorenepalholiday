@@ -17,6 +17,7 @@ class UpdateSiteSettingsAction
         array $attributes,
         ?UploadedFile $logo = null,
         ?UploadedFile $favicon = null,
+        ?UploadedFile $footerLogo = null,
     ): void {
         $attributes['social_links'] = array_filter(
             $attributes['social_links'] ?? [],
@@ -32,6 +33,10 @@ class UpdateSiteSettingsAction
 
         if ($favicon) {
             $this->mediaLibraryService->storeImage($siteSetting, $favicon, 'favicon');
+        }
+
+        if ($footerLogo) {
+            $this->mediaLibraryService->storeImage($siteSetting, $footerLogo, 'footer-logo');
         }
 
         Cache::forget(SiteSetting::CACHE_KEY);

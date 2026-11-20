@@ -43,6 +43,7 @@ class SiteSettingController extends Controller
             $data,
             $request->file('logo'),
             $request->file('favicon'),
+            $request->file('footer_logo'),
         );
 
         return to_route('admin.site-settings.edit')

@@ -141,6 +141,18 @@
                     </div>
                 </div>
 
+                <div class="card">
+                    <div class="card-header"><h5 class="card-title mb-0">Footer logo</h5></div>
+                    <div class="card-body">
+                        @if ($siteSetting->getFirstMediaUrl('footer-logo'))
+                            <img src="{{ $siteSetting->getFirstMediaUrl('footer-logo') }}" alt="Current {{ $siteSetting->name }} footer logo" class="img-fluid rounded mb-3" style="max-height: 160px;">
+                        @endif
+                        <input id="footer_logo" name="footer_logo" type="file" accept="image/jpeg,image/png,image/webp,image/avif" class="form-control @error('footer_logo') is-invalid @enderror">
+                        <div class="form-text">JPG, PNG, WebP, or AVIF. Maximum size: 5 MB. This replaces the logo shown in the public site footer.</div>
+                        @error('footer_logo')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-2 mb-4">
                     <button type="submit" class="btn btn-primary"><i class="ri-save-line me-1"></i>Save settings</button>
                 </div>
