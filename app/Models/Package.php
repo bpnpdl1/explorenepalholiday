@@ -104,6 +104,11 @@ class Package extends Model implements HasMedia
         return $this->hasMany(PackageReview::class)->orderBy('sort_order')->orderBy('id');
     }
 
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(PackageInquiry::class);
+    }
+
     protected function casts(): array
     {
         return [

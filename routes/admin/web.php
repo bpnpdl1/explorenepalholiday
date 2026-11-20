@@ -37,6 +37,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::get('site-settings', [SiteSettingController::class, 'edit'])->name('site-settings.edit');
     Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
+    Route::get('inquiries/{packageInquiry}', [InquiryController::class, 'show'])
+        ->name('inquiries.show');
+    Route::patch('inquiries/{packageInquiry}', [InquiryController::class, 'updateStatus'])
+        ->name('inquiries.update-status');
     Route::resource('packages', PackageController::class);
     Route::get('package-reviews/package/{package}', [PackageReviewController::class, 'forPackage'])
         ->name('package-reviews.package');

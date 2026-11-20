@@ -1754,6 +1754,72 @@ html {
   }
 }
 
+.package-toast {
+  position: fixed;
+  z-index: 120;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(440px, calc(100vw - 40px));
+  padding: 14px 16px;
+  border: 1px solid #b8e3c8;
+  border-radius: 14px;
+  background: #f0fff5;
+  color: #14532d;
+  box-shadow: 0 14px 36px rgba(8, 37, 63, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.package-toast.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.package-toast > i {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.package-toast p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.package-toast button {
+  flex: none;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .package-toast {
+    top: 12px;
+    right: 12px;
+    width: calc(100vw - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .package-toast {
+    transition: none;
+  }
+}
+
 /* Keep pricing in normal flow while the enquiry card follows the visitor. */
 .package-sidebar {
   position: static;

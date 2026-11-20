@@ -39,6 +39,22 @@ function packageBookingSidebar() {
 (() => {
   if (window.lucide) window.lucide.createIcons();
 
+  const inquiryToast = document.querySelector('[data-package-toast]');
+  if (inquiryToast) {
+    const dismissToast = inquiryToast.querySelector('[data-toast-dismiss]');
+    const closeToast = () => {
+      inquiryToast.classList.remove('is-visible');
+      window.setTimeout(() => inquiryToast.remove(), 250);
+    };
+    const toastTimer = window.setTimeout(closeToast, 6000);
+
+    window.requestAnimationFrame(() => inquiryToast.classList.add('is-visible'));
+    dismissToast?.addEventListener('click', () => {
+      window.clearTimeout(toastTimer);
+      closeToast();
+    });
+  }
+
   if (window.AOS) {
     AOS.init({
       duration: 700,
@@ -145,8 +161,6 @@ function packageBookingSidebar() {
       speed: reducedMotion ? 0 : 700
     });
   }
-
-  const forms = document.querySelectorAll('[data-static-form]');
 
   const packageTabs = document.querySelectorAll('[data-package-tab]');
   const shareUrl = encodeURIComponent(window.location.href);
@@ -293,16 +307,4 @@ function packageBookingSidebar() {
     schedulePackageNavUpdate();
   }
 
-  forms.forEach((form) => {
-    const status = form.querySelector('.package-form__status');
-    if (!status) return;
-
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      status.textContent = form.dataset.successMessage || 'This form does not send your details. Contact us on WhatsApp to continue.';
-      status.hidden = false;
-      status.setAttribute('tabindex', '-1');
-      status.focus();
-    });
-  });
 })();

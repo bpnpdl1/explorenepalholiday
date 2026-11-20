@@ -69,6 +69,13 @@
 
 @section('content')
     <a class="skip-link" href="#main">Skip to content</a>
+    @if (session('inquiry_submitted'))
+        <div class="package-toast is-visible" data-package-toast role="status" aria-live="polite">
+            <i data-lucide="circle-check" aria-hidden="true"></i>
+            <p>Thanks for your inquiry. Our team will be in touch.</p>
+            <button type="button" data-toast-dismiss aria-label="Dismiss notification">&times;</button>
+        </div>
+    @endif
     @include('site.partials.header')
     <main id="main">
         <section class="package-hero" aria-labelledby="package-title">
@@ -579,30 +586,38 @@
                             <button type="button" :class="sidebarForm === 'booking' ? 'is-active' : ''"
                                 @click="sidebarForm = 'booking'">Plan Booking</button>
                         </div>
-                        <form class="package-conversion-form" id="sidebar-enquiry-form" data-static-form data-success-message="Thanks for your interest in {{ $package->name }}. Please use WhatsApp to send your enquiry."
+                        <form class="package-conversion-form" id="sidebar-enquiry-form"
+                            action="{{ route('packages.inquiries.store', $package) }}" method="POST"
                             x-show="sidebarForm === 'inquiry'" role="tabpanel">
+                            @csrf
                             <label for="sidebar-enquiry-name">Your full name <b>*</b></label><input
-                                id="sidebar-enquiry-name" name="sidebar-enquiry-name" type="text" autocomplete="name"
-                                required placeholder="e.g. David Jenkins">
+                                id="sidebar-enquiry-name" name="customer_name" type="text" autocomplete="name"
+                                value="{{ old('customer_name') }}" required placeholder="e.g. David Jenkins">
+                            @error('customer_name') <small class="text-danger">{{ $message }}</small> @enderror
                             <div class="package-conversion-form__row">
                                 <div><label for="sidebar-enquiry-email">Email address <b>*</b></label><input
-                                        id="sidebar-enquiry-email" name="sidebar-enquiry-email" type="email"
-                                        autocomplete="email" required placeholder="david@example.com"></div>
+                                        id="sidebar-enquiry-email" name="email" type="email"
+                                        autocomplete="email" value="{{ old('email') }}" required placeholder="david@example.com">
+                                    @error('email') <small class="text-danger">{{ $message }}</small> @enderror</div>
                                 <div><label for="sidebar-enquiry-phone">WhatsApp / phone <b>*</b></label><input
-                                        id="sidebar-enquiry-phone" name="sidebar-enquiry-phone" type="tel"
-                                        autocomplete="tel" required placeholder="+1 555-0199"></div>
+                                        id="sidebar-enquiry-phone" name="phone" type="tel"
+                                        autocomplete="tel" value="{{ old('phone') }}" required placeholder="+1 555-0199">
+                                    @error('phone') <small class="text-danger">{{ $message }}</small> @enderror</div>
                             </div>
                             <label for="sidebar-enquiry-window">Preferred travel window <b>*</b></label><select
-                                id="sidebar-enquiry-window" name="sidebar-enquiry-window" required>
+                                id="sidebar-enquiry-window" name="travel_window" required>
                                 <option value="">Choose a season or date</option>
                                 @foreach ($travelWindows as $window)
-                                    <option value="{{ $window['value'] }}">{{ $window['label'] }}</option>
+                                    <option value="{{ $window['value'] }}" @selected(old('travel_window') === $window['value'])>{{ $window['label'] }}</option>
                                 @endforeach
                             </select>
+                            @error('travel_window') <small class="text-danger">{{ $message }}</small> @enderror
                             <label for="sidebar-enquiry-message">Questions / specific requests</label>
-                            <textarea id="sidebar-enquiry-message" name="sidebar-enquiry-message" rows="3"
-                                placeholder="e.g. Vegetarian diet, private group of 4, slow pacing request..."></textarea>
-                            <button class="package-conversion-submit" type="submit">Request Custom Plan</button><a
+                            <textarea id="sidebar-enquiry-message" name="message" rows="3"
+                                maxlength="10000"
+                                placeholder="e.g. Vegetarian diet, private group, slow pacing request...">{{ old('message') }}</textarea>
+                            @error('message') <small class="text-danger">{{ $message }}</small> @enderror
+                            <button class="package-conversion-submit" type="submit">Send inquiry</button><a
                                 class="package-whatsapp-button"
                                 href="https://wa.me/?text={{ $whatsAppMessage }}"
                                 target="_blank" rel="noopener noreferrer"><img

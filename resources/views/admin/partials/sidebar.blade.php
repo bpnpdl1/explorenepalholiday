@@ -32,11 +32,9 @@
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.inquiries.*') ? 'show' : '' }}" id="sidebarInquiries">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && ! request()->query('stage') ? 'active' : '' }}" href="{{ route('admin.inquiries.index') }}">All inquiries</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'new' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['stage' => 'new']) }}">New</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'in-progress' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['stage' => 'in-progress']) }}">In progress</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'awaiting-traveler' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['stage' => 'awaiting-traveler']) }}">Awaiting traveler</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'converted' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['stage' => 'converted']) }}">Converted to booking</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'closed' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['stage' => 'closed']) }}">Closed</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'new' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'new']) }}">New</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'contacted' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'contacted']) }}">Contacted</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'cancelled' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'cancelled']) }}">Cancelled</a></li>
                         </ul>
                     </div>
                 </li>
