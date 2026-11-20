@@ -109,53 +109,7 @@
   @include('site.partials.footer')
 
   <!-- Reusable Trip Search Modal Dialog -->
-  <div class="trip-search-backdrop" x-show="tripSearchOpen" x-cloak @click.self="closeTripSearch()"
-    @keydown.tab="trapSearchTab($event)" @keydown.escape.stop="closeTripSearch()">
-    <section class="trip-search-dialog" x-ref="tripSearchDialog" role="dialog" aria-modal="true"
-      aria-labelledby="trip-search-title" aria-describedby="trip-search-description">
-      <button class="trip-search-close" type="button" @click="closeTripSearch()" aria-label="Close trip search">×</button>
-      <div class="trip-search-heading">
-        <span class="eyebrow dark">FIND YOUR NEPAL JOURNEY</span>
-        <h2 id="trip-search-title">Where would you like to go?</h2>
-        <p id="trip-search-description">Search trekking, tour and peak climbing ideas.</p>
-      </div>
-      <label class="trip-search-input">
-        <img class="icon-img icon-img--light" src="{{ asset('site/assets/icons/search.svg') }}" alt="">
-        <span class="sr-only">Search trips and regions</span>
-        <input x-ref="tripSearchInput" type="search" x-model.debounce.150ms="tripSearchQuery"
-          placeholder="Try Annapurna, wildlife or Island Peak" autocomplete="off">
-      </label>
-      <div class="trip-search-filters" role="group" aria-label="Filter by journey type">
-        <button type="button" @click="tripSearchActivity='all'" :aria-pressed="(tripSearchActivity==='all').toString()" :class="tripSearchActivity==='all' ? 'active' : ''">All journeys</button>
-        <button type="button" @click="tripSearchActivity='Trekking'" :aria-pressed="(tripSearchActivity==='Trekking').toString()" :class="tripSearchActivity==='Trekking' ? 'active' : ''">Trekking</button>
-        <button type="button" @click="tripSearchActivity='Tours'" :aria-pressed="(tripSearchActivity==='Tours').toString()" :class="tripSearchActivity==='Tours' ? 'active' : ''">Tours</button>
-        <button type="button" @click="tripSearchActivity='Peak climbing'" :aria-pressed="(tripSearchActivity==='Peak climbing').toString()" :class="tripSearchActivity==='Peak climbing' ? 'active' : ''">Peak climbing</button>
-      </div>
-      <div class="trip-search-results-head">
-        <span x-text="tripSearchQuery ? 'SEARCH RESULTS' : 'IDEAS TO GET YOU STARTED'">IDEAS TO GET YOU STARTED</span>
-        <span x-text="filteredSearchTrips().length + ' sample ideas'">9 sample ideas</span>
-      </div>
-      <div class="trip-search-results" aria-live="polite">
-        <template x-for="trip in filteredSearchTrips()" :key="trip.activity + trip.category + trip.name">
-          <a class="trip-search-result" href="{{ route('home') }}#plan" @click="selectSearchTrip(trip)">
-            <span class="trip-search-result-meta">
-              <span x-text="trip.activity">Trekking</span>
-              <span x-text="trip.category">Annapurna Region Trekking</span>
-            </span>
-            <strong x-text="trip.name">14 Day Annapurna Base Camp Trek</strong>
-            <span class="trip-search-result-arrow" aria-hidden="true">↗</span>
-          </a>
-        </template>
-        <p class="trip-search-empty" x-show="filteredSearchTrips().length===0" x-cloak>
-          No sample journeys match that search. Try another name or choose a different journey type.
-        </p>
-      </div>
-      <p class="trip-search-note">These are sample enquiry topics. Routes and availability need confirmation.</p>
-    </section>
-  </div>
-
-  <!-- Reusable Floating Actions -->
-  <div class="floating-actions">
+    <div class="floating-actions">
     <a class="back-to-top" href="#top" aria-label="Back to top" title="Back to top" x-show="showBackToTop" x-cloak>
       <img src="{{ asset('site/assets/explore-nepal-back-to-top-animated.gif') }}" alt="" width="384" height="384">
     </a>

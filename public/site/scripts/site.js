@@ -82,12 +82,8 @@ function site() {
       });
       return matching.slice(0, 9);
     },
-    selectSearchTrip(trip) {
-      this.selectedTrip = trip.name;
-      this.formSubmitted = false;
-      this.tripSearchOpen = false;
-      this.tripSearchQuery = '';
-      this.tripSearchActivity = 'all';
+    searchActivities() {
+      return [...new Set(this.searchItems.map((trip) => trip.activity).filter(Boolean))];
     },
     trapSearchTab(event) {
       const focusable = [...this.$refs.tripSearchDialog.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href], select:not([disabled])')];
