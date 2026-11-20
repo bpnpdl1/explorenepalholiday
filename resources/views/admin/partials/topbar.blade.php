@@ -19,7 +19,6 @@
                 <div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
                         <i class="ri-notification-3-line fs-22"></i>
-                        <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">2</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0">
                         <div class="dropdown-head bg-primary bg-pattern rounded-top">
@@ -27,7 +26,7 @@
                                 <h6 class="m-0 fs-16 fw-semibold text-white">Notifications</h6>
                             </div>
                         </div>
-                        <div class="p-3 text-muted">You’re all caught up on your admin notifications.</div>
+                        <div class="p-3 text-muted">The notification center is not configured yet.</div>
                     </div>
                 </div>
 
