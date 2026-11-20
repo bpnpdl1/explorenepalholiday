@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\GuestReviews\ListGuestReviewsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreGuestReviewRequest;
 use App\Http\Requests\Admin\UpdateGuestReviewRequest;
@@ -12,30 +13,9 @@ use Illuminate\Http\Request;
 
 class GuestReviewController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, ListGuestReviewsAction $listReviews): View
     {
-        $search = trim($request->string('search')->toString());
-
-        $reviews = GuestReview::query()
-            ->when($search !== '', function ($query) use ($search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('reviewer_name', 'like', "%{$search}%")
-                        ->orWhere('review_text', 'like', "%{$search}%")
-                        ->orWhere('trip_name', 'like', "%{$search}%")
-                        ->orWhere('region_name', 'like', "%{$search}%");
-                });
-            })
-            ->orderByDesc('reviewed_at')
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.guest-reviews.index', [
-            'reviews' => $reviews,
-            'search' => $search,
-            'reviewCount' => GuestReview::count(),
-            'averageRating' => GuestReview::query()->avg('rating'),
-        ]);
+        return view('admin.guest-reviews.index', $listReviews->handle($request));
     }
 
     public function create(): View

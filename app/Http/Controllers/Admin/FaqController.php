@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Faqs\ListFaqsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreFaqRequest;
 use App\Http\Requests\Admin\UpdateFaqRequest;
@@ -12,32 +13,9 @@ use Illuminate\Http\Request;
 
 class FaqController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, ListFaqsAction $listFaqs): View
     {
-        $search = trim($request->string('search')->toString());
-        $status = $request->string('status')->toString();
-
-        $faqs = Faq::query()
-            ->when($search !== '', function ($query) use ($search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('question', 'like', "%{$search}%")
-                        ->orWhere('answer', 'like', "%{$search}%");
-                });
-            })
-            ->when($status === 'published', fn ($query) => $query->where('is_published', true))
-            ->when($status === 'draft', fn ($query) => $query->where('is_published', false))
-            ->orderBy('sort_order')
-            ->orderBy('question')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.faqs.index', [
-            'faqs' => $faqs,
-            'search' => $search,
-            'status' => in_array($status, ['published', 'draft'], true) ? $status : '',
-            'faqCount' => Faq::count(),
-            'publishedCount' => Faq::where('is_published', true)->count(),
-        ]);
+        return view('admin.faqs.index', $listFaqs->handle($request));
     }
 
     public function create(): View

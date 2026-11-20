@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\SiteSettings\UpdateSiteSettingsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateSiteSettingRequest;
 use App\Models\SiteSetting;
-use App\Services\MediaLibraryService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Cache;
 
 class SiteSettingController extends Controller
 {
-    public function __construct(private readonly MediaLibraryService $mediaLibraryService) {}
-
     public function edit(): View
     {
         $siteSetting = SiteSetting::query()
@@ -23,7 +20,7 @@ class SiteSettingController extends Controller
         return view('admin.site-settings.edit', compact('siteSetting'));
     }
 
-    public function update(UpdateSiteSettingRequest $request): RedirectResponse
+    public function update(UpdateSiteSettingRequest $request, UpdateSiteSettingsAction $updateSiteSettings): RedirectResponse
     {
         $siteSetting = SiteSetting::query()->firstOrFail();
         $data = $request->safe()->only([
@@ -41,23 +38,12 @@ class SiteSettingController extends Controller
             'og_title',
             'og_description',
         ]);
-        $data['social_links'] = array_filter(
-            $data['social_links'] ?? [],
-            fn (?string $url): bool => filled($url),
+        $updateSiteSettings->handle(
+            $siteSetting,
+            $data,
+            $request->file('logo'),
+            $request->file('favicon'),
         );
-
-        $siteSetting->update($data);
-        Cache::forget(SiteSetting::CACHE_KEY);
-
-        if ($logo = $request->file('logo')) {
-            $this->mediaLibraryService->storeImage($siteSetting, $logo, 'logo');
-        }
-
-        if ($favicon = $request->file('favicon')) {
-            $this->mediaLibraryService->storeImage($siteSetting, $favicon, 'favicon');
-        }
-
-        Cache::forget(SiteSetting::CACHE_KEY);
 
         return to_route('admin.site-settings.edit')
             ->with('success', 'Site settings updated successfully.');

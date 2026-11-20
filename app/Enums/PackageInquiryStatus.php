@@ -16,4 +16,14 @@ enum PackageInquiryStatus: string
             self::Cancelled => 'Cancelled',
         };
     }
+
+    /** @return array<string, string> */
+    public static function badgeClasses(): array
+    {
+        return [
+            self::New->value => 'info',
+            self::Contacted->value => 'success',
+            self::Cancelled->value => 'secondary',
+        ];
+    }
 }

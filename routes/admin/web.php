@@ -51,6 +51,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
         ->name('site-inquiries.update-status');
     Route::get('newsletter-subscribers', [NewsletterSubscriberController::class, 'index'])
         ->name('newsletter-subscribers.index');
+    Route::get('newsletter-subscribers/export', [NewsletterSubscriberController::class, 'export'])
+        ->name('newsletter-subscribers.export');
     Route::patch('newsletter-subscribers/{newsletterSubscriber}/status', [NewsletterSubscriberController::class, 'updateStatus'])
         ->name('newsletter-subscribers.update-status');
     Route::resource('packages', PackageController::class);

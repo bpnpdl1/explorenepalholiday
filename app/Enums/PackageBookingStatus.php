@@ -19,6 +19,17 @@ enum PackageBookingStatus: string
         };
     }
 
+    /** @return array<string, string> */
+    public static function badgeClasses(): array
+    {
+        return [
+            self::New->value => 'info',
+            self::Processing->value => 'warning',
+            self::Confirmed->value => 'success',
+            self::Canceled->value => 'danger',
+        ];
+    }
+
     /** @return array<self> */
     public function nextStatuses(): array
     {

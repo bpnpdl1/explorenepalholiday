@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\PackageReviews\ListPackageReviewsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePackageReviewRequest;
 use App\Http\Requests\Admin\UpdatePackageReviewRequest;
@@ -14,55 +15,14 @@ use Illuminate\Http\Request;
 
 class PackageReviewController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, ListPackageReviewsAction $listReviews): View
     {
-        return view('admin.package-reviews.index', $this->reviewListData($request));
+        return view('admin.package-reviews.index', $listReviews->handle($request));
     }
 
-    public function forPackage(Request $request, Package $package): View
+    public function forPackage(Request $request, Package $package, ListPackageReviewsAction $listReviews): View
     {
-        return view('admin.package-reviews.index', $this->reviewListData($request, $package));
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function reviewListData(Request $request, ?Package $package = null): array
-    {
-        $search = trim($request->string('search')->toString());
-        $selectedPackageId = $package?->id ?? $request->integer('package_id');
-
-        if (! $package && $selectedPackageId > 0) {
-            $package = Package::query()->find($selectedPackageId);
-        }
-
-        $scopedReviews = PackageReview::query()
-            ->when($package, fn ($query) => $query->where('package_id', $package->id));
-
-        $reviews = (clone $scopedReviews)
-            ->with('package:id,name,slug')
-            ->when($search !== '', function ($query) use ($search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('quote', 'like', "%{$search}%")
-                        ->orWhere('reviewer_name', 'like', "%{$search}%")
-                        ->orWhere('reviewer_label', 'like', "%{$search}%")
-                        ->orWhereHas('package', fn ($packageQuery) => $packageQuery->where('name', 'like', "%{$search}%"));
-                });
-            })
-            ->orderBy('sort_order')
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
-
-        return [
-            'reviews' => $reviews,
-            'package' => $package,
-            'packages' => $this->packagesForForm(),
-            'search' => $search,
-            'selectedPackageId' => $package?->id ?? 0,
-            'reviewCount' => (clone $scopedReviews)->count(),
-            'packageCount' => (clone $scopedReviews)->distinct('package_id')->count('package_id'),
-        ];
+        return view('admin.package-reviews.index', $listReviews->handle($request, $package));
     }
 
     public function create(Request $request): View

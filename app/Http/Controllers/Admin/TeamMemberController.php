@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\TeamMembers\SaveTeamMemberAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTeamMemberRequest;
 use App\Http\Requests\Admin\UpdateTeamMemberRequest;
 use App\Models\TeamMember;
-use App\Services\MediaLibraryService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class TeamMemberController extends Controller
 {
-    public function __construct(private readonly MediaLibraryService $mediaLibraryService) {}
-
     public function index(Request $request): View
     {
         $search = trim($request->string('search')->toString());
@@ -50,16 +48,10 @@ class TeamMemberController extends Controller
         return view('admin.team-members.create', ['teamMember' => new TeamMember]);
     }
 
-    public function store(StoreTeamMemberRequest $request): RedirectResponse
+    public function store(StoreTeamMemberRequest $request, SaveTeamMemberAction $saveTeamMember): RedirectResponse
     {
         $data = $request->safe()->only(['name', 'role', 'bio', 'sort_order']);
-        $data['is_published'] = $request->boolean('is_published');
-
-        $teamMember = TeamMember::create($data);
-
-        if ($portrait = $request->file('portrait_image')) {
-            $this->mediaLibraryService->storeImage($teamMember, $portrait, 'portrait');
-        }
+        $saveTeamMember->handle($data, $request->boolean('is_published'), $request->file('portrait_image'));
 
         return to_route('admin.team-members.index')
             ->with('success', 'Team member created successfully.');
@@ -72,18 +64,19 @@ class TeamMemberController extends Controller
         return view('admin.team-members.edit', compact('teamMember'));
     }
 
-    public function update(UpdateTeamMemberRequest $request, TeamMember $teamMember): RedirectResponse
-    {
+    public function update(
+        UpdateTeamMemberRequest $request,
+        TeamMember $teamMember,
+        SaveTeamMemberAction $saveTeamMember,
+    ): RedirectResponse {
         $data = $request->safe()->only(['name', 'role', 'bio', 'sort_order']);
-        $data['is_published'] = $request->boolean('is_published');
-
-        $teamMember->update($data);
-
-        if ($portrait = $request->file('portrait_image')) {
-            $this->mediaLibraryService->storeImage($teamMember, $portrait, 'portrait');
-        } elseif ($request->boolean('remove_portrait')) {
-            $teamMember->clearMediaCollection('portrait');
-        }
+        $saveTeamMember->handle(
+            $data,
+            $request->boolean('is_published'),
+            $request->file('portrait_image'),
+            $request->boolean('remove_portrait'),
+            $teamMember,
+        );
 
         return to_route('admin.team-members.index')
             ->with('success', 'Team member updated successfully.');

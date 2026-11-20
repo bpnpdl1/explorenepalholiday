@@ -19,6 +19,7 @@
     <div class="card">
         <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div><h4 class="card-title mb-1">Subscriber list</h4><p class="text-muted mb-0">Only subscribed contacts should be included in newsletter sends.</p></div>
+            <a class="btn btn-success" href="{{ route('admin.newsletter-subscribers.export', ['search' => $search, 'status' => $selectedStatus?->value]) }}"><i class="ri-file-excel-2-line me-1" aria-hidden="true"></i>Export Excel</a>
             <span class="badge bg-primary-subtle text-primary">{{ $subscribers->total() }}{{ $selectedStatus || $search !== '' ? ' filtered of '.$subscriberCount : '' }} records</span>
         </div>
         <div class="card-body">

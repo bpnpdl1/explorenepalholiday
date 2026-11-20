@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Destinations\SaveDestinationAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreDestinationRequest;
 use App\Http\Requests\Admin\UpdateDestinationRequest;
 use App\Models\Destination;
-use App\Services\RichContentSanitizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
-    public function __construct(private readonly RichContentSanitizer $richContentSanitizer) {}
-
     public function index(Request $request): View
     {
         $search = trim($request->string('search')->toString());
@@ -49,17 +47,10 @@ class DestinationController extends Controller
         return view('admin.destinations.create', ['destination' => new Destination]);
     }
 
-    public function store(StoreDestinationRequest $request): RedirectResponse
+    public function store(StoreDestinationRequest $request, SaveDestinationAction $saveDestination): RedirectResponse
     {
         $data = $request->safe()->except('cover_image');
-        $data['is_published'] = $request->boolean('is_published');
-        $data['description'] = $this->richContentSanitizer->sanitize($data['description'] ?? null);
-
-        $destination = Destination::create($data);
-
-        if ($request->hasFile('cover_image')) {
-            $destination->addMediaFromRequest('cover_image')->toMediaCollection('cover');
-        }
+        $saveDestination->handle($data, $request->boolean('is_published'), $request->file('cover_image'));
 
         return to_route('admin.destinations.index')
             ->with('success', 'Destination created successfully.');
@@ -72,17 +63,13 @@ class DestinationController extends Controller
         return view('admin.destinations.edit', compact('destination'));
     }
 
-    public function update(UpdateDestinationRequest $request, Destination $destination): RedirectResponse
-    {
+    public function update(
+        UpdateDestinationRequest $request,
+        Destination $destination,
+        SaveDestinationAction $saveDestination,
+    ): RedirectResponse {
         $data = $request->safe()->except('cover_image');
-        $data['is_published'] = $request->boolean('is_published');
-        $data['description'] = $this->richContentSanitizer->sanitize($data['description'] ?? null);
-
-        $destination->update($data);
-
-        if ($request->hasFile('cover_image')) {
-            $destination->addMediaFromRequest('cover_image')->toMediaCollection('cover');
-        }
+        $saveDestination->handle($data, $request->boolean('is_published'), $request->file('cover_image'), $destination);
 
         return to_route('admin.destinations.index')
             ->with('success', 'Destination updated successfully.');

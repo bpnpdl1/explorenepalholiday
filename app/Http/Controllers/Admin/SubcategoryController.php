@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Subcategories\ListSubcategoriesAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreSubcategoryRequest;
 use App\Http\Requests\Admin\UpdateSubcategoryRequest;
@@ -14,41 +15,9 @@ use Illuminate\Http\Request;
 
 class SubcategoryController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, ListSubcategoriesAction $listSubcategories): View
     {
-        $search = trim($request->string('search')->toString());
-        $status = $request->string('status')->toString();
-        $categoryId = $request->integer('category_id');
-
-        $subcategories = Subcategory::query()
-            ->with('category:id,destination_id,name', 'category.destination:id,name')
-            ->when($search !== '', function ($query) use ($search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('slug', 'like', "%{$search}%")
-                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', 'like', "%{$search}%"));
-                });
-            })
-            ->when($status === 'published', fn ($query) => $query->where('is_published', true))
-            ->when($status === 'draft', fn ($query) => $query->where('is_published', false))
-            ->when($categoryId > 0, fn ($query) => $query->where('category_id', $categoryId))
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.subcategories.index', [
-            'subcategories' => $subcategories,
-            'categories' => Category::query()
-                ->with('destination:id,name')
-                ->orderBy('name')
-                ->get(['id', 'destination_id', 'name']),
-            'search' => $search,
-            'status' => in_array($status, ['published', 'draft'], true) ? $status : '',
-            'categoryId' => $categoryId,
-            'subcategoryCount' => Subcategory::count(),
-            'publishedCount' => Subcategory::where('is_published', true)->count(),
-        ]);
+        return view('admin.subcategories.index', $listSubcategories->handle($request));
     }
 
     public function create(): View

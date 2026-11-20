@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Inquiries\UpdateInquiryStatusAction;
 use App\Enums\PackageInquiryStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateSiteInquiryStatusRequest;
@@ -21,25 +22,17 @@ class SiteInquiryController extends Controller
         return view('admin.site-inquiries.show', [
             'inquiry' => $siteInquiry,
             'statuses' => PackageInquiryStatus::cases(),
-            'statusClasses' => $this->statusClasses(),
+            'statusClasses' => PackageInquiryStatus::badgeClasses(),
         ]);
     }
 
-    public function updateStatus(UpdateSiteInquiryStatusRequest $request, SiteInquiry $siteInquiry): RedirectResponse
-    {
-        $siteInquiry->status = PackageInquiryStatus::from($request->validated('status'));
-        $siteInquiry->save();
+    public function updateStatus(
+        UpdateSiteInquiryStatusRequest $request,
+        SiteInquiry $siteInquiry,
+        UpdateInquiryStatusAction $updateStatus,
+    ): RedirectResponse {
+        $updateStatus->handle($siteInquiry, PackageInquiryStatus::from($request->validated('status')));
 
         return back()->with('success', 'Website inquiry status updated.');
-    }
-
-    /** @return array<string, string> */
-    private function statusClasses(): array
-    {
-        return [
-            PackageInquiryStatus::New->value => 'info',
-            PackageInquiryStatus::Contacted->value => 'success',
-            PackageInquiryStatus::Cancelled->value => 'secondary',
-        ];
     }
 }
