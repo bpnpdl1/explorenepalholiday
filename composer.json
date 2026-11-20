@@ -67,7 +67,9 @@
         ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
-            "@test"
+            "@lint:check",
+            "@types:check",
+            "@php artisan test"
         ],
         "types:check": [
             "phpstan analyse"

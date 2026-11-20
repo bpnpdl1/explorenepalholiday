@@ -12,7 +12,6 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PackageDepartureController;
 use App\Http\Controllers\Admin\PackageReviewController;
 use App\Http\Controllers\Admin\RichContentImageController;
-use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SiteInquiryController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SubcategoryController;
@@ -67,7 +66,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::resource('package-departures', PackageDepartureController::class)
         ->except('show')
         ->parameters(['package-departures' => 'packageDeparture']);
-    Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('rich-content/images', RichContentImageController::class)
         ->middleware('throttle:30,1')
