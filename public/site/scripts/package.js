@@ -36,6 +36,19 @@ function packageBookingSidebar() {
     }
   }
 
+  // Initialize sharing before optional page enhancements so a gallery error
+  // cannot leave these links pointing to their HTML fallback.
+  const shareUrl = encodeURIComponent(window.location.href);
+  document.querySelectorAll('[data-share]').forEach((link) => {
+    const shareType = link.dataset.share;
+    const shareLinks = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(document.title + ' ' + window.location.href)}`,
+      email: `mailto:?subject=${encodeURIComponent(document.title)}&body=${encodeURIComponent('I thought you might like this trip: ' + window.location.href)}`
+    };
+    if (shareLinks[shareType]) link.href = shareLinks[shareType];
+  });
+
   const gallery = document.querySelector('[data-package-gallery]');
   if (gallery) {
     const slides = [...gallery.querySelectorAll('.package-gallery__slide')];
@@ -56,8 +69,8 @@ function packageBookingSidebar() {
       });
     };
 
-    gallery.querySelector('[data-package-gallery-prev]').addEventListener('click', () => showSlide(activeIndex - 1));
-    gallery.querySelector('[data-package-gallery-next]').addEventListener('click', () => showSlide(activeIndex + 1));
+    gallery.querySelector('[data-package-gallery-prev]')?.addEventListener('click', () => showSlide(activeIndex - 1));
+    gallery.querySelector('[data-package-gallery-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
     dots.forEach((dot, index) => dot.addEventListener('click', () => showSlide(index)));
 
     gallery.addEventListener('keydown', (event) => {
@@ -131,18 +144,6 @@ function packageBookingSidebar() {
   }
 
   const packageTabs = document.querySelectorAll('[data-package-tab]');
-  const shareUrl = encodeURIComponent(window.location.href);
-  document.querySelectorAll('[data-share]').forEach((link) => {
-    const shareType = link.dataset.share;
-    const shareLinks = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(document.title + ' ' + window.location.href)}`,
-      email: `mailto:?subject=${encodeURIComponent(document.title)}&body=${encodeURIComponent('I thought you might like this trip: ' + window.location.href)}`
-    };
-    link.href = shareLinks[shareType] || '#';
-  });
-
   const packageNav = document.querySelector('[data-package-subnav]');
   const packageSections = [...packageTabs]
     .map((tab) => document.getElementById(tab.hash.slice(1)))

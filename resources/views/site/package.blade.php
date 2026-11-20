@@ -21,6 +21,12 @@
     $price = $package->price_from !== null ? (float) $package->price_from : null;
     $compareAtPrice = $package->compare_at_price !== null ? (float) $package->compare_at_price : null;
     $currency = $package->currency ?: 'USD';
+    $shareUrl = url()->current();
+    $shareText = $package->name . ' | ' . $shareUrl;
+    $whatsAppShareUrl = 'https://wa.me/?text=' . rawurlencode($shareText);
+    $facebookShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($shareUrl);
+    $emailShareUrl = 'mailto:?subject=' . rawurlencode('Trip idea: ' . $package->name) .
+        '&body=' . rawurlencode('I thought you might like this trip: ' . $shareUrl);
     $whatsAppMessage = rawurlencode('I am interested in ' . $package->name . '.');
     $travelWindows = $package->departures
         ->map(
@@ -119,15 +125,15 @@
                         </div>
                         <div class="package-share" aria-label="Share {{ $package->name }}">
                             <span>SHARE THIS TRIP</span>
-                            <a class="package-share__link" href="#" data-share="facebook" target="_blank"
+                            <a class="package-share__link" href="{{ $facebookShareUrl }}" data-share="facebook" target="_blank"
                                 rel="noopener noreferrer" aria-label="Share {{ $package->name }} on Facebook"
                                 title="Share on Facebook"><img class="package-icon-image"
                                     src="{{ asset('site/assets/icons/facebook.svg') }}" alt=""></a>
-                            <a class="package-share__link" href="#" data-share="whatsapp" target="_blank"
+                            <a class="package-share__link" href="{{ $whatsAppShareUrl }}" data-share="whatsapp" target="_blank"
                                 rel="noopener noreferrer" aria-label="Share {{ $package->name }} on WhatsApp"
                                 title="Share on WhatsApp"><img class="package-icon-image"
                                     src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt=""></a>
-                            <a class="package-share__link package-share__email" href="#" data-share="email"
+                            <a class="package-share__link package-share__email" href="{{ $emailShareUrl }}" data-share="email"
                                 aria-label="Share {{ $package->name }} by email" title="Share by email"><span
                                     aria-hidden="true">✉</span></a>
                         </div>
