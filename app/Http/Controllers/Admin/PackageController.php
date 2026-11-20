@@ -116,6 +116,7 @@ class PackageController extends Controller
             $this->syncSeasons($package, $validated['seasons'] ?? []);
             $this->syncFeatures($package, $validated['included_features'] ?? [], $validated['excluded_features'] ?? []);
             $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
+            $this->syncFaqs($package, $validated['faqs'] ?? []);
 
             return $package;
         });
@@ -143,6 +144,7 @@ class PackageController extends Controller
             'seasons',
             'features',
             'itineraryDays',
+            'faqs',
             'media',
         ]);
 
@@ -165,6 +167,7 @@ class PackageController extends Controller
             $this->syncSeasons($package, $validated['seasons'] ?? []);
             $this->syncFeatures($package, $validated['included_features'] ?? [], $validated['excluded_features'] ?? []);
             $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
+            $this->syncFaqs($package, $validated['faqs'] ?? []);
         });
 
         $this->storeMedia($request, $package);
@@ -303,6 +306,45 @@ class PackageController extends Controller
             }
 
             $package->itineraryDays()->create($attributes);
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $faqs
+     */
+    private function syncFaqs(Package $package, array $faqs): void
+    {
+        $rows = array_values($faqs);
+        $existingFaqs = $package->faqs()->get()->keyBy('id');
+        $retainedIds = collect($rows)
+            ->pluck('id')
+            ->filter()
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $faqsToDelete = $package->faqs();
+
+        if ($retainedIds !== []) {
+            $faqsToDelete->whereNotIn('id', $retainedIds);
+        }
+
+        $faqsToDelete->delete();
+
+        foreach ($rows as $index => $row) {
+            $attributes = [
+                'question' => $row['question'],
+                'answer' => $row['answer'],
+                'sort_order' => $index,
+            ];
+            $faq = ! empty($row['id']) ? $existingFaqs->get((int) $row['id']) : null;
+
+            if ($faq) {
+                $faq->update($attributes);
+
+                continue;
+            }
+
+            $package->faqs()->create($attributes);
         }
     }
 

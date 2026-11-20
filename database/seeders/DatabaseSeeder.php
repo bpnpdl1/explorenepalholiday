@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SubcategorySeeder::class,
             PackageSeeder::class,
+            PackageFaqSeeder::class,
             PackageFeatureSeeder::class,
             PackageItinerarySeeder::class,
             GuestReviewSeeder::class,
