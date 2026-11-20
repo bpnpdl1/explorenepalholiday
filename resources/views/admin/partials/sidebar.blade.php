@@ -31,6 +31,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.package-departures.*') ? 'active' : '' }}" href="{{ route('admin.package-departures.index') }}">
+                        <i class="ri-calendar-event-line"></i><span>Departures</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a
                         class="nav-link menu-link {{ request()->routeIs('admin.bookings.*') ? 'active' : 'collapsed' }}"
                         href="#sidebarBookings"

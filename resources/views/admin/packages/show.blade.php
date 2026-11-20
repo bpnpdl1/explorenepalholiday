@@ -5,6 +5,10 @@
             <p class="text-muted mb-0 mt-1">Package fields and media.</p>
         </div>
         <div class="d-flex gap-2">
+            <a href="{{ route('admin.package-departures.package', $package) }}" class="btn btn-soft-primary"><i class="ri-calendar-event-line me-1"></i>Departures</a>
+            @if ($package->is_published)
+                <a href="{{ route('packages.show', $package) }}" class="btn btn-soft-success" target="_blank" rel="noopener noreferrer"><i class="ri-external-link-line me-1"></i>View on site</a>
+            @endif
             <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-primary"><i class="ri-pencil-line me-1"></i>Edit package</a>
             <a href="{{ route('admin.packages.index') }}" class="btn btn-light">Back to packages</a>
         </div>

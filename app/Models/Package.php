@@ -86,7 +86,7 @@ class Package extends Model implements HasMedia
 
     public function departures(): HasMany
     {
-        return $this->hasMany(PackageDeparture::class)->orderBy('starts_on')->orderBy('id');
+        return $this->hasMany(PackageDeparture::class)->orderBy('sort_order')->orderBy('starts_on')->orderBy('id');
     }
 
     public function features(): HasMany

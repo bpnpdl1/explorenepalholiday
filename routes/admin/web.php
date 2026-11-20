@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GuestReviewController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\PackageDepartureController;
 use App\Http\Controllers\Admin\RichContentImageController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SiteSettingController;
@@ -36,6 +37,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
     Route::resource('packages', PackageController::class);
+    Route::get('package-departures/package/{package}', [PackageDepartureController::class, 'forPackage'])
+        ->name('package-departures.package');
+    Route::resource('package-departures', PackageDepartureController::class)
+        ->except('show')
+        ->parameters(['package-departures' => 'packageDeparture']);
     Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('rich-content/images', RichContentImageController::class)
