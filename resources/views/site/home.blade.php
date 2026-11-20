@@ -654,13 +654,16 @@
           <h2 id="newsletter-title">A little Nepal in <em>your inbox.</em></h2>
           <p>Journey ideas, places to discover, and thoughtful travel notes from Nepal.</p>
         </div>
-        <form class="newsletter-form" @submit.prevent="newsletterSubmitted=true"><label for="newsletter-email">Your
+        <form class="newsletter-form" method="POST" action="{{ route('newsletter.subscriptions.store') }}"><label for="newsletter-email">Your
             email address</label>
-          <div class="newsletter-field"><input id="newsletter-email" name="newsletter-email" type="email"
-              autocomplete="email" required placeholder="you@example.com" @input="newsletterSubmitted=false"><button
+          @csrf
+          <div class="newsletter-field"><input id="newsletter-email" name="newsletter_email" type="email"
+              autocomplete="email" value="{{ old('newsletter_email') }}" required placeholder="you@example.com"><button
               type="submit">Join newsletter <span aria-hidden="true">↗</span></button></div>
+          <label class="newsletter-consent"><input type="checkbox" name="consent" value="1" required @checked(old('consent'))><span>I agree to receive occasional travel emails from Explore Nepal Holidays.</span></label>
+          @error('email')<p class="newsletter-note" role="alert">{{ $message }}</p>@enderror
+          @error('consent')<p class="newsletter-note" role="alert">{{ $message }}</p>@enderror
           <p class="newsletter-note">Occasional travel notes, planning tips and seasonal journey ideas.</p>
-          <p class="newsletter-confirmation" role="status" x-show="newsletterSubmitted" x-cloak>Thank you for your interest in Nepal travel updates.</p>
         </form>
       </div>
     </section>

@@ -7,6 +7,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PackageBookingController;
 use App\Http\Controllers\PackageInquiryController;
 use App\Http\Controllers\PackageListingController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\SiteInquiryController;
 use App\Http\Controllers\TeamPageController;
 use App\Http\Controllers\SubcategoryController;
@@ -23,6 +24,9 @@ Route::view('/contact-us', 'site.contact')->name('contact');
 Route::post('/inquiries', [SiteInquiryController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('site-inquiries.store');
+Route::post('/newsletter/subscriptions', [NewsletterSubscriptionController::class, 'store'])
+    ->middleware('throttle:3,1')
+    ->name('newsletter.subscriptions.store');
 Route::post('/packages/{package}/inquiries', [PackageInquiryController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('packages.inquiries.store');

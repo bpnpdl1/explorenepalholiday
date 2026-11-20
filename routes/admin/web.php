@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\RichContentImageController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SiteInquiryController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
@@ -48,6 +49,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::get('site-inquiries/{siteInquiry}', [SiteInquiryController::class, 'show'])->name('site-inquiries.show');
     Route::patch('site-inquiries/{siteInquiry}/status', [SiteInquiryController::class, 'updateStatus'])
         ->name('site-inquiries.update-status');
+    Route::get('newsletter-subscribers', [NewsletterSubscriberController::class, 'index'])
+        ->name('newsletter-subscribers.index');
+    Route::patch('newsletter-subscribers/{newsletterSubscriber}/status', [NewsletterSubscriberController::class, 'updateStatus'])
+        ->name('newsletter-subscribers.update-status');
     Route::resource('packages', PackageController::class);
     Route::get('package-reviews/package/{package}', [PackageReviewController::class, 'forPackage'])
         ->name('package-reviews.package');

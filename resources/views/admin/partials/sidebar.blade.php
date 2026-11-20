@@ -63,6 +63,11 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.newsletter-subscribers.*') ? 'active' : '' }}" href="{{ route('admin.newsletter-subscribers.index') }}">
+                        <i class="ri-mail-send-line"></i><span>Newsletter subscribers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.bookings.*') ? 'active' : 'collapsed' }}" href="#sidebarBookings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.bookings.*') ? 'true' : 'false' }}" aria-controls="sidebarBookings">
                         <i class="ri-calendar-check-line"></i><span>Bookings</span><span class="menu-arrow"></span>
                     </a>
