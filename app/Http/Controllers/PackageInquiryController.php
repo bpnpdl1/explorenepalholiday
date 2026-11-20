@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Notifications\SendSubmissionNotificationsAction;
 use App\Http\Requests\StorePackageInquiryRequest;
 use App\Models\Package;
+use App\Models\PackageInquiry;
 use Illuminate\Http\RedirectResponse;
 
 class PackageInquiryController extends Controller
 {
-    public function store(StorePackageInquiryRequest $request, Package $package): RedirectResponse
-    {
+    public function store(
+        StorePackageInquiryRequest $request,
+        Package $package,
+        SendSubmissionNotificationsAction $sendNotifications,
+    ): RedirectResponse {
         abort_unless($package->is_published, 404);
 
-        $package->inquiries()->create($request->validated());
+        $inquiry = new PackageInquiry($request->validated());
+        $inquiry->package()->associate($package);
+        $inquiry->save();
+        $sendNotifications->handle($inquiry);
 
         return redirect()
             ->to(route('packages.show', $package).'#sidebar-enquiry-form')

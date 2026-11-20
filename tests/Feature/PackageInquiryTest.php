@@ -1,11 +1,15 @@
 <?php
 
+use App\Mail\PackageInquirySubmittedMail;
 use App\Models\PackageInquiry;
+use Illuminate\Support\Facades\Mail;
 use Tests\Support\CreatesTravelRecords;
 
 uses(CreatesTravelRecords::class);
 
 test('visitor can submit an inquiry for a published package', function () {
+    config(['admin.email' => 'operations@example.test']);
+    Mail::fake();
     $package = $this->createPublishedPackage();
 
     $this->post(route('packages.inquiries.store', $package), [
@@ -23,9 +27,24 @@ test('visitor can submit an inquiry for a published package', function () {
         'travel_window' => 'flexible',
         'status' => 'new',
     ]);
+
+    Mail::assertSent(
+        PackageInquirySubmittedMail::class,
+        fn (PackageInquirySubmittedMail $mail): bool => $mail->render() !== ''
+            && $mail->adminAlert
+            && $mail->hasTo('operations@example.test')
+            && $mail->inquiry->package->is($package),
+    );
+    Mail::assertSent(
+        PackageInquirySubmittedMail::class,
+        fn (PackageInquirySubmittedMail $mail): bool => $mail->render() !== ''
+            && ! $mail->adminAlert
+            && $mail->hasTo('alex@example.test'),
+    );
 });
 
 test('package inquiry rejects invalid travel windows', function () {
+    Mail::fake();
     $package = $this->createPublishedPackage();
 
     $this->from(route('packages.show', $package))->post(route('packages.inquiries.store', $package), [
@@ -36,4 +55,5 @@ test('package inquiry rejects invalid travel windows', function () {
     ])->assertSessionHasErrors('travel_window');
 
     expect(PackageInquiry::query()->count())->toBe(0);
+    Mail::assertNothingOutgoing();
 });

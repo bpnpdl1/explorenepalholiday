@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Notifications\SendSubmissionNotificationsAction;
 use App\Actions\Packages\StorePackageBookingAction;
 use App\Http\Requests\StorePackageBookingRequest;
 use App\Models\Package;
@@ -29,8 +30,10 @@ class PackageBookingController extends Controller
         StorePackageBookingRequest $request,
         Package $package,
         StorePackageBookingAction $storeBooking,
+        SendSubmissionNotificationsAction $sendNotifications,
     ): RedirectResponse {
         $booking = $storeBooking->handle($package, $request->validated());
+        $sendNotifications->handle($booking);
 
         return redirect()->to(URL::temporarySignedRoute(
             'packages.bookings.thank-you',

@@ -1,12 +1,16 @@
 <?php
 
 use App\Enums\PackageBookingStatus;
+use App\Mail\PackageBookingSubmittedMail;
 use App\Models\PackageBooking;
+use Illuminate\Support\Facades\Mail;
 use Tests\Support\CreatesTravelRecords;
 
 uses(CreatesTravelRecords::class);
 
 test('visitor can book a package and receives a signed confirmation link', function () {
+    config(['admin.email' => 'operations@example.test']);
+    Mail::fake();
     $package = $this->createPublishedPackage();
 
     $response = $this->post(route('packages.bookings.store', $package), [
@@ -34,9 +38,24 @@ test('visitor can book a package and receives a signed confirmation link', funct
         'event' => 'submitted',
         'to_status' => PackageBookingStatus::New->value,
     ]);
+
+    Mail::assertSent(
+        PackageBookingSubmittedMail::class,
+        fn (PackageBookingSubmittedMail $mail): bool => $mail->render() !== ''
+            && $mail->adminAlert
+            && $mail->hasTo('operations@example.test')
+            && $mail->booking->is($booking),
+    );
+    Mail::assertSent(
+        PackageBookingSubmittedMail::class,
+        fn (PackageBookingSubmittedMail $mail): bool => $mail->render() !== ''
+            && ! $mail->adminAlert
+            && $mail->hasTo('alex@example.test'),
+    );
 });
 
 test('booking validation prevents unconsented requests from being saved', function () {
+    Mail::fake();
     $package = $this->createPublishedPackage();
 
     $this->from(route('packages.bookings.create', $package))->post(route('packages.bookings.store', $package), [
@@ -48,4 +67,5 @@ test('booking validation prevents unconsented requests from being saved', functi
     ])->assertSessionHasErrors('consent');
 
     expect(PackageBooking::query()->count())->toBe(0);
+    Mail::assertNothingOutgoing();
 });
