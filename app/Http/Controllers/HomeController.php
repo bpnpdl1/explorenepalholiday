@@ -6,6 +6,7 @@ use App\Enums\Season;
 use App\Models\Destination;
 use App\Models\Faq;
 use App\Models\Package;
+use App\Models\Subcategory;
 use App\Models\WhyTravelReason;
 use Illuminate\Contracts\View\View;
 
@@ -20,6 +21,27 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->orderBy('name')
             ->limit(6)
+            ->get();
+
+        $regionSubcategories = Subcategory::query()
+            ->where('is_published', true)
+            ->whereHas('category', fn ($query) => $query
+                ->where('is_published', true)
+                ->whereHas('destination', fn ($destinationQuery) => $destinationQuery->where('is_published', true)))
+            ->whereHas('packages', fn ($query) => $query->where('is_published', true))
+            ->withCount(['packages as published_packages_count' => fn ($query) => $query->where('is_published', true)])
+            ->with([
+                'category.destination.media',
+                'packages' => fn ($query) => $query
+                    ->where('is_published', true)
+                    ->with('media')
+                    ->orderByDesc('is_featured')
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->limit(1),
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('name')
             ->get();
 
         $faqs = Faq::query()
@@ -41,6 +63,7 @@ class HomeController extends Controller
             ->with([
                 'subcategory.category.destination',
                 'seasons',
+                'highlights',
                 'media',
             ])
             ->orderByDesc('is_featured')
@@ -49,18 +72,24 @@ class HomeController extends Controller
             ->limit(18)
             ->get();
 
-        $featuredPackages = $packages->where('is_featured', true)->values();
+        $featuredPackages = $packages->where('is_featured', true)->take(6)->values();
 
         if ($featuredPackages->isEmpty()) {
             $featuredPackages = $packages->take(6)->values();
         }
 
         $featuredPackageCategories = $featuredPackages
-            ->map(fn (Package $package): array => [
-                'value' => $package->subcategory->category->slug,
-                'label' => $package->subcategory->category->name,
-            ])
-            ->unique('value')
+            ->groupBy(fn (Package $package): string => $package->subcategory->category->slug)
+            ->map(function ($categoryPackages, string $categorySlug): array {
+                /** @var Package $firstPackage */
+                $firstPackage = $categoryPackages->first();
+
+                return [
+                    'value' => $categorySlug,
+                    'label' => $firstPackage->subcategory->category->name,
+                    'count' => $categoryPackages->count(),
+                ];
+            })
             ->values();
 
         $packageCategories = $packages
@@ -106,6 +135,7 @@ class HomeController extends Controller
 
         return view('site.home', compact(
             'destinations',
+            'regionSubcategories',
             'faqs',
             'whyTravelReasons',
             'packages',

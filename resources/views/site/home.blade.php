@@ -235,14 +235,14 @@
       <div class="max-w-7xl mx-auto px-4 md:px-8">
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
           <div>
-            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-amber-600 mb-3">Featured journeys</span>
+            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-amber-600 mb-3">Featured journey ideas</span>
             <h2 id="expeditions-title" class="text-2xl lg:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">Nepal trips to compare</h2>
-            <p class="text-slate-500 text-sm lg:text-base max-w-2xl mt-3 leading-relaxed">Compare published trips by category, duration, altitude, and starting price. Final details are confirmed with our team.</p>
+            <p class="text-slate-500 text-sm lg:text-base max-w-2xl mt-3 leading-relaxed">A curated set of trek and peak-climbing ideas with useful cues for region, duration, altitude and starting price. Final routes, inclusions and dates are confirmed during enquiry.</p>
           </div>
           <div class="journey-tabs flex flex-wrap items-center gap-2" role="group" aria-label="Filter featured packages">
-            <button type="button" @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">All featured</button>
+            <button type="button" @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">All ({{ $featuredPackages->count() }})</button>
             @foreach ($featuredPackageCategories as $category)
-              <button type="button" @click="activeCategory = '{{ $category['value'] }}'" :class="activeCategory === '{{ $category['value'] }}' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">{{ $category['label'] }}</button>
+              <button type="button" @click="activeCategory = '{{ $category['value'] }}'" :class="activeCategory === '{{ $category['value'] }}' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">{{ $category['label'] }} ({{ $category['count'] }})</button>
             @endforeach
           </div>
         </div>
@@ -252,20 +252,48 @@
             @php
                 $categoryKey = $package->subcategory->category->slug;
             @endphp
-            <article x-show="activeCategory === 'all' || activeCategory === '{{ $categoryKey }}'" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
-              <a href="{{ route('packages.show', $package) }}" class="relative h-52 overflow-hidden block">
+            <article x-show="activeCategory === 'all' || activeCategory === '{{ $categoryKey }}'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
+              <div class="relative h-52 overflow-hidden">
                 <img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" class="w-full h-full object-cover" loading="lazy">
-                <span class="absolute top-3 left-3 bg-amber-400 text-amber-950 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">Featured</span>
-                @if ($package->max_altitude_meters)<span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max {{ number_format($package->max_altitude_meters) }} m</span>@endif
-              </a>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                  @forelse ($package->highlights->take(2) as $highlight)
+                    <span class="{{ $loop->first ? 'bg-amber-400 text-amber-900' : 'bg-slate-900/70 text-white backdrop-blur-sm' }} text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">{{ $highlight->title }}</span>
+                  @empty
+                    <span class="bg-amber-400 text-amber-900 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide">{{ $package->subcategory->category->name }}</span>
+                    @if ($package->is_featured)<span class="bg-slate-900/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">Featured journey</span>@endif
+                  @endforelse
+                </div>
+                @if ($package->max_altitude_meters)
+                  <span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max {{ number_format($package->max_altitude_meters) }}m</span>
+                @endif
+              </div>
               <div class="flex flex-col flex-1 p-5">
-                <div class="flex items-center justify-between gap-2 mb-2"><a href="{{ route('subcategories.show', $package->subcategory->slug) }}" class="text-xs font-bold text-slate-700 hover:text-sky-700">{{ $package->subcategory->category->name }} &bull; {{ $package->subcategory->category->destination->name }}</a><span class="text-xs text-amber-600 font-semibold">{{ $package->difficulty ?: 'All levels' }}</span></div>
-                <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors"><a href="{{ route('packages.show', $package) }}">{{ $package->name }}</a></h3>
-                <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">{{ $package->summary }}</p>
-                <div class="flex flex-wrap gap-1.5 mt-3">@if ($package->duration_days)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $package->duration_days }} days</span>@endif @foreach ($package->seasons->take(2) as $season)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $season->season->label() }}</span>@endforeach</div>
+                <div class="flex items-center justify-between mb-2 gap-3">
+                  <span class="text-xs font-bold text-slate-700">{{ $package->duration_days ? $package->duration_days.' Days' : 'Flexible duration' }} &bull; {{ $package->subcategory->name }}</span>
+                  <span class="text-xs text-amber-500 font-semibold">{{ $package->difficulty ?: 'All levels' }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 line-clamp-1">{{ $package->name }}</h3>
+                @if ($package->summary)<p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">{{ $package->summary }}</p>@endif
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  @forelse ($package->highlights->take(3) as $highlight)
+                    <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $highlight->title }}</span>
+                  @empty
+                    @foreach ($package->seasons->take(2) as $season)
+                      <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $season->season->label() }}</span>
+                    @endforeach
+                  @endforelse
+                </div>
                 <div class="border-t border-slate-100 mt-auto pt-4 flex items-center justify-between gap-3">
-                  <div><div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{{ $package->price_from !== null ? 'From' : 'Ask for price' }}</div>@if ($package->price_from !== null)<div class="text-lg font-extrabold text-slate-900">{{ $package->currency }} {{ number_format((float) $package->price_from, 0) }}</div>@endif</div>
-                  <a href="{{ route('packages.show', $package) }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View package</a>
+                  <div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{{ $package->price_from !== null ? 'From' : 'Pricing' }}</div>
+                    @if ($package->price_from !== null)
+                      <div class="text-lg font-extrabold text-slate-900">{{ $package->currency }} {{ number_format((float) $package->price_from, 0) }} <span class="text-xs font-medium text-slate-400">{{ $package->price_qualifier ?: 'per person' }}</span></div>
+                    @else
+                      <div class="text-lg font-extrabold text-slate-900">Ask us</div>
+                    @endif
+                  </div>
+                  <a href="{{ route('packages.show', $package) }}" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">View itinerary</a>
                 </div>
               </div>
             </article>
@@ -277,91 +305,45 @@
     </section>
 
 
-    <section id="regions" class="bg-slate-950 text-white py-20 px-4 md:px-8" aria-labelledby="regions-title">
-      <div class="max-w-7xl mx-auto">
+    @if ($regionSubcategories->isNotEmpty())
+      <section id="regions" class="bg-slate-950 text-white py-20 px-4 md:px-8" aria-labelledby="regions-title">
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-12">
+            <span class="text-amber-400 text-xs font-bold tracking-widest uppercase mb-2 block">Explore by trip area</span>
+            <h2 id="regions-title" class="text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">Explore Nepal by Region</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">Browse the regions and trip areas represented in our published packages.</p>
+          </div>
 
-        <!-- Section Header -->
-        <div class="text-center mb-12">
-          <span class="text-amber-400 text-xs font-bold tracking-widest uppercase mb-2 block">Geographic Diversity</span>
-          <h2 id="regions-title" class="text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">Explore Nepal by Region</h2>
-          <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">From the soaring 8,000-meter giants of the Khumbu to the forbidden walled kingdom of Upper Mustang</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach ($regionSubcategories as $region)
+              @php
+                  $representativePackage = $region->packages->first();
+                  $regionImage = $representativePackage?->getFirstMediaUrl('cover', 'card')
+                      ?: $representativePackage?->getFirstMediaUrl('cover')
+                      ?: $region->category->destination->getFirstMediaUrl('cover', 'card')
+                      ?: $region->category->destination->getFirstMediaUrl('cover')
+                      ?: asset('site/assets/nepal-trail.jpg');
+              @endphp
+              <a href="{{ route('subcategories.show', $region->slug) }}" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
+                <img src="{{ $regionImage }}" alt="{{ $region->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
+                <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
+                <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
+                  <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">{{ $region->category->name }} · {{ $region->published_packages_count }} {{ \Illuminate\Support\Str::plural('trip', $region->published_packages_count) }}</span>
+                  <h3 class="text-xl font-bold text-white mb-2">{{ $region->name }}</h3>
+                  <p class="text-slate-300 text-sm leading-relaxed mb-3">{{ $region->summary ?: 'Explore published trips in '.$region->name.'.' }}</p>
+                  <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
+                    Explore region
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            @endforeach
+          </div>
         </div>
-
-        <!-- 4-Column Card Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-          <!-- Card 1: Everest Region -->
-          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
-            <img src="{{ asset('site/assets/everest-hikers.jpg') }}" alt="Everest Region" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">Solukhumbu</span>
-              <h3 class="text-xl font-bold text-white mb-2">Everest Region</h3>
-              <p class="text-slate-400 text-sm leading-relaxed mb-3">High trails, Sherpa villages, monasteries and classic views toward Everest.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Explore region
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-          <!-- Card 2: Annapurna Sanctuary -->
-          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
-            <img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}" alt="Annapurna Sanctuary" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">Gandaki Province</span>
-              <h3 class="text-xl font-bold text-white mb-2">Annapurna Sanctuary</h3>
-              <p class="text-slate-400 text-sm leading-relaxed mb-3">Lush rhododendron valleys, Poon Hill sunrises, and Thorong La Pass.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Explore region
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-          <!-- Card 3: Manaslu & Tsum -->
-          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
-            <img src="{{ asset('site/assets/manaslu-birendra-lake.webp') }}" alt="Turquoise Birendra Lake below snowy mountains near Samagaun" width="1200" height="800" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-orange-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">Restricted Wilderness</span>
-              <h3 class="text-xl font-bold text-white mb-2">Manaslu &amp; Tsum</h3>
-              <p class="text-slate-400 text-sm leading-relaxed mb-3">Pure tranquility, ancient Tibetan monasteries, and Larkya La pass.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Explore region
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-          <!-- Card 4: Langtang & Helambu -->
-          <a href="{{ route('home') }}#journeys" class="relative h-[400px] rounded-2xl border border-slate-800 shadow-xl group cursor-pointer overflow-hidden">
-            <img src="{{ asset('site/assets/langtang-kyanjin-village.webp') }}" alt="Kyanjin Gompa village beneath the mountains of Langtang Valley" width="1200" height="900" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
-            <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
-              <span class="text-sky-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">Pasang Lamu Gateway</span>
-              <h3 class="text-xl font-bold text-white mb-2">Langtang &amp; Helambu</h3>
-              <p class="text-slate-400 text-sm leading-relaxed mb-3">Glacier-carved valleys, sacred high lakes, and authentic Tamang culture.</p>
-              <span class="text-sky-400 group-hover:text-sky-300 font-semibold text-xs transition flex items-center gap-1">
-                Explore region
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </span>
-            </div>
-          </a>
-
-        </div>
-
-      </div>
-    </section>
+      </section>
+    @endif
 
     <section id="destinations" class="bg-white py-20 px-4 md:px-8" aria-labelledby="destinations-title">
       <div class="max-w-7xl mx-auto">
