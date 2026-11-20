@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destination;
+use App\Models\Package;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
@@ -23,6 +24,20 @@ class DestinationController extends Controller
             ->limit(3)
             ->get();
 
+        $packages = Package::query()
+            ->where('is_published', true)
+            ->whereHas('subcategory.category', fn ($query) => $query->where('destination_id', $destination->id))
+            ->with([
+                'subcategory.category.destination',
+                'seasons',
+                'media',
+            ])
+            ->orderByDesc('is_featured')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(9)
+            ->withQueryString();
+
         $coverImage = $destination->getFirstMediaUrl('cover', 'card')
             ?: $destination->getFirstMediaUrl('cover')
             ?: asset('site/assets/annapurna-sunrise.jpg');
@@ -31,6 +46,7 @@ class DestinationController extends Controller
         return view('site.destinations.show', compact(
             'destination',
             'relatedDestinations',
+            'packages',
             'coverImage',
             'metaDescription',
         ));

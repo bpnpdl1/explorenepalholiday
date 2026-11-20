@@ -97,7 +97,7 @@
                                 </a>
                                 <div class="trip-content">
                                     <div class="trip-meta">
-                                        <span>{{ $package->subcategory->category->destination->name }} / {{ $package->subcategory->name }}</span>
+                                        <span>{{ $package->subcategory->category->destination->name }} / <a href="{{ route('subcategories.show', $package->subcategory->slug) }}">{{ $package->subcategory->name }}</a></span>
                                         @if ($package->is_featured)<span>FEATURED</span>@endif
                                     </div>
                                     <h3><a href="{{ route('packages.show', $package) }}">{{ $package->name }}</a></h3>

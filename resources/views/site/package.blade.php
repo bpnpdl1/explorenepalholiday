@@ -89,9 +89,11 @@
                 <nav class="package-hero__breadcrumbs" aria-label="Breadcrumb">
                     <a href="{{ route('home') }}">Home</a>
                     <span aria-hidden="true">/</span>
-                    <a href="{{ route('home') }}#journeys">{{ $destination->name }}</a>
+                    <a href="{{ route('destinations.show', $destination) }}">{{ $destination->name }}</a>
                     <span aria-hidden="true">/</span>
-                    <a href="{{ route('home') }}#journeys">{{ $category->name }}</a>
+                    <a href="{{ route('packages.index', ['style' => $category->slug]) }}">{{ $category->name }}</a>
+                    <span aria-hidden="true">/</span>
+                    <a href="{{ route('subcategories.show', $package->subcategory->slug) }}">{{ $package->subcategory->name }}</a>
                     <span aria-hidden="true">/</span>
                     <span>{{ $package->name }}</span>
                 </nav>

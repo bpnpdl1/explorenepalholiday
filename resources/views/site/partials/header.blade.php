@@ -39,7 +39,7 @@
                     <span>{{ $subcategory['name'] }}</span><span aria-hidden="true">›</span>
                   </button>
                   <div class="cascade-flyout" id="region-{{ $subcategory['id'] }}" x-show="openRegion==='{{ $subcategory['id'] }}'" x-cloak>
-                    <div class="flyout-heading"><strong>{{ $subcategory['name'] }}</strong><span>{{ count($subcategory['packages']) }} {{ $navCategory['item_label'] }}</span></div>
+                    <div class="flyout-heading"><strong><a href="{{ $subcategory['url'] }}">Explore {{ $subcategory['name'] }}</a></strong><span>{{ count($subcategory['packages']) }} {{ $navCategory['item_label'] }}</span></div>
                     <div class="flyout-scroll">
                       @forelse ($subcategory['packages'] as $package)
                         <a href="{{ $package['url'] }}">{{ $package['name'] }}</a>
@@ -91,6 +91,7 @@
                   <span>{{ $subcategory['name'] }}</span><span aria-hidden="true">+</span>
                 </button>
                 <div class="mobile-trip-list" id="mobile-region-{{ $subcategory['id'] }}" x-show="mobileRegion==='{{ $subcategory['id'] }}'" x-cloak>
+                  <a class="mobile-subcategory-link" href="{{ $subcategory['url'] }}" @click="menuOpen=false;mobileSection=null;mobileRegion=null">Explore {{ $subcategory['name'] }}</a>
                   @forelse ($subcategory['packages'] as $package)
                     <a href="{{ $package['url'] }}" @click="menuOpen=false;mobileSection=null;mobileRegion=null">{{ $package['name'] }}</a>
                   @empty

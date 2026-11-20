@@ -8,10 +8,12 @@ use App\Http\Controllers\PackageBookingController;
 use App\Http\Controllers\PackageInquiryController;
 use App\Http\Controllers\PackageListingController;
 use App\Http\Controllers\TeamPageController;
+use App\Http\Controllers\SubcategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
+Route::get('/subcategories/{subcategory:slug}', [SubcategoryController::class, 'show'])->name('subcategories.show');
 Route::view('/about-us', 'site.about')->name('about');
 Route::get('/our-team', TeamPageController::class)->name('team');
 Route::get('/guest-reviews', GuestReviewController::class)->name('guest-reviews');

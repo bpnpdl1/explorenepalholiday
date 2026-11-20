@@ -259,7 +259,7 @@
                 @if ($package->max_altitude_meters)<span class="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">Max {{ number_format($package->max_altitude_meters) }} m</span>@endif
               </a>
               <div class="flex flex-col flex-1 p-5">
-                <div class="flex items-center justify-between gap-2 mb-2"><span class="text-xs font-bold text-slate-700">{{ $package->subcategory->category->name }} &bull; {{ $package->subcategory->category->destination->name }}</span><span class="text-xs text-amber-600 font-semibold">{{ $package->difficulty ?: 'All levels' }}</span></div>
+                <div class="flex items-center justify-between gap-2 mb-2"><a href="{{ route('subcategories.show', $package->subcategory->slug) }}" class="text-xs font-bold text-slate-700 hover:text-sky-700">{{ $package->subcategory->category->name }} &bull; {{ $package->subcategory->category->destination->name }}</a><span class="text-xs text-amber-600 font-semibold">{{ $package->difficulty ?: 'All levels' }}</span></div>
                 <h3 class="text-xl font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition-colors"><a href="{{ route('packages.show', $package) }}">{{ $package->name }}</a></h3>
                 <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">{{ $package->summary }}</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">@if ($package->duration_days)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $package->duration_days }} days</span>@endif @foreach ($package->seasons->take(2) as $season)<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{{ $season->season->label() }}</span>@endforeach</div>
@@ -563,7 +563,7 @@
             <article class="trip-card" data-package-card data-region="{{ $package->subcategory->slug }}" data-style="{{ $categoryKey }}" data-duration="{{ $package->duration_days }}" data-seasons="{{ $package->seasons->map(fn ($season) => $season->season->value)->implode(',') }}" x-show="matchesPackage($el)">
               <a class="trip-image" href="{{ route('packages.show', $package) }}"><img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" loading="lazy"><span class="trip-category">{{ $package->subcategory->category->name }}</span></a>
               <div class="trip-content">
-                <div class="trip-meta"><span>{{ $package->subcategory->category->destination->name }} / {{ $package->subcategory->name }}</span>@if ($package->is_featured)<span>FEATURED</span>@endif</div>
+                <div class="trip-meta"><span>{{ $package->subcategory->category->destination->name }} / <a href="{{ route('subcategories.show', $package->subcategory->slug) }}">{{ $package->subcategory->name }}</a></span>@if ($package->is_featured)<span>FEATURED</span>@endif</div>
                 <h3>{{ $package->name }}</h3>
                 <p>{{ $package->summary }}</p>
                 <div class="trip-facts"><span>{{ $package->duration_days ? $package->duration_days.' days' : 'Flexible duration' }}</span><span>{{ $package->difficulty ?: 'Ask us' }}</span></div>

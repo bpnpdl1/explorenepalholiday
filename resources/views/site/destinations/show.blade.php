@@ -59,6 +59,62 @@
             </div>
         </section>
 
+        <section class="destination-packages" aria-labelledby="destination-packages-title">
+            <div class="container">
+                <div class="destination-related__heading">
+                    <div>
+                        <span class="destination-kicker">Trips in {{ $destination->name }}</span>
+                        <h2 id="destination-packages-title">Choose your journey</h2>
+                    </div>
+                    <p>{{ $packages->total() }} {{ \Illuminate\Support\Str::plural('published trip', $packages->total()) }}</p>
+                </div>
+
+                @if ($packages->isNotEmpty())
+                    <div class="trip-grid destination-packages__grid">
+                        @foreach ($packages as $package)
+                            <article class="trip-card">
+                                <a class="trip-image" href="{{ route('packages.show', $package) }}">
+                                    <img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" loading="lazy">
+                                    <span class="trip-category">{{ $package->subcategory->category->name }}</span>
+                                </a>
+                                <div class="trip-content">
+                                    <div class="trip-meta">
+                                        <span><a href="{{ route('subcategories.show', $package->subcategory->slug) }}">{{ $package->subcategory->name }}</a></span>
+                                        @if ($package->is_featured)<span>FEATURED</span>@endif
+                                    </div>
+                                    <h3><a href="{{ route('packages.show', $package) }}">{{ $package->name }}</a></h3>
+                                    @if ($package->summary)<p>{{ $package->summary }}</p>@endif
+                                    <div class="trip-facts">
+                                        <span>{{ $package->duration_days ? $package->duration_days.' days' : 'Flexible duration' }}</span>
+                                        <span>{{ $package->difficulty ?: 'Ask us' }}</span>
+                                    </div>
+                                    <p class="trip-price">
+                                        @if ($package->price_from !== null)
+                                            <span class="trip-price__from">From</span> {{ $package->currency }} {{ number_format((float) $package->price_from, 0) }}
+                                            @if ($package->price_qualifier)<small>{{ $package->price_qualifier }}</small>@endif
+                                        @else
+                                            <span class="trip-price__from">Ask us for pricing</span>
+                                        @endif
+                                    </p>
+                                    <a href="{{ route('packages.show', $package) }}">View package <span aria-hidden="true">↗</span></a>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+
+                    @if ($packages->hasPages())
+                        <div class="destination-packages__pagination">{{ $packages->links() }}</div>
+                    @endif
+                @else
+                    <div class="destination-packages__empty">
+                        <h3>Trips for this destination are being prepared.</h3>
+                        <p>Contact our team and we’ll help plan a journey around {{ $destination->name }}.</p>
+                        <a href="{{ route('contact') }}">Plan a trip</a>
+                    </div>
+                @endif
+            </div>
+        </section>
+
         @if ($relatedDestinations->isNotEmpty())
             <section class="destination-related" aria-labelledby="related-destinations-title">
                 <div class="container">

@@ -2252,6 +2252,15 @@ html {
     Arial,
     sans-serif;
 }
+.flyout-heading strong a {
+  color: inherit;
+}
+.flyout-heading strong a:hover,
+.flyout-heading strong a:focus-visible {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .flyout-heading span {
   color: var(--muted);
   font-size: 0.68rem;
@@ -2343,6 +2352,11 @@ html {
     color: #3e5668;
     font-size: 0.79rem;
     line-height: 1.35;
+  }
+  .mobile-nav .mobile-trip-list .mobile-subcategory-link {
+    background: #e8eff3;
+    color: var(--navy);
+    font-weight: 800;
   }
   .mobile-nav .mobile-trip-list a:last-child {
     border-bottom: 0;

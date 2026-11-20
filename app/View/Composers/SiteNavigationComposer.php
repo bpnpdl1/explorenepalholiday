@@ -63,6 +63,7 @@ class SiteNavigationComposer
                 ->map(fn ($subcategory): array => [
                     'id' => $key.'-'.$subcategory->id,
                     'name' => $subcategory->name,
+                    'url' => route('subcategories.show', $subcategory->slug),
                     'packages' => $subcategory->packages
                         ->map(fn (Package $package): array => [
                             'name' => $package->name,
