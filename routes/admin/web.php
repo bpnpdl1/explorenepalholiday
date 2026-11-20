@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\GuestReviewController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PackageDepartureController;
+use App\Http\Controllers\Admin\PackageReviewController;
 use App\Http\Controllers\Admin\RichContentImageController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SiteSettingController;
@@ -37,6 +38,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
     Route::resource('packages', PackageController::class);
+    Route::get('package-reviews/package/{package}', [PackageReviewController::class, 'forPackage'])
+        ->name('package-reviews.package');
+    Route::resource('package-reviews', PackageReviewController::class)
+        ->except('show')
+        ->parameters(['package-reviews' => 'packageReview']);
     Route::get('package-departures/package/{package}', [PackageDepartureController::class, 'forPackage'])
         ->name('package-departures.package');
     Route::resource('package-departures', PackageDepartureController::class)

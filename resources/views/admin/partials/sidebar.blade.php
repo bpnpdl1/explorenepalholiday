@@ -36,6 +36,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.package-reviews.*') ? 'active' : '' }}" href="{{ route('admin.package-reviews.index') }}">
+                        <i class="ri-chat-quote-line"></i><span>Package reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a
                         class="nav-link menu-link {{ request()->routeIs('admin.bookings.*') ? 'active' : 'collapsed' }}"
                         href="#sidebarBookings"

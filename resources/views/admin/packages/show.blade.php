@@ -5,6 +5,7 @@
             <p class="text-muted mb-0 mt-1">Package fields and media.</p>
         </div>
         <div class="d-flex gap-2">
+            <a href="{{ route('admin.package-reviews.package', $package) }}" class="btn btn-soft-primary"><i class="ri-chat-quote-line me-1"></i>Reviews</a>
             <a href="{{ route('admin.package-departures.package', $package) }}" class="btn btn-soft-primary"><i class="ri-calendar-event-line me-1"></i>Departures</a>
             @if ($package->is_published)
                 <a href="{{ route('packages.show', $package) }}" class="btn btn-soft-success" target="_blank" rel="noopener noreferrer"><i class="ri-external-link-line me-1"></i>View on site</a>

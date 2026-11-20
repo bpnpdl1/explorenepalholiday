@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PackageFeatureSeeder::class,
             PackageItinerarySeeder::class,
             GuestReviewSeeder::class,
+            PackageReviewSeeder::class,
             TeamMemberSeeder::class,
             WhyTravelReasonSeeder::class,
             AdminSeeder::class,
