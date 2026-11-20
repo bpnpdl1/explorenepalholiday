@@ -7,6 +7,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PackageBookingController;
 use App\Http\Controllers\PackageInquiryController;
 use App\Http\Controllers\PackageListingController;
+use App\Http\Controllers\SiteInquiryController;
 use App\Http\Controllers\TeamPageController;
 use App\Http\Controllers\SubcategoryController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::get('/our-team', TeamPageController::class)->name('team');
 Route::get('/guest-reviews', GuestReviewController::class)->name('guest-reviews');
 Route::view('/faq', 'site.faq')->name('faq');
 Route::view('/contact-us', 'site.contact')->name('contact');
+Route::post('/inquiries', [SiteInquiryController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('site-inquiries.store');
 Route::post('/packages/{package}/inquiries', [PackageInquiryController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('packages.inquiries.store');

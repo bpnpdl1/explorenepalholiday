@@ -79,31 +79,37 @@
           <div class="contact-form-panel">
             <h3>Send us your questions</h3>
             <p>Tell us a little about what you are planning.</p>
-            <form class="contact-form" @submit.prevent="formSubmitted = true">
+            <form class="contact-form" method="POST" action="{{ route('site-inquiries.store') }}">
+              @csrf
+              <input type="hidden" name="source" value="contact">
               <label for="contact-full-name">Full name</label>
-              <input id="contact-full-name" name="full_name" type="text" autocomplete="name" required>
+              <input id="contact-full-name" name="name" type="text" autocomplete="name" value="{{ old('name', old('full_name')) }}" required>
+              @error('name')<small class="text-danger">{{ $message }}</small>@enderror
 
               <label for="contact-email">Email address</label>
-              <input id="contact-email" name="email" type="email" autocomplete="email" required>
+              <input id="contact-email" name="email" type="email" autocomplete="email" value="{{ old('email') }}" required>
+              @error('email')<small class="text-danger">{{ $message }}</small>@enderror
 
               <div class="contact-phone-row">
                 <div>
                   <label for="contact-country-code">Country code</label>
-                  <input id="contact-country-code" name="country_code" type="tel" inputmode="tel" autocomplete="tel-country-code" placeholder="+977" pattern="\+[0-9]{1,4}" title="Enter a country calling code, such as +977">
+                  <input id="contact-country-code" name="country_code" type="tel" inputmode="tel" autocomplete="tel-country-code" placeholder="+977" pattern="\+[0-9]{1,4}" title="Enter a country calling code, such as +977" value="{{ old('country_code') }}">
                 </div>
                 <div>
                   <label for="contact-phone">Phone number</label>
-                  <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national">
+                  <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" value="{{ old('phone') }}">
                 </div>
               </div>
+              @error('country_code')<small class="text-danger">{{ $message }}</small>@enderror
+              @error('phone')<small class="text-danger">{{ $message }}</small>@enderror
 
               <label for="contact-message">Questions or comments</label>
-              <textarea id="contact-message" name="message" rows="5" required></textarea>
+              <textarea id="contact-message" name="message" rows="5" required>{{ old('message') }}</textarea>
+              @error('message')<small class="text-danger">{{ $message }}</small>@enderror
 
               <button class="contact-submit" type="submit">Submit enquiry <span aria-hidden="true">↗</span></button>
             </form>
-            <p class="contact-form-note">This form is not connected to a live inbox yet.</p>
-            <p class="contact-form-note" role="status" x-show="formSubmitted" x-cloak>Your enquiry was not sent. Please contact us by phone or WhatsApp to continue.</p>
+            <p class="contact-form-note">Your enquiry will be delivered to our team for follow-up.</p>
           </div>
         </div>
       </div>

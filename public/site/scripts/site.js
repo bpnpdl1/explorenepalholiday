@@ -203,6 +203,24 @@ function packageListings() {
   };
 }
 
+(() => {
+  const toast = document.querySelector('[data-site-toast]');
+  if (!toast) return;
+
+  const dismissButton = toast.querySelector('[data-site-toast-dismiss]');
+  const closeToast = () => {
+    toast.classList.remove('is-visible');
+    window.setTimeout(() => toast.remove(), 250);
+  };
+  const toastTimer = window.setTimeout(closeToast, 6000);
+
+  window.requestAnimationFrame(() => toast.classList.add('is-visible'));
+  dismissButton?.addEventListener('click', () => {
+    window.clearTimeout(toastTimer);
+    closeToast();
+  });
+})();
+
 // tawk.to test widget. Paste the Property ID and Widget ID from
 // Administration → Chat Widget in your tawk.to dashboard below.
 (() => {

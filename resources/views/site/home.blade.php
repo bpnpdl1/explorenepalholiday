@@ -630,18 +630,20 @@
             Nepal story.</p>
           <p class="plan-small">Share your dates, interests and travel style so our team can recommend the right route.</p>
         </div>
-        <form class="plan-card" @submit.prevent="formSubmitted=true"><span class="plan-card-top">TELL US WHAT YOU HAVE
+        <form class="plan-card" method="POST" action="{{ route('site-inquiries.store') }}">@csrf<input type="hidden" name="source" value="home"><span class="plan-card-top">TELL US WHAT YOU HAVE
             IN MIND <span>✦</span></span><label for="guest-name">Your name <span>*</span></label><input id="guest-name"
-            name="name" type="text" autocomplete="name" required placeholder="Your name"><label for="guest-email">Email
+            name="name" type="text" autocomplete="name" value="{{ old('name') }}" required placeholder="Your name"><label for="guest-email">Email
             address <span>*</span></label><input id="guest-email" name="email" type="email" autocomplete="email"
-            required placeholder="you@example.com"><label for="guest-interest">I'm interested in</label><input
-            id="guest-interest" name="interest" type="text" x-model="selectedTrip"
+            required value="{{ old('email') }}" placeholder="you@example.com"><label for="guest-interest">I'm interested in</label><input
+            id="guest-interest" name="interest" type="text" value="{{ old('interest') }}" x-model="selectedTrip"
             placeholder="A trek, tour or place"><label for="guest-message">What would you like to
             experience?</label><textarea id="guest-message" name="message" rows="3"
-            placeholder="Your ideas, dates or questions"></textarea><button class="btn btn-orange" type="submit">Send
+            placeholder="Your ideas, dates or questions">{{ old('message') }}</textarea><button class="btn btn-orange" type="submit">Send
             enquiry ↗</button>
-          <p class="form-confirmation" role="status" x-show="formSubmitted" x-cloak>Thank you. Please contact our team
-            by phone or email to complete your enquiry.</p>
+          @error('name')<p class="form-confirmation">{{ $message }}</p>@enderror
+          @error('email')<p class="form-confirmation">{{ $message }}</p>@enderror
+          @error('interest')<p class="form-confirmation">{{ $message }}</p>@enderror
+          @error('message')<p class="form-confirmation">{{ $message }}</p>@enderror
         </form>
       </div>
     </section>

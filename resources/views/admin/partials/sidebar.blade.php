@@ -25,16 +25,40 @@
                 </li>
 
                 <li class="menu-title"><span>Operations</span></li>
+                @php
+                    $isInquirySection = request()->routeIs('admin.inquiries.*', 'admin.site-inquiries.*');
+                    $isWebsiteInquirySection = request()->query('source') === 'website' || request()->routeIs('admin.site-inquiries.*');
+                    $isPackageInquirySection = request()->query('source') === 'package'
+                        || request()->routeIs('admin.inquiries.show', 'admin.inquiries.update-status');
+                @endphp
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->routeIs('admin.inquiries.*') ? 'active' : 'collapsed' }}" href="#sidebarInquiries" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.inquiries.*') ? 'true' : 'false' }}" aria-controls="sidebarInquiries">
+                    <a class="nav-link menu-link {{ $isInquirySection ? 'active' : 'collapsed' }}" href="#sidebarInquiries" data-bs-toggle="collapse" role="button" aria-expanded="{{ $isInquirySection ? 'true' : 'false' }}" aria-controls="sidebarInquiries">
                         <i class="ri-question-answer-line"></i><span>Inquiries</span><span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.inquiries.*') ? 'show' : '' }}" id="sidebarInquiries">
+                    <div class="collapse menu-dropdown {{ $isInquirySection ? 'show' : '' }}" id="sidebarInquiries">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && ! request()->query('stage') ? 'active' : '' }}" href="{{ route('admin.inquiries.index') }}">All inquiries</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'new' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'new']) }}">New</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'contacted' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'contacted']) }}">Contacted</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'cancelled' && request()->routeIs('admin.inquiries.*') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['status' => 'cancelled']) }}">Cancelled</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ $isWebsiteInquirySection ? 'active' : 'collapsed' }}" href="#sidebarWebsiteInquiries" data-bs-toggle="collapse" role="button" aria-expanded="{{ $isWebsiteInquirySection ? 'true' : 'false' }}" aria-controls="sidebarWebsiteInquiries">Site inquiries<span class="menu-arrow"></span></a>
+                                <div class="collapse menu-dropdown {{ $isWebsiteInquirySection ? 'show' : '' }}" id="sidebarWebsiteInquiries">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && $isWebsiteInquirySection && ! request()->query('status') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['source' => 'website']) }}">All</a></li>
+                                        @foreach (['new' => 'New', 'contacted' => 'Contacted', 'cancelled' => 'Cancelled'] as $statusValue => $statusLabel)
+                                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && $isWebsiteInquirySection && request()->query('status') === $statusValue ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['source' => 'website', 'status' => $statusValue]) }}">{{ $statusLabel }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ $isPackageInquirySection ? 'active' : 'collapsed' }}" href="#sidebarPackageInquiries" data-bs-toggle="collapse" role="button" aria-expanded="{{ $isPackageInquirySection ? 'true' : 'false' }}" aria-controls="sidebarPackageInquiries">Package inquiries<span class="menu-arrow"></span></a>
+                                <div class="collapse menu-dropdown {{ $isPackageInquirySection ? 'show' : '' }}" id="sidebarPackageInquiries">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && $isPackageInquirySection && ! request()->query('status') ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['source' => 'package']) }}">All</a></li>
+                                        @foreach (['new' => 'New', 'contacted' => 'Contacted', 'cancelled' => 'Cancelled'] as $statusValue => $statusLabel)
+                                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.inquiries.index') && $isPackageInquirySection && request()->query('status') === $statusValue ? 'active' : '' }}" href="{{ route('admin.inquiries.index', ['source' => 'package', 'status' => $statusValue]) }}">{{ $statusLabel }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </li>

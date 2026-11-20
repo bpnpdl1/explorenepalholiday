@@ -4,7 +4,7 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <div>
                     <h4 class="mb-sm-0">Inquiries</h4>
-                    <p class="text-muted mb-0 mt-1">Follow up with travelers and turn trip questions into bookings.</p>
+                <p class="text-muted mb-0 mt-1">Package requests and messages from the website, together in one follow-up queue.</p>
                 </div>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
@@ -37,7 +37,7 @@
                 <h4 class="card-title mb-1">All inquiries</h4>
                 <p class="text-muted mb-0">Review traveler questions by follow-up stage.</p>
             </div>
-            <span class="badge bg-primary-subtle text-primary">{{ $inquiries->total() }}{{ $selectedStatus || $search !== '' ? ' of '.$inquiryCount : '' }} records</span>
+            <span class="badge bg-primary-subtle text-primary">{{ $inquiries->total() }}{{ $selectedStatus || $selectedSource || $search !== '' ? ' of '.$inquiryCount : '' }} records</span>
         </div>
 
         <div class="card-body">
@@ -56,8 +56,15 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-md-3 col-lg-2">
+                    <select class="form-select" name="source" aria-label="Filter inquiries by source">
+                        <option value="">All sources</option>
+                        <option value="package" @selected($selectedSource === 'package')>Package inquiries</option>
+                        <option value="website" @selected($selectedSource === 'website')>Website inquiries</option>
+                    </select>
+                </div>
                 <div class="col-auto"><button class="btn btn-primary" type="submit">Filter</button></div>
-                @if ($selectedStatus || $search !== '')
+                @if ($selectedStatus || $selectedSource || $search !== '')
                     <div class="col-auto"><a class="btn btn-light" href="{{ route('admin.inquiries.index') }}">Clear</a></div>
                 @endif
             </form>
@@ -67,10 +74,10 @@
                     <thead class="table-light text-muted">
                         <tr>
                             <th scope="col">Inquiry ID</th>
+                            <th scope="col">Source</th>
                             <th scope="col">Traveler</th>
                             <th scope="col">Contact</th>
-                            <th scope="col">Interested package</th>
-                            <th scope="col">Travel date</th>
+                            <th scope="col">Interest / package</th>
                             <th scope="col">Received</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-end">Details</th>
@@ -80,14 +87,20 @@
                         @forelse ($inquiries as $inquiry)
                             <tr>
                                 <td><span class="fw-medium">#{{ $inquiry->id }}</span></td>
-                                <td><h6 class="mb-1">{{ $inquiry->customer_name }}</h6><span class="text-muted">{{ $inquiry->email }}</span></td>
-                                <td>{{ $inquiry->phone }}</td>
-                                <td>{{ $inquiry->package?->name ?? 'Package removed' }}</td>
-                                <td>{{ $inquiry->travelWindowLabel() }}</td>
-                                <td>{{ $inquiry->created_at->format('M j, Y') }}</td>
-                                <td><span class="badge bg-{{ $statusClasses[$inquiry->status->value] }}-subtle text-{{ $statusClasses[$inquiry->status->value] }}">{{ $inquiry->status->label() }}</span></td>
+                                <td><span class="badge bg-{{ $inquiry->source === 'package' ? 'primary' : 'info' }}-subtle text-{{ $inquiry->source === 'package' ? 'primary' : 'info' }}">{{ $inquiry->source === 'package' ? 'Package' : 'Website' }}</span></td>
+                                <td><h6 class="mb-1">{{ $inquiry->name }}</h6><span class="text-muted">{{ $inquiry->email }}</span></td>
+                                <td>{{ $inquiry->phone ?: '—' }}</td>
+                                <td>
+                                    @if ($inquiry->source === 'package')
+                                        {{ $inquiry->package_name ?? 'Package removed' }}
+                                    @else
+                                        {{ $inquiry->interest ?: 'General question' }}
+                                    @endif
+                                </td>
+                                <td>{{ \Illuminate\Support\Carbon::parse($inquiry->created_at)->format('M j, Y') }}</td>
+                                <td><span class="badge bg-{{ $statusClasses[$inquiry->status] }}-subtle text-{{ $statusClasses[$inquiry->status] }}">{{ \App\Enums\PackageInquiryStatus::from($inquiry->status)->label() }}</span></td>
                                 <td class="text-end">
-                                    <a class="btn btn-soft-primary btn-sm" href="{{ route('admin.inquiries.show', $inquiry) }}" aria-label="View inquiry {{ $inquiry->id }}">
+                                    <a class="btn btn-soft-primary btn-sm" href="{{ $inquiry->source === 'package' ? route('admin.inquiries.show', $inquiry->id) : route('admin.site-inquiries.show', $inquiry->id) }}" aria-label="View inquiry {{ $inquiry->id }}">
                                         <i class="ri-eye-line align-bottom" aria-hidden="true"></i>
                                     </a>
                                 </td>

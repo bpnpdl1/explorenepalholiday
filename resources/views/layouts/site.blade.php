@@ -31,6 +31,13 @@
     <script defer src="{{ asset('site/scripts/alpine.min.js') }}"></script>
 </head>
 <body class="antialiased @yield('body_class')" x-data="site()" :class="tripSearchOpen ? 'search-open' : ''" x-init="updateScrollUI()" @scroll.window="updateScrollUI()" @keydown.escape.window="closeOverlays()">
+    @if (session('site_inquiry_submitted'))
+        <div class="site-toast" data-site-toast role="status" aria-live="polite" aria-atomic="true">
+            <i data-lucide="circle-check" aria-hidden="true"></i>
+            <p>Thanks for your inquiry. Our team will be in touch.</p>
+            <button type="button" data-site-toast-dismiss aria-label="Dismiss notification">&times;</button>
+        </div>
+    @endif
     @yield('content')
     @include('site.partials.trip-search-modal')
 
