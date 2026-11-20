@@ -14,21 +14,21 @@ class CategorySeeder extends Seeder
 
         $categories = [
             [
-                'name' => 'Trekking',
-                'summary' => 'Multi-day treks through Nepal’s mountain regions and traditional villages.',
-                'description' => 'Explore Nepal on foot with routes for a range of interests and experience levels.',
+                'name' => 'Peak Climbing in Nepal',
+                'summary' => 'Guided Himalayan peak climbing journeys across Nepal.',
+                'description' => 'Explore climbing packages by region, with route planning, acclimatization, and experienced local support.',
                 'sort_order' => 1,
             ],
             [
-                'name' => 'Peak Climbing',
-                'summary' => 'Non-technical and technical climbing journeys among the Himalayan peaks.',
-                'description' => 'Plan a Himalayan peak climb with experienced local support and a considered itinerary.',
+                'name' => 'Tours in Nepal',
+                'summary' => 'Guided cultural, nature, and discovery tours throughout Nepal.',
+                'description' => 'Explore Nepal through heritage sites, mountain towns, wildlife areas, and locally guided journeys.',
                 'sort_order' => 2,
             ],
             [
-                'name' => 'Tours',
-                'summary' => 'Guided journeys through Nepal’s historic cities, mountain towns, and landscapes.',
-                'description' => 'Discover Nepal through cultural visits, scenic drives, and experiences with local guides.',
+                'name' => 'Trekking in Nepal',
+                'summary' => 'Multi-day treks through Nepal’s mountain regions and traditional villages.',
+                'description' => 'Explore Nepal on foot with routes for a range of interests and experience levels.',
                 'sort_order' => 3,
             ],
             [

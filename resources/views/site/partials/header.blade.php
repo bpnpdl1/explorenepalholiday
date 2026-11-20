@@ -1,4 +1,8 @@
-  <div class="topbar">
+  <script>
+    window.NEPAL_NAVIGATION = @js($navigationCategories);
+    window.NEPAL_PACKAGES = @js($packageSearchItems);
+  </script>
+  <div class="topbar" id="top">
     <div class="container topbar-inner"><span>{{ $siteSetting?->tagline ?: 'Thoughtful journeys across Nepal' }}</span>@if ($siteSetting?->whatsapp_number)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSetting->whatsapp_number) }}" target="_blank" rel="noopener noreferrer">{{ $siteSetting->whatsapp_number }} &middot; WhatsApp</a>@endif</div>
   </div>
   <header class="site-header" :class="headerCompact ? 'is-compact' : ''" @mouseleave="openNav=null">
@@ -21,75 +25,36 @@
       <nav class="container desktop-nav" aria-label="Primary navigation">
         <a class="compact-brand" href="{{ route('home') }}#top" aria-label="{{ $siteSetting?->name ?? config('app.name') }}, back to top"><img
             src="{{ $siteSetting?->logo_url ?: asset('site/assets/logo-mark.png') }}" alt="" width="42" height="42"></a>
-        <div class="nav-item cascade" @mouseenter="openNav='trekking';openRegion=trekRegions[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="trekking" @click="openNav='trekking';openRegion=trekRegions[0].id"
-            :aria-expanded="(openNav==='trekking').toString()" aria-controls="nav-trekking">Trekking in Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-trekking" class="nav-panel cascade-panel" x-show="openNav==='trekking'" x-cloak>
-            <div class="cascade-heading">TREKKING REGIONS <span x-text="trekRegions.length + ' categories'"></span>
+        @foreach ($navigationCategories as $navKey => $navCategory)
+          @php($firstSubcategoryId = $navCategory['subcategories'][0]['id'] ?? '')
+          <div class="nav-item cascade {{ $navKey }}-cascade" @mouseenter="openNav='{{ $navKey }}';openRegion='{{ $firstSubcategoryId }}'"
+            @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
+            <button type="button" data-nav-trigger="{{ $navKey }}" @click="openNav='{{ $navKey }}';openRegion='{{ $firstSubcategoryId }}'"
+              :aria-expanded="(openNav==='{{ $navKey }}').toString()" aria-controls="nav-{{ $navKey }}">{{ $navCategory['label'] }} <span class="nav-chevron" aria-hidden="true"></span></button>
+            <div id="nav-{{ $navKey }}" class="nav-panel cascade-panel {{ $navKey === 'tours' ? 'tour-cascade' : ($navKey === 'climbing' ? 'climbing-cascade' : '') }}" x-show="openNav==='{{ $navKey }}'" x-cloak>
+              <div class="cascade-heading">{{ $navCategory['heading'] }} <span>{{ count($navCategory['subcategories']) }} categories</span></div>
+              @forelse ($navCategory['subcategories'] as $subcategory)
+                <div class="cascade-region" @mouseenter="openRegion='{{ $subcategory['id'] }}'" @focusin="openRegion='{{ $subcategory['id'] }}'">
+                  <button type="button" @click="openRegion='{{ $subcategory['id'] }}'" :aria-expanded="(openRegion==='{{ $subcategory['id'] }}').toString()" aria-controls="region-{{ $subcategory['id'] }}">
+                    <span>{{ $subcategory['name'] }}</span><span aria-hidden="true">›</span>
+                  </button>
+                  <div class="cascade-flyout" id="region-{{ $subcategory['id'] }}" x-show="openRegion==='{{ $subcategory['id'] }}'" x-cloak>
+                    <div class="flyout-heading"><strong>{{ $subcategory['name'] }}</strong><span>{{ count($subcategory['packages']) }} {{ $navCategory['item_label'] }}</span></div>
+                    <div class="flyout-scroll">
+                      @forelse ($subcategory['packages'] as $package)
+                        <a href="{{ $package['url'] }}">{{ $package['name'] }}</a>
+                      @empty
+                        <p class="flyout-note mb-0">No published packages in this subcategory yet.</p>
+                      @endforelse
+                    </div>
+                  </div>
+                </div>
+              @empty
+                <p class="flyout-note mb-0">{{ $navCategory['empty_message'] }}</p>
+              @endforelse
             </div>
-            <template x-for="region in trekRegions" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id">
-                <button type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' trek ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Open a trek to see itinerary highlights. Routes and availability
-                    need confirmation.</div>
-                </div>
-              </div>
-            </template>
           </div>
-        </div>
-        <div class="nav-item cascade" @mouseenter="openNav='tours';openRegion=tourGroups[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="tours" @click="openNav='tours';openRegion=tourGroups[0].id"
-            :aria-expanded="(openNav==='tours').toString()" aria-controls="nav-tours">Tours in Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-tours" class="nav-panel cascade-panel tour-cascade" x-show="openNav==='tours'" x-cloak>
-            <div class="cascade-heading">TOUR STYLES <span x-text="tourGroups.length + ' categories'"></span></div>
-            <template x-for="region in tourGroups" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id"><button
-                  type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'tour-region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'tour-region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' tour ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Open a tour to see itinerary highlights.</div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="nav-item cascade" @mouseenter="openNav='climbing';openRegion=climbingGroups[0].id"
-          @focusout="if(!$el.contains($event.relatedTarget)) openNav=null">
-          <button type="button" data-nav-trigger="climbing" @click="openNav='climbing';openRegion=climbingGroups[0].id"
-            :aria-expanded="(openNav==='climbing').toString()" aria-controls="nav-climbing">Peak Climbing Nepal <span
-              class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-climbing" class="nav-panel cascade-panel climbing-cascade" x-show="openNav==='climbing'" x-cloak>
-            <div class="cascade-heading">CLIMBING REGIONS <span x-text="climbingGroups.length + ' categories'"></span>
-            </div>
-            <template x-for="region in climbingGroups" :key="region.id">
-              <div class="cascade-region" @mouseenter="openRegion=region.id" @focusin="openRegion=region.id"><button
-                  type="button" @click="openRegion=region.id" :aria-expanded="(openRegion===region.id).toString()"
-                  :aria-controls="'climb-region-'+region.id"><span x-text="region.name"></span><span
-                    aria-hidden="true">›</span></button>
-                <div class="cascade-flyout" :id="'climb-region-'+region.id" x-show="openRegion===region.id" x-cloak>
-                  <div class="flyout-heading"><strong x-text="region.name"></strong><span
-                      x-text="region.trips.length + ' peak ideas'"></span></div>
-                  <div class="flyout-scroll"><template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys" x-text="trip"></a></template></div>
-                  <div class="flyout-note">Climbing plans depend on experience, conditions and permits.</div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
+        @endforeach
         <div class="nav-item compact" @mouseenter="openNav='company'"
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button"
             data-nav-trigger="company" @click="openNav='company'" :aria-expanded="(openNav==='company').toString()"
@@ -113,54 +78,32 @@
     </div>
     <nav id="mobile-menu" class="mobile-nav" aria-label="Mobile navigation" x-show="menuOpen" x-cloak>
       <div class="mobile-menu-intro">EXPLORE NEPAL YOUR WAY</div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('trekking')"
-          :aria-expanded="(mobileSection==='trekking').toString()" aria-controls="mobile-trekking">Trekking in Nepal
-          <span aria-hidden="true">+</span></button>
-        <div id="mobile-trekking" class="mobile-subnav" x-show="mobileSection==='trekking'" x-cloak>
-          <p>Explore trek ideas by region.</p><template x-for="region in trekRegions" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-region-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-region-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
-                    x-text="trip"></a></template>
+      @foreach ($navigationCategories as $navKey => $navCategory)
+        <div class="mobile-nav-group">
+          <button type="button" @click="toggleMobileSection('{{ $navKey }}')"
+            :aria-expanded="(mobileSection==='{{ $navKey }}').toString()" aria-controls="mobile-{{ $navKey }}">{{ $navCategory['label'] }} <span aria-hidden="true">+</span></button>
+          <div id="mobile-{{ $navKey }}" class="mobile-subnav" x-show="mobileSection==='{{ $navKey }}'" x-cloak>
+            <p>{{ $navCategory['intro'] }}</p>
+            @forelse ($navCategory['subcategories'] as $subcategory)
+              <div class="mobile-region">
+                <button type="button" @click="toggleMobileRegion('{{ $subcategory['id'] }}')"
+                  :aria-expanded="(mobileRegion==='{{ $subcategory['id'] }}').toString()" aria-controls="mobile-region-{{ $subcategory['id'] }}">
+                  <span>{{ $subcategory['name'] }}</span><span aria-hidden="true">+</span>
+                </button>
+                <div class="mobile-trip-list" id="mobile-region-{{ $subcategory['id'] }}" x-show="mobileRegion==='{{ $subcategory['id'] }}'" x-cloak>
+                  @forelse ($subcategory['packages'] as $package)
+                    <a href="{{ $package['url'] }}" @click="menuOpen=false;mobileSection=null;mobileRegion=null">{{ $package['name'] }}</a>
+                  @empty
+                    <p class="mobile-trip-empty">No published packages yet.</p>
+                  @endforelse
+                </div>
               </div>
-            </div>
-          </template>
+            @empty
+              <p>{{ $navCategory['empty_message'] }}</p>
+            @endforelse
+          </div>
         </div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('tours')"
-          :aria-expanded="(mobileSection==='tours').toString()" aria-controls="mobile-tours">Tours in Nepal <span
-            aria-hidden="true">+</span></button>
-        <div id="mobile-tours" class="mobile-subnav" x-show="mobileSection==='tours'" x-cloak>
-          <p>Explore tour ideas by theme.</p><template x-for="region in tourGroups" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-tour-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-tour-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
-                    x-text="trip"></a></template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('climbing')"
-          :aria-expanded="(mobileSection==='climbing').toString()" aria-controls="mobile-climbing">Peak Climbing Nepal
-          <span aria-hidden="true">+</span></button>
-        <div id="mobile-climbing" class="mobile-subnav" x-show="mobileSection==='climbing'" x-cloak>
-          <p>Explore climbing ideas by region.</p><template x-for="region in climbingGroups" :key="region.id">
-            <div class="mobile-region"><button type="button" @click="toggleMobileRegion(region.id)"
-                :aria-expanded="(mobileRegion===region.id).toString()" :aria-controls="'mobile-climb-'+region.id"><span
-                  x-text="region.name"></span><span aria-hidden="true">+</span></button>
-              <div class="mobile-trip-list" :id="'mobile-climb-'+region.id" x-show="mobileRegion===region.id" x-cloak>
-                <template x-for="trip in region.trips" :key="trip"><a href="{{ route('home') }}#journeys"
-                    x-text="trip"></a></template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+      @endforeach
       <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('company')"
           :aria-expanded="(mobileSection==='company').toString()" aria-controls="mobile-company">Company <span
             aria-hidden="true">+</span></button>

@@ -13,8 +13,8 @@ class PackageSeeder extends Seeder
     {
         $packages = [
             [
-                'subcategory' => 'Everest Base Camp Trek',
-                'category' => 'Trekking',
+                'subcategory' => 'Everest Region Trekking',
+                'category' => 'Trekking in Nepal',
                 'name' => 'Everest Base Camp Trek',
                 'summary' => 'Trek through Sherpa villages to Everest Base Camp, with time to acclimatize and take in the Khumbu peaks.',
                 'description' => 'Follow well-loved trails through Namche Bazaar, Tengboche, Dingboche, and Gorak Shep before reaching Everest Base Camp. The itinerary includes planned acclimatization and comfortable teahouse stays.',
@@ -39,8 +39,8 @@ class PackageSeeder extends Seeder
                 'image' => '1670824549-nepal-everest-base-camp-trek.jpg',
             ],
             [
-                'subcategory' => 'Annapurna Base Camp Trek',
-                'category' => 'Trekking',
+                'subcategory' => 'Annapurna Region Trekking',
+                'category' => 'Trekking in Nepal',
                 'name' => 'Annapurna Base Camp Trek',
                 'summary' => 'Walk through mountain villages and forest trails into the Annapurna sanctuary.',
                 'description' => 'Travel from Pokhara through terraced hillsides, rhododendron forests, and Gurung villages to the high mountain amphitheater at Annapurna Base Camp.',
@@ -64,8 +64,8 @@ class PackageSeeder extends Seeder
                 'image' => 'annapurna-sunrise.jpg',
             ],
             [
-                'subcategory' => 'Manaslu Circuit Trek',
-                'category' => 'Trekking',
+                'subcategory' => 'Manaslu Region Trekking',
+                'category' => 'Trekking in Nepal',
                 'name' => 'Manaslu Circuit Trek',
                 'summary' => 'Cross remote Himalayan valleys and the Larkya La on a guided circuit around Mount Manaslu.',
                 'description' => 'Follow the Budhi Gandaki valley through traditional settlements and high alpine scenery, then cross Larkya La before descending toward the Annapurna region.',
@@ -89,8 +89,8 @@ class PackageSeeder extends Seeder
                 'image' => 'manaslu-trekker.webp',
             ],
             [
-                'subcategory' => 'Langtang Valley Trek',
-                'category' => 'Trekking',
+                'subcategory' => 'Langtang Region Trekking',
+                'category' => 'Trekking in Nepal',
                 'name' => 'Langtang Valley Trek',
                 'summary' => 'Explore alpine landscapes, Tamang communities, and the high valley beneath Langtang Lirung.',
                 'description' => 'Walk north of Kathmandu through forest, riverside settlements, and yak pastures to Kyanjin Gompa, with optional hikes for wider mountain views.',
@@ -114,8 +114,8 @@ class PackageSeeder extends Seeder
                 'image' => 'langtang-kyanjin-village.webp',
             ],
             [
-                'subcategory' => 'Island Peak Climbing',
-                'category' => 'Peak Climbing',
+                'subcategory' => 'Everest Region Peak Climbing',
+                'category' => 'Peak Climbing in Nepal',
                 'name' => 'Island Peak Climbing',
                 'summary' => 'Combine Khumbu acclimatization trekking with a guided Island Peak summit attempt.',
                 'description' => 'Build altitude on the Everest approach before moving to Island Peak base camp for skills practice and a planned summit push with climbing support.',
@@ -139,8 +139,8 @@ class PackageSeeder extends Seeder
                 'image' => 'island-peak-climbers.webp',
             ],
             [
-                'subcategory' => 'Mera Peak Climbing',
-                'category' => 'Peak Climbing',
+                'subcategory' => 'Everest Region Peak Climbing',
+                'category' => 'Peak Climbing in Nepal',
                 'name' => 'Mera Peak Climbing',
                 'summary' => 'Journey through the Hinku Valley toward a high Himalayan summit and broad mountain panoramas.',
                 'description' => 'Trek through the quieter Hinku Valley with acclimatization days before a guided climb on Mera Peak’s standard route.',
@@ -164,8 +164,8 @@ class PackageSeeder extends Seeder
                 'image' => 'mera-peak.webp',
             ],
             [
-                'subcategory' => 'Kathmandu Valley Heritage Tour',
-                'category' => 'Tours',
+                'subcategory' => 'Kathmandu Valley & Heritage Tours',
+                'category' => 'Tours in Nepal',
                 'name' => 'Kathmandu Valley Heritage Tour',
                 'summary' => 'Visit historic squares, sacred sites, and traditional neighborhoods around Kathmandu Valley.',
                 'description' => 'Explore the living heritage and architecture of Kathmandu Valley with a local guide, with time to visit its historic temple squares and stupas.',
@@ -189,8 +189,8 @@ class PackageSeeder extends Seeder
                 'image' => 'kathmandu-stupa.jpg',
             ],
             [
-                'subcategory' => 'Chitwan Jungle Safari',
-                'category' => 'Wildlife & Safari',
+                'subcategory' => 'Wildlife & Nature Tours',
+                'category' => 'Tours in Nepal',
                 'name' => 'Chitwan Jungle Safari',
                 'summary' => 'Discover Chitwan’s forests, river habitats, and wildlife with responsible local guides.',
                 'description' => 'Spend time in the Terai with guided nature walks, river experiences, and wildlife viewing that follows park rules and respects animal habitats.',

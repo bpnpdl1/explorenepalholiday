@@ -738,9 +738,3 @@
       title="Share your trip plans on WhatsApp"><img class="icon-img icon-img--dark" src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt=""></a>
   </div>
 @endsection
-
-@push('page_scripts')
-  <script>
-    window.NEPAL_PACKAGES = @json($packageSearchItems);
-  </script>
-@endpush

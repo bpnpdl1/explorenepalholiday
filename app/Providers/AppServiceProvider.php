@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\SiteSetting;
+use App\View\Composers\SiteNavigationComposer;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Blade;
@@ -61,6 +62,8 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('siteSetting', $siteSettingData === null ? null : (object) $siteSettingData);
         });
+
+        view()->composer('site.partials.header', SiteNavigationComposer::class);
 
         $this->configureDefaults();
     }

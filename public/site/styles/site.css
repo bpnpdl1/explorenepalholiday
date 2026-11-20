@@ -2286,8 +2286,8 @@ html {
   width: 310px;
 }
 .climbing-cascade .cascade-flyout {
-  left: auto;
-  right: calc(100% - 1px);
+  left: calc(100% - 1px);
+  right: auto;
   width: 280px;
 }
 @media (max-width: 900px) {
@@ -2346,6 +2346,12 @@ html {
   }
   .mobile-nav .mobile-trip-list a:last-child {
     border-bottom: 0;
+  }
+  .mobile-nav .mobile-trip-empty {
+    margin: 0;
+    padding: 9px 11px;
+    color: #71808b;
+    font-size: 0.76rem;
   }
 }
 

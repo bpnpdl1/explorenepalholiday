@@ -64,13 +64,6 @@ class HomeController extends Controller
             ->unique()
             ->values();
 
-        $packageSearchItems = $packages->map(fn (Package $package): array => [
-            'name' => $package->name,
-            'category' => $package->subcategory->category->destination->name.' / '.$package->subcategory->category->name,
-            'activity' => $package->subcategory->category->name,
-            'url' => route('packages.show', $package),
-        ])->values();
-
         return view('site.home', compact(
             'destinations',
             'faqs',
@@ -79,7 +72,6 @@ class HomeController extends Controller
             'featuredPackages',
             'featuredPackageCategories',
             'packageCategories',
-            'packageSearchItems',
         ));
     }
 }

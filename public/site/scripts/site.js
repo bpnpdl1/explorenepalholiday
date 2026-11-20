@@ -9,14 +9,7 @@ function site() {
     mobileRegion: null,
     openNav: null,
     openRegion: null,
-    trekRegions: window.NEPAL_MENU.trekRegions,
-    tourGroups: window.NEPAL_MENU.tourGroups,
-    climbingGroups: window.NEPAL_MENU.climbingGroups,
-    searchItems: Array.isArray(window.NEPAL_PACKAGES) ? window.NEPAL_PACKAGES : [
-      ...window.NEPAL_MENU.trekRegions.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Trekking' }))),
-      ...window.NEPAL_MENU.tourGroups.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Tours' }))),
-      ...window.NEPAL_MENU.climbingGroups.flatMap((group) => group.trips.map((name) => ({ name, category: group.name, activity: 'Peak Climbing' })))
-    ],
+    searchItems: Array.isArray(window.NEPAL_PACKAGES) ? window.NEPAL_PACKAGES : [],
     activeFilter: 'all',
     selectedTrip: '',
     formSubmitted: false,

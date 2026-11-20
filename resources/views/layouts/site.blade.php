@@ -33,7 +33,6 @@
 <body class="antialiased @yield('body_class')" x-data="site()" :class="tripSearchOpen ? 'search-open' : ''" x-init="updateScrollUI()" @scroll.window="updateScrollUI()" @keydown.escape.window="closeOverlays()">
     @yield('content')
 
-    <script src="{{ asset('site/scripts/menu-data.js') }}"></script>
     <script src="{{ asset('site/scripts/site.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
