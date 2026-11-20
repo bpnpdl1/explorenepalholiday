@@ -577,13 +577,15 @@
                                 <p class="package-price-offer__per-person">{{ $package->price_qualifier ?: 'per person' }}</p>
                             </div>
                         </div>
-                        @if ($package->highlights->isNotEmpty())
-                            <ul class="package-price-benefits" aria-label="{{ $package->name }} highlights">
-                                @foreach ($package->highlights as $highlight)
-                                    <li><i data-lucide="circle-check" aria-hidden="true"></i><span>{{ $highlight->title }}</span></li>
-                                @endforeach
-                            </ul>
-                        @endif
+                        <ul class="package-price-benefits" aria-label="Trip benefits">
+                            <li><i data-lucide="trending-up" aria-hidden="true"></i><span>98% Trip Success Rate</span></li>
+                            <li><i data-lucide="calendar-check" aria-hidden="true"></i><span>Flexible Booking &amp; Trip Options</span></li>
+                            <li><i data-lucide="badge-check" aria-hidden="true"></i><span>Best Price Guarantee</span></li>
+                            <li><i data-lucide="shield-check" aria-hidden="true"></i><span>Safety-First on Every Trip</span></li>
+                            <li><i data-lucide="wallet-cards" aria-hidden="true"></i><span>Secure &amp; Flexible Lifetime Deposit</span></li>
+                            <li><i data-lucide="user-check" aria-hidden="true"></i><span>Highly Experienced Guides</span></li>
+                            <li><i data-lucide="circle-check" aria-hidden="true"></i><span>Guaranteed Departures</span></li>
+                        </ul>
                     </div>
                     <div class="package-conversion-card package-form-card">
                         <div class="package-form-tabs" aria-label="Choose how to continue">
