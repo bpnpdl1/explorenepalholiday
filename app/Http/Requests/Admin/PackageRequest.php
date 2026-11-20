@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Enums\Season;
+use App\Http\Requests\Admin\Rules\PackageContentRules;
+use App\Http\Requests\Admin\Rules\PackageDetailsRules;
+use App\Http\Requests\Admin\Rules\PackageMediaRules;
+use App\Http\Requests\Admin\Rules\PackageScheduleRules;
 use App\Models\Package;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 abstract class PackageRequest extends FormRequest
 {
@@ -19,101 +21,14 @@ abstract class PackageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $seasons = array_map(fn (Season $season): string => $season->value, Season::cases());
+        $package = $this->route('package');
+        $packageId = $package instanceof Package ? $package->id : null;
 
         return [
-            'subcategory_id' => ['required', 'integer', 'exists:subcategories,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'summary' => ['nullable', 'string', 'max:5000'],
-            'description' => ['nullable', 'string', 'max:100000'],
-            'duration_days' => ['nullable', 'integer', 'between:1,65535'],
-            'duration_nights' => ['nullable', 'integer', 'between:0,65535'],
-            'difficulty' => ['nullable', 'string', 'max:50'],
-            'max_altitude_meters' => ['nullable', 'integer', 'between:0,65535'],
-            'min_group_size' => ['nullable', 'integer', 'between:1,65535'],
-            'max_group_size' => ['nullable', 'integer', 'between:1,65535', 'gte:min_group_size'],
-            'price_from' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
-            'compare_at_price' => ['nullable', 'numeric', 'min:0', 'max:99999999.99', 'gte:price_from'],
-            'currency' => ['required', 'string', 'size:3', 'regex:/^[A-Z]{3}$/'],
-            'price_qualifier' => ['nullable', 'string', 'max:255'],
-            'route_map_url' => ['nullable', 'url', 'max:2048'],
-            'route_map_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:10240', 'dimensions:max_width=12000,max_height=12000'],
-            'remove_route_map' => ['sometimes', 'boolean'],
-            'accommodation' => ['nullable', 'string', 'max:10000'],
-            'fitness_guidance' => ['nullable', 'string', 'max:20000'],
-            'permit_notes' => ['nullable', 'string', 'max:20000'],
-            'safety_notes' => ['nullable', 'string', 'max:20000'],
-            'weather_notes' => ['nullable', 'string', 'max:20000'],
-            'meta_title' => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string', 'max:1000'],
-            'tags' => ['nullable', 'array', 'max:10'],
-            'tags.*' => ['required', 'string', 'max:50', 'distinct', Rule::in(['trekking', 'challenging', 'featured journey'])],
-            'is_published' => ['sometimes', 'boolean'],
-            'is_featured' => ['sometimes', 'boolean'],
-            'sort_order' => ['required', 'integer', 'between:0,65535'],
-            'seasons' => ['nullable', 'array', 'max:4'],
-            'seasons.*' => ['required', 'string', 'distinct', Rule::in($seasons)],
-            'included_features' => ['nullable', 'array', 'max:100'],
-            'included_features.*' => ['required', 'array:id,description'],
-            'included_features.*.id' => [
-                'nullable',
-                'integer',
-                'distinct',
-                Rule::exists('package_features', 'id')
-                    ->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0)
-                    ->where('type', 'included'),
-            ],
-            'included_features.*.description' => ['required', 'string', 'max:5000'],
-            'excluded_features' => ['nullable', 'array', 'max:100'],
-            'excluded_features.*' => ['required', 'array:id,description'],
-            'excluded_features.*.id' => [
-                'nullable',
-                'integer',
-                'distinct',
-                Rule::exists('package_features', 'id')
-                    ->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0)
-                    ->where('type', 'excluded'),
-            ],
-            'excluded_features.*.description' => ['required', 'string', 'max:5000'],
-            'itinerary_days' => ['nullable', 'array', 'max:100'],
-            'itinerary_days.*' => ['required', 'array:id,title,location,altitude_meters,activity_label,meal_plan,description'],
-            'itinerary_days.*.id' => [
-                'nullable',
-                'integer',
-                'distinct',
-                Rule::exists('package_itinerary_days', 'id')->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0),
-            ],
-            'itinerary_days.*.title' => ['required', 'string', 'max:255'],
-            'itinerary_days.*.location' => ['nullable', 'string', 'max:255'],
-            'itinerary_days.*.altitude_meters' => ['nullable', 'integer', 'between:0,65535'],
-            'itinerary_days.*.activity_label' => ['nullable', 'string', 'max:255'],
-            'itinerary_days.*.meal_plan' => ['nullable', 'string', 'max:255'],
-            'itinerary_days.*.description' => ['nullable', 'string', 'max:100000'],
-            'elevation_points' => ['nullable', 'array', 'max:100'],
-            'elevation_points.*' => ['required', 'array:id,stop_name,altitude_meters'],
-            'elevation_points.*.id' => [
-                'nullable',
-                'integer',
-                'distinct',
-                Rule::exists('package_elevation_points', 'id')->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0),
-            ],
-            'elevation_points.*.stop_name' => ['required', 'string', 'max:255'],
-            'elevation_points.*.altitude_meters' => ['required', 'integer', 'between:0,65535'],
-            'faqs' => ['nullable', 'array', 'max:100'],
-            'faqs.*' => ['required', 'array:id,question,answer'],
-            'faqs.*.id' => [
-                'nullable',
-                'integer',
-                'distinct',
-                Rule::exists('package_faqs', 'id')->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0),
-            ],
-            'faqs.*.question' => ['required', 'string', 'max:500'],
-            'faqs.*.answer' => ['required', 'string', 'max:10000'],
-            'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
-            'gallery' => ['nullable', 'array', 'max:20'],
-            'gallery.*' => ['image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
-            'remove_gallery' => ['nullable', 'array'],
-            'remove_gallery.*' => ['integer', 'exists:media,id'],
+            ...PackageDetailsRules::rules(),
+            ...PackageScheduleRules::rules(),
+            ...PackageContentRules::rules($packageId),
+            ...PackageMediaRules::rules(),
         ];
     }
 }
