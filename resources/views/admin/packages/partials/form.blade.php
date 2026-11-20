@@ -2,6 +2,14 @@
     $hasOldInput = session()->hasOldInput();
     $seasons = old('seasons', $package->seasons->map(fn ($season) => $season->season->value)->all());
     $tags = old('tags', $package->tags ?? []);
+    $includedFeatures = old('included_features', $package->features->where('type', 'included')->map(fn ($feature) => [
+        'id' => $feature->id,
+        'description' => $feature->description,
+    ])->values()->all());
+    $excludedFeatures = old('excluded_features', $package->features->where('type', 'excluded')->map(fn ($feature) => [
+        'id' => $feature->id,
+        'description' => $feature->description,
+    ])->values()->all());
     $itineraryDays = old('itinerary_days', $package->itineraryDays->map(fn ($day) => [
         'id' => $day->id,
         'title' => $day->title,
@@ -38,14 +46,14 @@
                         <h5 class="mb-1" data-wizard-heading>Package basics</h5>
                         <p class="text-muted mb-0" data-wizard-description>Set the package name, category, overview, and tags.</p>
                     </div>
-                    <span class="badge bg-primary-subtle text-primary" data-wizard-count aria-live="polite">Step 1 of 5</span>
+                    <span class="badge bg-primary-subtle text-primary" data-wizard-count aria-live="polite">Step 1 of 6</span>
                 </div>
-                <div class="progress mb-3" role="progressbar" aria-label="Package form progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
-                    <div class="progress-bar" data-wizard-progress style="width: 20%"></div>
+                <div class="progress mb-3" role="progressbar" aria-label="Package form progress" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
+                    <div class="progress-bar" data-wizard-progress style="width: 16.67%"></div>
                 </div>
                 <ol class="package-wizard__steps" aria-label="Package form steps">
-                    @foreach (['Package basics', 'Trip facts', 'Route details', 'Itinerary', 'Images & publishing'] as $stepLabel)
-                        <li><button type="button" class="package-wizard__step {{ $loop->first ? 'is-current' : '' }}" data-wizard-go="{{ $loop->index }}" @if (!$loop->first) disabled @endif aria-current="{{ $loop->first ? 'step' : 'false' }}"><span>{{ $loop->iteration }}</span><span>{{ $stepLabel }}</span></button></li>
+                    @foreach (['Package basics', 'Trip facts', 'Inclusions', 'Route details', 'Itinerary', 'Images & publishing'] as $stepLabel)
+                        <li><button type="button" class="package-wizard__step {{ $loop->first ? 'is-current' : '' }}" data-wizard-go="{{ $loop->index }}" aria-current="{{ $loop->first ? 'step' : 'false' }}"><span>{{ $loop->iteration }}</span><span>{{ $stepLabel }}</span></button></li>
                     @endforeach
                 </ol>
             </div>
@@ -134,6 +142,52 @@
                 </div>
             </div>
         </div>
+    </div>
+
+        </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Inclusions & exclusions" data-step-description="List what this package includes and what travelers should budget for separately.">
+    @php
+        $featureLists = [
+            'included' => ['label' => 'Included', 'input' => 'included_features', 'rows' => $includedFeatures, 'tone' => 'success', 'hint' => 'Services and costs included in the package price.'],
+            'excluded' => ['label' => 'Not included', 'input' => 'excluded_features', 'rows' => $excludedFeatures, 'tone' => 'warning', 'hint' => 'Costs or services travelers should arrange or budget for separately.'],
+        ];
+    @endphp
+    <div class="row g-3">
+        @foreach ($featureLists as $featureType => $featureList)
+            @php($rows = $featureList['rows'])
+            <div class="col-xl-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div><h5 class="card-title mb-0"><i class="ri-{{ $featureType === 'included' ? 'check' : 'close' }}-line text-{{ $featureList['tone'] }} me-1"></i>{{ $featureList['label'] }}</h5><p class="text-muted mb-0 small">{{ $featureList['hint'] }}</p></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning d-none" data-feature-limit="{{ $featureType }}" role="alert">You can add up to 100 items in this list.</div>
+                        <div class="text-center py-4 text-muted" data-feature-empty="{{ $featureType }}" @if (count($rows)) hidden @endif>
+                            <span class="d-block mb-2">No items added yet.</span>
+                            <button type="button" class="btn btn-sm btn-soft-primary" data-add-feature="{{ $featureType }}"><i class="ri-add-line me-1"></i>Add first item</button>
+                        </div>
+                        <div class="d-grid gap-2" data-feature-list="{{ $featureType }}" data-input-name="{{ $featureList['input'] }}">
+                            @foreach ($rows as $index => $feature)
+                                <div class="border rounded p-3" data-feature-row>
+                                    @if (!empty($feature['id']))<input type="hidden" data-feature-id name="{{ $featureList['input'] }}[{{ $index }}][id]" value="{{ $feature['id'] }}">@endif
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="small fw-semibold">Item <span data-feature-number>{{ $loop->iteration }}</span></span></div>
+                                    <label class="visually-hidden" for="{{ $featureList['input'] }}-{{ $index }}-description">{{ $featureList['label'] }} description</label>
+                                    <textarea data-field="description" id="{{ $featureList['input'] }}-{{ $index }}-description" name="{{ $featureList['input'] }}[{{ $index }}][description]" rows="2" maxlength="5000" class="form-control @error("{$featureList['input']}.$index.description") is-invalid @enderror" placeholder="e.g. Airport transfers in a private vehicle" required>{{ $feature['description'] ?? '' }}</textarea>
+                                    @error("{$featureList['input']}.$index.description")<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <div class="d-flex justify-content-end gap-2 mt-2">
+                                        <button type="button" class="btn btn-sm btn-light" data-move-feature="up" aria-label="Move item up" title="Move up"><i class="ri-arrow-up-line"></i></button>
+                                        <button type="button" class="btn btn-sm btn-light" data-move-feature="down" aria-label="Move item down" title="Move down"><i class="ri-arrow-down-line"></i></button>
+                                        <button type="button" class="btn btn-sm btn-soft-danger" data-remove-feature aria-label="Remove item" title="Remove item"><i class="ri-delete-bin-line"></i></button>
+                                        <button type="button" class="btn btn-sm btn-soft-primary" data-add-feature="{{ $featureType }}"><i class="ri-add-line me-1"></i>Add item</button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        @error($featureList['input'])<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 
         </section>
@@ -269,14 +323,14 @@
 
 @push('styles')
     <style>
-        .package-wizard__steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
+        .package-wizard__steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
         .package-wizard__step { display: flex; align-items: center; gap: .6rem; width: 100%; padding: .55rem .7rem; border: 1px solid var(--vz-border-color, #e9ebec); border-radius: .5rem; background: var(--vz-card-bg, #fff); color: var(--vz-secondary-color, #878a99); text-align: left; }
         .package-wizard__step span:first-child { display: grid; width: 1.7rem; height: 1.7rem; flex: 0 0 1.7rem; place-items: center; border-radius: 50%; background: #f3f6f9; font-size: .8rem; font-weight: 600; }
         .package-wizard__step.is-current { border-color: var(--vz-primary, #405189); color: var(--vz-primary, #405189); font-weight: 600; }
         .package-wizard__step.is-current span:first-child { background: var(--vz-primary, #405189); color: #fff; }
         .package-wizard__step:disabled { cursor: not-allowed; opacity: .6; }
         @media (max-width: 767.98px) {
-            .package-wizard__steps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .35rem; }
+            .package-wizard__steps { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .35rem; }
             .package-wizard__step { justify-content: center; padding: .45rem .25rem; }
             .package-wizard__step span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
         }
@@ -313,6 +367,19 @@
             const count = wizard.querySelector('[data-wizard-count]');
             const progress = wizard.querySelector('[data-wizard-progress]');
             const progressTrack = progress?.parentElement;
+            const featureLists = [...form.querySelectorAll('[data-feature-list]')];
+            const featureTemplate = document.createElement('template');
+            featureTemplate.innerHTML = `<div class="border rounded p-3" data-feature-row>
+                <div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="small fw-semibold">Item <span data-feature-number></span></span></div>
+                <label class="visually-hidden" data-feature-label>Description</label>
+                <textarea data-field="description" rows="2" maxlength="5000" class="form-control" placeholder="e.g. Airport transfers in a private vehicle" required></textarea>
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-light" data-move-feature="up" aria-label="Move item up"><i class="ri-arrow-up-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-light" data-move-feature="down" aria-label="Move item down"><i class="ri-arrow-down-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-soft-danger" data-remove-feature><i class="ri-delete-bin-line me-1"></i>Remove</button>
+                    <button type="button" class="btn btn-sm btn-soft-primary" data-add-feature><i class="ri-add-line me-1"></i>Add item</button>
+                </div>
+            </div>`;
             const itineraryContainer = form.querySelector('[data-itinerary-days]');
             const itineraryEmpty = form.querySelector('[data-itinerary-empty]');
             const itineraryLimit = form.querySelector('[data-itinerary-limit]');
@@ -348,7 +415,7 @@
                 });
 
                 steps.forEach((step, stepIndex) => {
-                    step.disabled = stepIndex > current + 1;
+                    step.disabled = false;
                     step.classList.toggle('is-current', stepIndex === current);
                     if (stepIndex === current) step.setAttribute('aria-current', 'step');
                     else step.removeAttribute('aria-current');
@@ -369,6 +436,75 @@
                     wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             };
+
+            const refreshFeatureList = (list) => {
+                const type = list.dataset.featureList;
+                const inputName = list.dataset.inputName;
+                const rows = [...list.querySelectorAll('[data-feature-row]')];
+                form.querySelector(`[data-feature-empty="${type}"]`).hidden = rows.length > 0;
+                form.querySelector(`[data-feature-limit="${type}"]`).classList.toggle('d-none', rows.length < 100);
+                form.querySelectorAll('[data-add-feature]').forEach((button) => {
+                    const buttonList = button.closest('[data-feature-list]');
+                    if (button.dataset.addFeature !== type && buttonList !== list) return;
+
+                    button.disabled = rows.length >= 100;
+                    const buttonRow = button.closest('[data-feature-row]');
+                    if (buttonRow) button.hidden = buttonRow !== rows[rows.length - 1];
+                });
+
+                rows.forEach((row, index) => {
+                    row.querySelector('[data-feature-number]').textContent = String(index + 1);
+                    const idField = row.querySelector('[data-feature-id]');
+                    if (idField) idField.name = `${inputName}[${index}][id]`;
+                    row.querySelector('[data-move-feature="up"]').disabled = index === 0;
+                    row.querySelector('[data-move-feature="down"]').disabled = index === rows.length - 1;
+                    row.querySelectorAll('[data-field]').forEach((field) => {
+                        field.name = `${inputName}[${index}][${field.dataset.field}]`;
+                        field.id = `${inputName}-${index}-${field.dataset.field}`;
+                        row.querySelector('[data-feature-label]').htmlFor = field.id;
+                    });
+                });
+            };
+
+            form.addEventListener('click', (event) => {
+                const addButton = event.target.closest('[data-add-feature]');
+                if (!addButton) return;
+
+                const type = addButton.dataset.addFeature || addButton.closest('[data-feature-list]')?.dataset.featureList;
+                const list = featureLists.find((featureList) => featureList.dataset.featureList === type);
+                if (!list || list.querySelectorAll('[data-feature-row]').length >= 100) return;
+
+                const row = featureTemplate.content.firstElementChild.cloneNode(true);
+                const currentRow = addButton.closest('[data-feature-row]');
+                if (currentRow) currentRow.after(row);
+                else list.append(row);
+
+                refreshFeatureList(list);
+                row.querySelector('[data-field="description"]')?.focus();
+            });
+
+            featureLists.forEach((list) => {
+                list.addEventListener('click', (event) => {
+                    if (event.target.closest('[data-add-feature]')) return;
+                    const row = event.target.closest('[data-feature-row]');
+                    if (!row) return;
+
+                    if (event.target.closest('[data-remove-feature]')) {
+                        row.remove();
+                    } else {
+                        const moveButton = event.target.closest('[data-move-feature]');
+                        if (moveButton?.dataset.moveFeature === 'up' && row.previousElementSibling) {
+                            list.insertBefore(row, row.previousElementSibling);
+                        } else if (moveButton?.dataset.moveFeature === 'down' && row.nextElementSibling) {
+                            list.insertBefore(row.nextElementSibling, row);
+                        }
+                    }
+
+                    refreshFeatureList(list);
+                });
+
+                refreshFeatureList(list);
+            });
 
             const refreshItineraryDays = () => {
                 const rows = [...itineraryContainer.querySelectorAll('[data-itinerary-day]')];
@@ -448,8 +584,7 @@
             steps.forEach((step) => {
                 step.addEventListener('click', () => {
                     const target = Number(step.dataset.wizardGo);
-                    if (target < current) showStep(target, true);
-                    else if (target === current + 1 && validatePanel(panels[current])) showStep(target, true);
+                    if (Number.isInteger(target) && panels[target]) showStep(target, true);
                 });
             });
 

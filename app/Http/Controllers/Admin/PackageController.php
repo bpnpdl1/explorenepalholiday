@@ -114,6 +114,7 @@ class PackageController extends Controller
         $package = DB::transaction(function () use ($attributes, $validated): Package {
             $package = Package::create($attributes);
             $this->syncSeasons($package, $validated['seasons'] ?? []);
+            $this->syncFeatures($package, $validated['included_features'] ?? [], $validated['excluded_features'] ?? []);
             $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
 
             return $package;
@@ -140,6 +141,7 @@ class PackageController extends Controller
     {
         $package->load([
             'seasons',
+            'features',
             'itineraryDays',
             'media',
         ]);
@@ -161,6 +163,7 @@ class PackageController extends Controller
         DB::transaction(function () use ($package, $attributes, $validated): void {
             $package->update($attributes);
             $this->syncSeasons($package, $validated['seasons'] ?? []);
+            $this->syncFeatures($package, $validated['included_features'] ?? [], $validated['excluded_features'] ?? []);
             $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
         });
 
@@ -188,6 +191,51 @@ class PackageController extends Controller
             fn (string $season): array => ['season' => $season],
             array_values(array_unique($seasons)),
         ));
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $included
+     * @param  array<int, array<string, mixed>>  $excluded
+     */
+    private function syncFeatures(Package $package, array $included, array $excluded): void
+    {
+        $rowsByType = [
+            'included' => array_values($included),
+            'excluded' => array_values($excluded),
+        ];
+        $existingFeatures = $package->features()->get()->keyBy('id');
+        $retainedIds = collect([...$rowsByType['included'], ...$rowsByType['excluded']])
+            ->pluck('id')
+            ->filter()
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $featuresToDelete = $package->features();
+
+        if ($retainedIds !== []) {
+            $featuresToDelete->whereNotIn('id', $retainedIds);
+        }
+
+        $featuresToDelete->delete();
+
+        foreach ($rowsByType as $type => $rows) {
+            foreach ($rows as $index => $row) {
+                $attributes = [
+                    'type' => $type,
+                    'description' => $row['description'],
+                    'sort_order' => $index,
+                ];
+                $feature = ! empty($row['id']) ? $existingFeatures->get((int) $row['id']) : null;
+
+                if ($feature) {
+                    $feature->update($attributes);
+
+                    continue;
+                }
+
+                $package->features()->create($attributes);
+            }
+        }
     }
 
     /**

@@ -53,6 +53,28 @@ abstract class PackageRequest extends FormRequest
             'sort_order' => ['required', 'integer', 'between:0,65535'],
             'seasons' => ['nullable', 'array', 'max:4'],
             'seasons.*' => ['required', 'string', 'distinct', Rule::in($seasons)],
+            'included_features' => ['nullable', 'array', 'max:100'],
+            'included_features.*' => ['required', 'array:id,description'],
+            'included_features.*.id' => [
+                'nullable',
+                'integer',
+                'distinct',
+                Rule::exists('package_features', 'id')
+                    ->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0)
+                    ->where('type', 'included'),
+            ],
+            'included_features.*.description' => ['required', 'string', 'max:5000'],
+            'excluded_features' => ['nullable', 'array', 'max:100'],
+            'excluded_features.*' => ['required', 'array:id,description'],
+            'excluded_features.*.id' => [
+                'nullable',
+                'integer',
+                'distinct',
+                Rule::exists('package_features', 'id')
+                    ->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0)
+                    ->where('type', 'excluded'),
+            ],
+            'excluded_features.*.description' => ['required', 'string', 'max:5000'],
             'itinerary_days' => ['nullable', 'array', 'max:100'],
             'itinerary_days.*' => ['required', 'array:id,title,location,altitude_meters,activity_label,meal_plan,description'],
             'itinerary_days.*.id' => [
