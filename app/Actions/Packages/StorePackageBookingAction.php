@@ -3,8 +3,10 @@
 namespace App\Actions\Packages;
 
 use App\Enums\PackageBookingStatus;
+use App\Enums\PackageBookingLogEvent;
 use App\Models\Package;
 use App\Models\PackageBooking;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StorePackageBookingAction
@@ -24,18 +26,29 @@ class StorePackageBookingAction
             })
             ->first();
 
-        return $package->bookings()->create([
-            'customer_name' => $validated['customer_name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'country_of_residence' => $validated['country_of_residence'] ?? null,
-            'travel_date' => $travelDate,
-            'guests' => $validated['guests'],
-            'special_requests' => $validated['special_requests'] ?? null,
-            'reference' => 'ENH-'.Str::upper(Str::random(10)),
-            'package_departure_id' => $departure?->id,
-            'status' => PackageBookingStatus::New,
-            'currency' => $departure?->currency ?: $package->currency ?: 'USD',
-        ]);
+        return DB::transaction(function () use ($package, $validated, $travelDate, $departure): PackageBooking {
+            $booking = $package->bookings()->create([
+                'customer_name' => $validated['customer_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'country_of_residence' => $validated['country_of_residence'] ?? null,
+                'travel_date' => $travelDate,
+                'guests' => $validated['guests'],
+                'special_requests' => $validated['special_requests'] ?? null,
+                'reference' => 'ENH-'.Str::upper(Str::random(10)),
+                'package_departure_id' => $departure?->id,
+                'status' => PackageBookingStatus::New,
+                'currency' => $departure?->currency ?: $package->currency ?: 'USD',
+            ]);
+
+            $booking->logs()->create([
+                'event' => PackageBookingLogEvent::Submitted,
+                'from_status' => null,
+                'to_status' => PackageBookingStatus::New,
+                'note' => 'Booking request submitted on the website.',
+            ]);
+
+            return $booking;
+        });
     }
 }

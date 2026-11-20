@@ -68,22 +68,71 @@
                 <div class="card-header"><h5 class="card-title mb-0">Update booking status</h5></div>
                 <div class="card-body">
                     @error('status')<div class="alert alert-danger py-2">{{ $message }}</div>@enderror
-                    @forelse ($booking->status->nextStatuses() as $nextStatus)
-                        <form class="mb-2" method="POST" action="{{ route('admin.bookings.update-status', $booking) }}" data-booking-status-confirm data-booking-reference="{{ $booking->reference ?: '#'.$booking->id }}" data-next-status="{{ $nextStatus->label() }}" data-dangerous="{{ $nextStatus->value === 'canceled' ? 'true' : 'false' }}">
+                    @error('note')<div class="alert alert-danger py-2">{{ $message }}</div>@enderror
+                    @if ($booking->status->nextStatuses())
+                        <form method="POST" action="{{ route('admin.bookings.update-status', $booking) }}" data-booking-status-confirm data-booking-reference="{{ $booking->reference ?: '#'.$booking->id }}">
                             @csrf
                             @method('PATCH')
-                            <input type="hidden" name="status" value="{{ $nextStatus->value }}">
-                            <button class="btn {{ $nextStatus === \App\Enums\PackageBookingStatus::Canceled ? 'btn-soft-danger' : 'btn-primary' }} w-100" type="submit">
-                                <i class="{{ $nextStatus === \App\Enums\PackageBookingStatus::Canceled ? 'ri-close-circle-line' : 'ri-arrow-right-line' }} me-1"></i>
-                                {{ $nextStatus === \App\Enums\PackageBookingStatus::Processing ? 'Start processing' : 'Mark as '.$nextStatus->label() }}
-                            </button>
+                            <label class="form-label" for="booking-next-status">Move to</label>
+                            <select class="form-select mb-3" id="booking-next-status" name="status" required>
+                                @foreach ($booking->status->nextStatuses() as $nextStatus)
+                                    <option value="{{ $nextStatus->value }}">{{ $nextStatus->label() }}</option>
+                                @endforeach
+                            </select>
+                            <label class="form-label" for="booking-status-note">Internal note <span class="text-muted">(optional)</span></label>
+                            <textarea class="form-control mb-3" id="booking-status-note" name="note" rows="3" maxlength="1000" placeholder="Add context for this status change">{{ old('note') }}</textarea>
+                            <button class="btn btn-primary w-100" type="submit"><i class="ri-save-line me-1"></i>Update status</button>
                         </form>
-                    @empty
+                    @else
                         <p class="text-muted mb-0">This booking is canceled and has no further status changes.</p>
-                    @endforelse
+                    @endif
                     <small class="text-muted d-block mt-3">Status changes are saved to the booking record.</small>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div><h5 class="card-title mb-1">Booking activity</h5><p class="text-muted mb-0">Status changes and request history.</p></div>
+            <span class="badge bg-light text-body">{{ $booking->logs->count() }} {{ \Illuminate\Support\Str::plural('event', $booking->logs->count()) }}</span>
+        </div>
+        <div class="card-body">
+            @forelse ($booking->logs as $log)
+                <div class="d-flex gap-3 {{ ! $loop->last ? 'pb-3 mb-3 border-bottom' : '' }}">
+                    <span class="avatar-title rounded-circle bg-{{ $statusClasses[$log->to_status->value] }}-subtle text-{{ $statusClasses[$log->to_status->value] }} flex-shrink-0" style="width: 2.25rem; height: 2.25rem;">
+                        <i class="{{ $log->from_status ? 'ri-arrow-right-line' : 'ri-add-line' }}"></i>
+                    </span>
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <strong>
+                                @switch($log->event)
+                                    @case(\App\Enums\PackageBookingLogEvent::Submitted)
+                                        Booking request received · {{ $log->to_status->label() }}
+                                        @break
+                                    @case(\App\Enums\PackageBookingLogEvent::StatusChanged)
+                                        {{ $log->from_status->label() }} <i class="ri-arrow-right-line mx-1 text-muted"></i> {{ $log->to_status->label() }}
+                                        @break
+                                    @case(\App\Enums\PackageBookingLogEvent::HistoryInitialized)
+                                        Initial status recorded · {{ $log->to_status->label() }}
+                                        @break
+                                @endswitch
+                            </strong>
+                            <time class="text-muted small" datetime="{{ $log->created_at->toIso8601String() }}">{{ $log->created_at->format('M j, Y g:i A') }}</time>
+                        </div>
+                        <p class="text-muted small mb-0">
+                            @switch($log->event)
+                                @case(\App\Enums\PackageBookingLogEvent::Submitted) Traveler / website @break
+                                @case(\App\Enums\PackageBookingLogEvent::StatusChanged) {{ $log->user?->name ?? 'Administrator' }} @break
+                                @case(\App\Enums\PackageBookingLogEvent::HistoryInitialized) System @break
+                            @endswitch
+                        </p>
+                        @if ($log->note)<p class="mt-2 mb-0" style="white-space: pre-line">{{ $log->note }}</p>@endif
+                    </div>
+                </div>
+            @empty
+                <p class="text-muted mb-0">No activity has been recorded for this booking.</p>
+            @endforelse
         </div>
     </div>
 

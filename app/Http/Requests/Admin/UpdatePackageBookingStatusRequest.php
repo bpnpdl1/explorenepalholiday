@@ -18,6 +18,7 @@ class UpdatePackageBookingStatusRequest extends FormRequest
     {
         return [
             'status' => ['required', Rule::enum(PackageBookingStatus::class)],
+            'note' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

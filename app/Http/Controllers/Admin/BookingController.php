@@ -72,7 +72,7 @@ class BookingController extends Controller
 
     public function show(PackageBooking $booking): View
     {
-        $booking->load(['package', 'departure']);
+        $booking->load(['package', 'departure', 'logs.user']);
 
         return view('admin.bookings.show', [
             'booking' => $booking,
@@ -88,6 +88,7 @@ class BookingController extends Controller
         $updateStatus->handle(
             $booking,
             PackageBookingStatus::from($request->validated('status')),
+            $request->validated('note'),
         );
 
         return back()->with('success', 'Booking status updated.');

@@ -5,9 +5,12 @@ document.addEventListener('submit', async (event) => {
 
     event.preventDefault();
 
-    const nextStatus = form.dataset.nextStatus;
+    const statusSelect = form.querySelector('[name="status"]');
+    const nextStatus = form.dataset.nextStatus
+        || statusSelect?.selectedOptions[0]?.textContent.trim()
+        || 'the selected status';
     const reference = form.dataset.bookingReference;
-    const isDangerous = form.dataset.dangerous === 'true';
+    const isDangerous = form.dataset.dangerous === 'true' || statusSelect?.value === 'canceled';
     const confirmationText = `Move booking ${reference} to ${nextStatus}?`;
 
     if (!window.Swal) {

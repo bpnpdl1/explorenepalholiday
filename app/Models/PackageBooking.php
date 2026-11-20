@@ -6,6 +6,7 @@ use App\Enums\PackageBookingStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'reference',
@@ -42,5 +43,10 @@ class PackageBooking extends Model
     public function departure(): BelongsTo
     {
         return $this->belongsTo(PackageDeparture::class, 'package_departure_id');
+    }
+
+    public function logs(): HasMany
+    {
+        return $this->hasMany(PackageBookingLog::class)->orderByDesc('created_at')->orderByDesc('id');
     }
 }
