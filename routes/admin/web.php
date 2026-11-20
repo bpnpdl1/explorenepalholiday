@@ -2,18 +2,19 @@
 
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GuestReviewController;
 use App\Http\Controllers\Admin\InquiryController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PackageDepartureController;
 use App\Http\Controllers\Admin\PackageReviewController;
 use App\Http\Controllers\Admin\RichContentImageController;
 use App\Http\Controllers\Admin\SeoController;
-use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SiteInquiryController;
-use App\Http\Controllers\Admin\NewsletterSubscriberController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
@@ -21,7 +22,7 @@ use App\Http\Controllers\Admin\WhyTravelReasonController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::view('dashboard', 'admin.dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::patch('bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.update-status');
