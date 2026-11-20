@@ -24,6 +24,9 @@ Route::get('/packages/{package}/booking', [PackageBookingController::class, 'cre
 Route::post('/packages/{package}/booking', [PackageBookingController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('packages.bookings.store');
+Route::get('/packages/{package}/booking/thank-you/{reference}', [PackageBookingController::class, 'thankYou'])
+    ->middleware('signed')
+    ->name('packages.bookings.thank-you');
 Route::get('/packages/{package}', [PackageController::class, 'show'])->name('packages.show');
 
 require __DIR__.'/settings.php';

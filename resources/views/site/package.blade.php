@@ -75,10 +75,10 @@
 
 @section('content')
     <a class="skip-link" href="#main">Skip to content</a>
-    @if (session('inquiry_submitted') || session('booking_reference'))
+    @if (session('inquiry_submitted'))
         <div class="package-toast is-visible" data-package-toast role="status" aria-live="polite">
             <i data-lucide="circle-check" aria-hidden="true"></i>
-            <p>{{ session('booking_reference') ? 'Booking request '.session('booking_reference').' received. Our team will confirm availability with you.' : 'Thanks for your inquiry. Our team will be in touch.' }}</p>
+            <p>Thanks for your inquiry. Our team will be in touch.</p>
             <button type="button" data-toast-dismiss aria-label="Dismiss notification">&times;</button>
         </div>
     @endif
@@ -462,8 +462,8 @@
                                                 </div>
                                                 <span
                                                     class="package-date-row__status">{{ str($departure->status)->replace('_', ' ')->headline() }}</span>
-                                                <a href="#sidebar-enquiry-form"
-                                                    aria-label="Ask about {{ $departure->season->label() }} departure">Ask
+                                                <a href="{{ route('packages.bookings.create', ['package' => $package, 'departure_id' => $departure->id]) }}"
+                                                    aria-label="Book {{ $departure->season->label() }} departure">Book
                                                     <span aria-hidden="true">&#8599;</span></a>
                                             </article>
                                         @endforeach

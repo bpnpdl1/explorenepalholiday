@@ -47,14 +47,6 @@
 
 @section('content')
     <a class="skip-link" href="#main">Skip to content</a>
-    @if (session('booking_reference'))
-        <div class="package-toast is-visible" data-package-toast role="status" aria-live="polite">
-            <i data-lucide="circle-check" aria-hidden="true"></i>
-            <p>Your booking request <strong>{{ session('booking_reference') }}</strong> has been sent. Our team will confirm availability and arrangements with you.</p>
-            <button type="button" data-toast-dismiss aria-label="Dismiss notification">&times;</button>
-        </div>
-    @endif
-
     @include('site.partials.header')
 
     <section class="booking-banner" aria-labelledby="booking-title">
@@ -94,8 +86,8 @@
                         <div class="booking-fields">
                             <div class="booking-field">
                                 <label for="departure-date">Preferred departure date <span>*</span></label>
-                                <input id="departure-date" name="travel_date" type="date" required min="{{ now()->toDateString() }}" value="{{ old('travel_date') }}" autocomplete="off" aria-describedby="travel-date-help">
-                                <small id="travel-date-help">Your date is a request; our team will confirm availability.</small>
+                                <input id="departure-date" name="travel_date" type="date" required min="{{ now()->toDateString() }}" value="{{ old('travel_date', $selectedDeparture?->starts_on?->toDateString()) }}" autocomplete="off" aria-describedby="travel-date-help">
+                                <small id="travel-date-help">@if ($selectedDeparture) Selected {{ $selectedDeparture->season->label() }} departure: {{ $selectedDeparture->starts_on->format('M j, Y') }}. You can change this date. @else Your date is a request; our team will confirm availability. @endif</small>
                                 @error('travel_date') <small class="text-danger">{{ $message }}</small> @enderror
                             </div>
                             <div class="booking-field">
