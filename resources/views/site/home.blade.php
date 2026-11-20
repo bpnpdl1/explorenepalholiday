@@ -39,7 +39,7 @@
 
           <!-- Hero actions -->
           <div class="hero-fade-up-delay-3 hero-expedition-ctas">
-            <a href="#journeys" class="hero-cta-primary">
+            <a href="{{ route('packages.index') }}" class="hero-cta-primary">
               Explore journeys
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -59,52 +59,47 @@
       <!-- Search / Filter Widget -->
       <div class="container hero-search-container">
         <div class="hero-search-card">
-          <form @submit.prevent="handleExpeditionSearch()" class="hero-search-grid">
+          <form action="{{ route('packages.index') }}" method="GET" class="hero-search-grid">
 
-            <!-- Destination Region -->
+            <!-- Regions represented in published packages -->
             <div class="hero-search-field">
-              <label for="exp-region">Destination Region</label>
-              <select id="exp-region" x-model="expeditionFilters.region" class="hero-select">
+              <label for="exp-region">Region / Trip Area</label>
+              <select id="exp-region" name="region" x-model="expeditionFilters.region" class="hero-select">
                 <option value="all">All Regions</option>
-                <option value="everest">Everest Region</option>
-                <option value="annapurna">Annapurna Region</option>
-                <option value="langtang">Langtang Region</option>
-                <option value="manaslu">Manaslu Region</option>
-                <option value="makalu">Makalu Region</option>
-                <option value="kanchenjunga">Kanchenjunga Region</option>
+                @foreach ($packageRegions as $region)
+                  <option value="{{ $region['value'] }}">{{ $region['label'] }}</option>
+                @endforeach
               </select>
             </div>
 
-            <!-- Expedition Comfort Tier -->
+            <!-- Package style from the category model -->
             <div class="hero-search-field">
-              <label for="exp-comfort">Trip Style</label>
-              <select id="exp-comfort" x-model="expeditionFilters.comfort" class="hero-select">
+              <label for="exp-style">Trip Style</label>
+              <select id="exp-style" name="style" x-model="expeditionFilters.style" class="hero-select">
                 <option value="any">Any Trip Style</option>
-                <option value="comfort">Comfort Trek</option>
-                <option value="premium">Classic Trek</option>
-                <option value="classic">Cultural Tour</option>
-                <option value="camping">Remote Camping</option>
+                @foreach ($packageStyles as $style)
+                  <option value="{{ $style['value'] }}">{{ $style['label'] }}</option>
+                @endforeach
               </select>
             </div>
 
-            <!-- Trek Duration -->
+            <!-- Available duration ranges from package duration data -->
             <div class="hero-search-field">
-              <label for="exp-duration">Trek Duration</label>
-              <select id="exp-duration" x-model="expeditionFilters.duration" class="hero-select">
+              <label for="exp-duration">Trip Duration</label>
+              <select id="exp-duration" name="duration" x-model="expeditionFilters.duration" class="hero-select">
                 <option value="any">Any Duration</option>
-                <option value="short">Short (5–10 Days)</option>
-                <option value="medium">Medium (11–18 Days)</option>
-                <option value="long">Long (19–28 Days)</option>
-                <option value="extended">Extended (29+ Days)</option>
+                @foreach ($packageDurations as $duration)
+                  <option value="{{ $duration['value'] }}">{{ $duration['label'] }}</option>
+                @endforeach
               </select>
             </div>
 
-            <!-- Departure Window -->
+            <!-- Seasons assigned to published packages -->
             <div class="hero-search-field">
-              <label for="exp-departure">Best Season</label>
-              <select id="exp-departure" x-model="expeditionFilters.departure" class="hero-select">
+              <label for="exp-season">Best Season</label>
+              <select id="exp-season" name="season" x-model="expeditionFilters.season" class="hero-select">
                 <option value="any">Any Season</option>
-                @foreach (\App\Enums\Season::cases() as $season)
+                @foreach ($packageSeasons as $season)
                   <option value="{{ $season->value }}">{{ $season->label() }}</option>
                 @endforeach
               </select>
@@ -128,29 +123,29 @@
             <span class="hero-active-filters-label">Active filters:</span>
             <template x-if="expeditionFilters.region !== 'all'">
               <span class="hero-filter-pill">
-                <span x-text="getRegionLabel(expeditionFilters.region)"></span>
-                <button @click="expeditionFilters.region = 'all'" class="hero-filter-pill-remove">&times;</button>
+                <span x-text="getExpeditionFilterLabel('exp-region', expeditionFilters.region)"></span>
+                <button type="button" @click="expeditionFilters.region = 'all'; handleExpeditionSearch()" class="hero-filter-pill-remove" aria-label="Remove region filter">&times;</button>
               </span>
             </template>
-            <template x-if="expeditionFilters.comfort !== 'any'">
+            <template x-if="expeditionFilters.style !== 'any'">
               <span class="hero-filter-pill">
-                <span x-text="getComfortLabel(expeditionFilters.comfort)"></span>
-                <button @click="expeditionFilters.comfort = 'any'" class="hero-filter-pill-remove">&times;</button>
+                <span x-text="getExpeditionFilterLabel('exp-style', expeditionFilters.style)"></span>
+                <button type="button" @click="expeditionFilters.style = 'any'; handleExpeditionSearch()" class="hero-filter-pill-remove" aria-label="Remove trip style filter">&times;</button>
               </span>
             </template>
             <template x-if="expeditionFilters.duration !== 'any'">
               <span class="hero-filter-pill">
-                <span x-text="getDurationLabel(expeditionFilters.duration)"></span>
-                <button @click="expeditionFilters.duration = 'any'" class="hero-filter-pill-remove">&times;</button>
+                <span x-text="getExpeditionFilterLabel('exp-duration', expeditionFilters.duration)"></span>
+                <button type="button" @click="expeditionFilters.duration = 'any'; handleExpeditionSearch()" class="hero-filter-pill-remove" aria-label="Remove trip duration filter">&times;</button>
               </span>
             </template>
-            <template x-if="expeditionFilters.departure !== 'any'">
+            <template x-if="expeditionFilters.season !== 'any'">
               <span class="hero-filter-pill">
-                <span x-text="getDepartureLabel(expeditionFilters.departure)"></span>
-                <button @click="expeditionFilters.departure = 'any'" class="hero-filter-pill-remove">&times;</button>
+                <span x-text="getExpeditionFilterLabel('exp-season', expeditionFilters.season)"></span>
+                <button type="button" @click="expeditionFilters.season = 'any'; handleExpeditionSearch()" class="hero-filter-pill-remove" aria-label="Remove season filter">&times;</button>
               </span>
             </template>
-            <button @click="resetExpeditionFilters()" class="hero-filter-clear">Clear all</button>
+            <button type="button" @click="resetExpeditionFilters()" class="hero-filter-clear">Clear all</button>
           </div>
 
         </div>
@@ -247,10 +242,7 @@
           <div class="journey-tabs flex flex-wrap items-center gap-2" role="group" aria-label="Filter featured packages">
             <button type="button" @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">All featured</button>
             @foreach ($featuredPackageCategories as $category)
-              @php
-                  $categoryKey = \Illuminate\Support\Str::slug($category);
-              @endphp
-              <button type="button" @click="activeCategory = '{{ $categoryKey }}'" :class="activeCategory === '{{ $categoryKey }}' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">{{ $category }}</button>
+              <button type="button" @click="activeCategory = '{{ $category['value'] }}'" :class="activeCategory === '{{ $category['value'] }}' ? 'bg-slate-900 text-white font-medium shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-200">{{ $category['label'] }}</button>
             @endforeach
           </div>
         </div>
@@ -258,7 +250,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           @forelse ($featuredPackages as $package)
             @php
-                $categoryKey = \Illuminate\Support\Str::slug($package->subcategory->category->name);
+                $categoryKey = $package->subcategory->category->slug;
             @endphp
             <article x-show="activeCategory === 'all' || activeCategory === '{{ $categoryKey }}'" class="rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col overflow-hidden">
               <a href="{{ route('packages.show', $package) }}" class="relative h-52 overflow-hidden block">
@@ -550,7 +542,7 @@
 
 
 
-    <section id="journeys" class="journeys section" aria-labelledby="journeys-title" x-data="{ activeFilter: 'all' }">
+    <section id="journeys" class="journeys section" aria-labelledby="journeys-title" x-data="packageListings()">
       <div class="container">
         <div class="section-heading" data-aos="fade-up">
           <div><span class="eyebrow dark">PUBLISHED TRIPS</span><h2 id="journeys-title">Find your next <em>chapter.</em></h2></div>
@@ -559,19 +551,16 @@
         <div class="filter-row" role="group" aria-label="Filter packages by category">
           <button type="button" @click="activeFilter = 'all'" :class="activeFilter === 'all' ? 'active' : ''" :aria-pressed="(activeFilter === 'all').toString()">All packages</button>
           @foreach ($packageCategories as $category)
-            @php
-                $categoryKey = \Illuminate\Support\Str::slug($category);
-            @endphp
-            <button type="button" @click="activeFilter = '{{ $categoryKey }}'" :class="activeFilter === '{{ $categoryKey }}' ? 'active' : ''" :aria-pressed="(activeFilter === '{{ $categoryKey }}').toString()">{{ $category }}</button>
+            <button type="button" @click="activeFilter = '{{ $category['value'] }}'" :class="activeFilter === '{{ $category['value'] }}' ? 'active' : ''" :aria-pressed="(activeFilter === '{{ $category['value'] }}').toString()">{{ $category['label'] }}</button>
           @endforeach
         </div>
-        <p class="result-count" aria-live="polite">{{ $packages->count() }} published packages</p>
+        <p class="result-count" aria-live="polite"><span x-text="visiblePackagesCount()">{{ $packages->count() }}</span> published packages</p>
         <div class="trip-grid">
           @forelse ($packages as $package)
             @php
-                $categoryKey = \Illuminate\Support\Str::slug($package->subcategory->category->name);
+                $categoryKey = $package->subcategory->category->slug;
             @endphp
-            <article class="trip-card" data-category="{{ $categoryKey }}" x-show="activeFilter === 'all' || activeFilter === '{{ $categoryKey }}'">
+            <article class="trip-card" data-package-card data-region="{{ $package->subcategory->slug }}" data-style="{{ $categoryKey }}" data-duration="{{ $package->duration_days }}" data-seasons="{{ $package->seasons->map(fn ($season) => $season->season->value)->implode(',') }}" x-show="matchesPackage($el)">
               <a class="trip-image" href="{{ route('packages.show', $package) }}"><img src="{{ $package->getFirstMediaUrl('cover', 'card') ?: $package->getFirstMediaUrl('cover') ?: asset('site/assets/nepal-trail.jpg') }}" alt="{{ $package->name }}" loading="lazy"><span class="trip-category">{{ $package->subcategory->category->name }}</span></a>
               <div class="trip-content">
                 <div class="trip-meta"><span>{{ $package->subcategory->category->destination->name }} / {{ $package->subcategory->name }}</span>@if ($package->is_featured)<span>FEATURED</span>@endif</div>
@@ -586,6 +575,7 @@
             <p class="trip-search-empty">There are no published packages yet. Please check back soon.</p>
           @endforelse
         </div>
+        <p class="trip-search-empty" x-show="visiblePackagesCount() === 0" x-cloak>No published packages match those filters. Try changing your region, style, duration, or season.</p>
       </div>
     </section>
 

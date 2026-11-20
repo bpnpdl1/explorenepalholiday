@@ -156,52 +156,50 @@ function site() {
     // ===== Expedition Hero Search =====
     expeditionFilters: {
       region: 'all',
-      comfort: 'any',
+      style: 'any',
       duration: 'any',
-      departure: 'any',
+      season: 'any',
     },
     handleExpeditionSearch() {
-      console.log('Expedition search:', { ...this.expeditionFilters });
+      const form = document.querySelector('.hero-search-grid');
+      if (!form) return;
+
+      const url = new URL(form.action, window.location.origin);
+      Object.entries(this.expeditionFilters).forEach(([key, value]) => {
+        const defaultValue = key === 'region' ? 'all' : 'any';
+        if (value !== defaultValue) url.searchParams.set(key, value);
+      });
+
+      window.location.assign(url.toString());
     },
     hasActiveExpeditionFilters() {
       return this.expeditionFilters.region !== 'all' ||
-        this.expeditionFilters.comfort !== 'any' ||
+        this.expeditionFilters.style !== 'any' ||
         this.expeditionFilters.duration !== 'any' ||
-        this.expeditionFilters.departure !== 'any';
+        this.expeditionFilters.season !== 'any';
     },
     resetExpeditionFilters() {
-      this.expeditionFilters = { region: 'all', comfort: 'any', duration: 'any', departure: 'any' };
+      this.expeditionFilters = { region: 'all', style: 'any', duration: 'any', season: 'any' };
+      this.handleExpeditionSearch();
     },
-    getRegionLabel(value) {
-      const labels = { everest: 'Everest', annapurna: 'Annapurna', langtang: 'Langtang', manaslu: 'Manaslu', makalu: 'Makalu', kanchenjunga: 'Kanchenjunga' };
-      return labels[value] || value;
-    },
-    getComfortLabel(value) {
-      const labels = { comfort: 'Comfort Trek', premium: 'Classic Trek', classic: 'Cultural Tour', camping: 'Remote Camping' };
-      return labels[value] || value;
-    },
-    getDurationLabel(value) {
-      const labels = { short: '5–10 Days', medium: '11–18 Days', long: '19–28 Days', extended: '29+ Days' };
-      return labels[value] || value;
-    },
-    getDepartureLabel(value) {
-      const labels = { autumn: 'Autumn', spring: 'Spring', winter: 'Winter', monsoon: 'Monsoon' };
-      return labels[value] || value;
+    getExpeditionFilterLabel(selectId, value) {
+      const options = [...(document.getElementById(selectId)?.options || [])];
+      return options.find((option) => option.value === value)?.textContent.trim() || value;
     },
 
   };
 }
 
-function expeditionTabs() {
+function packageListings() {
   return {
-    activeTab: 'all',
-    tabs: [
-      { id: 'all', label: 'All (6)' },
-      { id: 'everest', label: 'Everest' },
-      { id: 'annapurna', label: 'Annapurna' },
-      { id: 'manaslu', label: 'Manaslu' },
-      { id: 'peak', label: 'Peak Climbing' },
-    ],
+    activeFilter: 'all',
+    matchesPackage(element) {
+      return this.activeFilter === 'all' || element.dataset.style === this.activeFilter;
+    },
+    visiblePackagesCount() {
+      return [...this.$root.querySelectorAll('[data-package-card]')]
+        .filter((element) => this.matchesPackage(element)).length;
+    }
   };
 }
 
