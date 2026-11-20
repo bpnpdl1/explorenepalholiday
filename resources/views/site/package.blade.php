@@ -21,6 +21,7 @@
     $price = $package->price_from !== null ? (float) $package->price_from : null;
     $compareAtPrice = $package->compare_at_price !== null ? (float) $package->compare_at_price : null;
     $currency = $package->currency ?: 'USD';
+    $whatsAppMessage = rawurlencode('I am interested in ' . $package->name . '.');
     $travelWindows = $package->departures
         ->map(
             fn($departure) => [
@@ -48,7 +49,6 @@
         max(1, (int) ($package->min_group_size ?: 1)),
         max((int) ($package->min_group_size ?: 1), min(20, (int) ($package->max_group_size ?: 6))),
     );
-    $whatsAppMessage = rawurlencode('I am interested in ' . $package->name . '.');
 @endphp
 
 @section('page_title', ($package->meta_title ?: $package->name) . ' | ' . ($siteSetting?->name ?? config('app.name',
@@ -328,6 +328,45 @@
                     @endif
 
                     @if ($package->elevationPoints->isNotEmpty())
+                        @php
+                            $elevationPoints = $package->elevationPoints->values();
+                            $chartWidth = 960;
+                            $chartHeight = 360;
+                            $plotLeft = 72;
+                            $plotRight = 24;
+                            $plotTop = 24;
+                            $plotBottom = 286;
+                            $plotWidth = $chartWidth - $plotLeft - $plotRight;
+                            $plotHeight = $plotBottom - $plotTop;
+                            $pointCount = $elevationPoints->count();
+                            $minAltitude = (int) floor($elevationPoints->min('altitude_meters') / 1000) * 1000;
+                            $maxAltitude = (int) ceil($elevationPoints->max('altitude_meters') / 1000) * 1000;
+
+                            if ($maxAltitude <= $minAltitude) {
+                                $maxAltitude = $minAltitude + 1000;
+                            }
+
+                            $tickStep = (int) (max(1, ceil(($maxAltitude - $minAltitude) / 4 / 500)) * 500);
+                            $altitudeTicks = range($minAltitude, $maxAltitude, $tickStep);
+                            if (end($altitudeTicks) !== $maxAltitude) {
+                                $altitudeTicks[] = $maxAltitude;
+                            }
+
+                            $chartCoordinates = $elevationPoints->map(fn ($point, $index) => [
+                                'x' => $pointCount === 1 ? $plotLeft + ($plotWidth / 2) : $plotLeft + ($index / ($pointCount - 1) * $plotWidth),
+                                'y' => $plotBottom - (($point->altitude_meters - $minAltitude) / ($maxAltitude - $minAltitude) * $plotHeight),
+                            ]);
+                            $linePath = $chartCoordinates->map(fn ($point, $index) => ($index === 0 ? 'M ' : 'L ')
+                                .number_format($point['x'], 2, '.', '').' '.number_format($point['y'], 2, '.', ''))
+                                ->implode(' ');
+                            $firstCoordinate = $chartCoordinates->first();
+                            $lastCoordinate = $chartCoordinates->last();
+                            $areaPath = $linePath.' L '.number_format($lastCoordinate['x'], 2, '.', '').' '.$plotBottom
+                                .' L '.number_format($firstCoordinate['x'], 2, '.', '').' '.$plotBottom.' Z';
+                            $labelIndexes = $pointCount <= 6
+                                ? range(0, $pointCount - 1)
+                                : array_values(array_unique(array_map(fn ($index) => (int) round($index * ($pointCount - 1) / 5), range(0, 5))));
+                        @endphp
                         <section class="package-elevation package-section" id="elevation"
                             aria-labelledby="elevation-title">
                             <div class="package-section-heading">
@@ -337,13 +376,39 @@
                             </div>
                             <p class="package-lead">Approximate elevations along the route.</p>
                             <div class="package-elevation-chart-wrap">
-                                <canvas id="package-elevation-chart" data-labels='@json($package->elevationPoints->pluck('stop_name')->values())'
-                                    data-values='@json($package->elevationPoints->pluck('altitude_meters')->map(fn($value) => (int) $value)->values())' role="img"
-                                    aria-label="Elevation profile for {{ $package->name }}">
-                                    @foreach ($package->elevationPoints as $point)
-                                        {{ $point->stop_name }}: {{ number_format($point->altitude_meters) }} metres.
+                                <svg viewBox="0 0 {{ $chartWidth }} {{ $chartHeight }}" role="img" aria-labelledby="elevation-chart-title elevation-chart-description">
+                                    <title id="elevation-chart-title">Altitude profile for {{ $package->name }}</title>
+                                    <desc id="elevation-chart-description">Approximate elevations at the route stops, measured in metres.</desc>
+                                    <defs>
+                                        <linearGradient id="elevation-chart-fill" x1="0" x2="0" y1="0" y2="1">
+                                            <stop offset="0%" stop-color="#1764a5" stop-opacity=".24" />
+                                            <stop offset="100%" stop-color="#1764a5" stop-opacity=".02" />
+                                        </linearGradient>
+                                    </defs>
+                                    @foreach ($altitudeTicks as $tick)
+                                        @php
+                                            $tickY = $plotBottom - (($tick - $minAltitude) / ($maxAltitude - $minAltitude) * $plotHeight);
+                                        @endphp
+                                        <line x1="{{ $plotLeft }}" y1="{{ $tickY }}" x2="{{ $chartWidth - $plotRight }}" y2="{{ $tickY }}" stroke="#e7edf1" stroke-width="1" />
+                                        <text x="{{ $plotLeft - 12 }}" y="{{ $tickY + 4 }}" text-anchor="end" fill="#536878" font-size="12">{{ number_format($tick) }} m</text>
                                     @endforeach
-                                </canvas>
+                                    <path d="{{ $areaPath }}" fill="url(#elevation-chart-fill)" />
+                                    <path d="{{ $linePath }}" fill="none" stroke="#1764a5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                    @foreach ($chartCoordinates as $index => $coordinate)
+                                        @php
+                                            $point = $elevationPoints[$index];
+                                        @endphp
+                                        <circle cx="{{ $coordinate['x'] }}" cy="{{ $coordinate['y'] }}" r="5" fill="#1764a5" stroke="#fff" stroke-width="2">
+                                            <title>{{ $point->stop_name }}: {{ number_format($point->altitude_meters) }} metres</title>
+                                        </circle>
+                                        @if (in_array($index, $labelIndexes, true))
+                                            @php
+                                                $anchor = $index === 0 ? 'start' : ($index === $pointCount - 1 ? 'end' : 'middle');
+                                            @endphp
+                                            <text x="{{ $coordinate['x'] }}" y="{{ $chartHeight - 22 }}" text-anchor="{{ $anchor }}" fill="#536878" font-size="12">{{ \Illuminate\Support\Str::limit($point->stop_name, 18) }}</text>
+                                        @endif
+                                    @endforeach
+                                </svg>
                             </div>
                         </section>
                     @endif
@@ -540,7 +605,9 @@
                             <button class="package-conversion-submit" type="submit">Request Custom Plan</button><a
                                 class="package-whatsapp-button"
                                 href="https://wa.me/?text={{ $whatsAppMessage }}"
-                                target="_blank" rel="noopener noreferrer">◉ &nbsp; Instant Chat on WhatsApp</a>
+                                target="_blank" rel="noopener noreferrer"><img
+                                class="package-icon-image package-whatsapp-button__icon"
+                                src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt="">Instant Chat on WhatsApp</a>
                             <p class="package-form__status" role="status" hidden></p>
                         </form>
                         <form class="package-conversion-form" id="sidebar-booking-form" data-package-slug="{{ $package->slug }}"
@@ -571,9 +638,11 @@
                                 @endforeach
                             </select>
                             <button class="package-conversion-submit" type="submit">Continue to booking details <span
-                                    aria-hidden="true">↗</span></button><a class="package-whatsapp-button"
+                                    aria-hidden="true">&#8599;</span></button><a class="package-whatsapp-button"
                                 href="https://wa.me/?text={{ rawurlencode('I am ready to discuss booking '.$package->name.'.') }}"
-                                target="_blank" rel="noopener noreferrer">◉ &nbsp; Instant Chat on WhatsApp</a>
+                                target="_blank" rel="noopener noreferrer"><img
+                                class="package-icon-image package-whatsapp-button__icon"
+                                src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt="">Instant Chat on WhatsApp</a>
                             <p class="package-form__status" role="status" hidden></p>
                         </form>
                     </div>

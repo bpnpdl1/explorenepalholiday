@@ -923,6 +923,12 @@ html {
   background: #32b887;
   color: #fff;
 }
+.package-whatsapp-button__icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  flex: none;
+}
 .package-whatsapp-button:hover {
   background: #269d73;
 }
@@ -1047,7 +1053,7 @@ html {
   border-radius: var(--radius-card);
   background: #fff;
 }
-.package-elevation-chart-wrap canvas { display: block; width: 100% !important; height: 100% !important; }
+.package-elevation-chart-wrap svg { display: block; width: 100%; height: 100%; }
 @media (max-width: 600px) {
   .package-elevation-chart-wrap {
     height: 250px;

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PackageFaqSeeder::class,
             PackageFeatureSeeder::class,
             PackageItinerarySeeder::class,
+            PackageElevationSeeder::class,
             GuestReviewSeeder::class,
             PackageReviewSeeder::class,
             TeamMemberSeeder::class,

@@ -89,6 +89,16 @@ abstract class PackageRequest extends FormRequest
             'itinerary_days.*.activity_label' => ['nullable', 'string', 'max:255'],
             'itinerary_days.*.meal_plan' => ['nullable', 'string', 'max:255'],
             'itinerary_days.*.description' => ['nullable', 'string', 'max:100000'],
+            'elevation_points' => ['nullable', 'array', 'max:100'],
+            'elevation_points.*' => ['required', 'array:id,stop_name,altitude_meters'],
+            'elevation_points.*.id' => [
+                'nullable',
+                'integer',
+                'distinct',
+                Rule::exists('package_elevation_points', 'id')->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0),
+            ],
+            'elevation_points.*.stop_name' => ['required', 'string', 'max:255'],
+            'elevation_points.*.altitude_meters' => ['required', 'integer', 'between:0,65535'],
             'faqs' => ['nullable', 'array', 'max:100'],
             'faqs.*' => ['required', 'array:id,question,answer'],
             'faqs.*.id' => [

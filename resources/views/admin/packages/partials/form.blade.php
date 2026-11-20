@@ -19,6 +19,11 @@
         'meal_plan' => $day->meal_plan,
         'description' => $day->description,
     ])->all());
+    $elevationPoints = old('elevation_points', $package->elevationPoints->map(fn ($point) => [
+        'id' => $point->id,
+        'stop_name' => $point->stop_name,
+        'altitude_meters' => $point->altitude_meters,
+    ])->values()->all());
     $faqs = old('faqs', $package->faqs->map(fn ($faq) => [
         'id' => $faq->id,
         'question' => $faq->question,
@@ -51,13 +56,13 @@
                         <h5 class="mb-1" data-wizard-heading>Package basics</h5>
                         <p class="text-muted mb-0" data-wizard-description>Set the package name, category, overview, and tags.</p>
                     </div>
-                    <span class="badge bg-primary-subtle text-primary" data-wizard-count aria-live="polite">Step 1 of 7</span>
+                    <span class="badge bg-primary-subtle text-primary" data-wizard-count aria-live="polite">Step 1 of 8</span>
                 </div>
-                <div class="progress mb-3" role="progressbar" aria-label="Package form progress" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1">
-                    <div class="progress-bar" data-wizard-progress style="width: 14.29%"></div>
+                <div class="progress mb-3" role="progressbar" aria-label="Package form progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+                    <div class="progress-bar" data-wizard-progress style="width: 12.5%"></div>
                 </div>
                 <ol class="package-wizard__steps" aria-label="Package form steps">
-                    @foreach (['Package basics', 'Trip facts', 'Inclusions', 'Route details', 'Itinerary', 'FAQs', 'Images & publishing'] as $stepLabel)
+                    @foreach (['Package basics', 'Trip facts', 'Inclusions', 'Route details', 'Itinerary', 'Altitude profile', 'FAQs', 'Images & publishing'] as $stepLabel)
                         <li><button type="button" class="package-wizard__step {{ $loop->first ? 'is-current' : '' }}" data-wizard-go="{{ $loop->index }}" aria-current="{{ $loop->first ? 'step' : 'false' }}"><span>{{ $loop->iteration }}</span><span>{{ $stepLabel }}</span></button></li>
                     @endforeach
                 </ol>
@@ -268,6 +273,52 @@
     </div>
 
         </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Altitude profile" data-step-description="Add ordered route stops and their approximate elevations for the public package chart.">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-1">Route altitude points</h5>
+                    <p class="text-muted mb-0">Add the main route stops in travel order. Their elevations power the package altitude chart.</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger d-none" data-elevation-limit role="alert">A package can have up to 100 altitude points.</div>
+                    <div class="text-center py-4 text-muted" data-elevation-empty @if (count($elevationPoints)) hidden @endif>
+                        <i class="ri-line-chart-line fs-2 d-block mb-2"></i>
+                        <p class="mb-2">No altitude points added yet.</p>
+                        <button type="button" class="btn btn-sm btn-soft-primary" data-add-elevation><i class="ri-add-line me-1"></i>Add first stop</button>
+                    </div>
+                    <div class="d-grid gap-2" data-elevation-points>
+                        @foreach ($elevationPoints as $index => $point)
+                            <div class="border rounded p-3" data-elevation-row>
+                                @if (!empty($point['id']))<input type="hidden" data-elevation-id name="elevation_points[{{ $index }}][id]" value="{{ $point['id'] }}">@endif
+                                <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                                    <span class="small fw-semibold">Stop <span data-elevation-number>{{ $loop->iteration }}</span></span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label" data-elevation-label="stop_name" for="elevation-{{ $index }}-stop-name">Route stop <span class="text-danger">*</span></label>
+                                        <input data-field="stop_name" id="elevation-{{ $index }}-stop-name" name="elevation_points[{{ $index }}][stop_name]" type="text" maxlength="255" value="{{ $point['stop_name'] ?? '' }}" class="form-control @error("elevation_points.$index.stop_name") is-invalid @enderror" placeholder="e.g. Namche Bazaar" required>
+                                        @error("elevation_points.$index.stop_name")<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label" data-elevation-label="altitude_meters" for="elevation-{{ $index }}-altitude">Elevation (m) <span class="text-danger">*</span></label>
+                                        <input data-field="altitude_meters" id="elevation-{{ $index }}-altitude" name="elevation_points[{{ $index }}][altitude_meters]" type="number" min="0" max="65535" value="{{ $point['altitude_meters'] ?? '' }}" class="form-control @error("elevation_points.$index.altitude_meters") is-invalid @enderror" placeholder="e.g. 3440" required>
+                                        @error("elevation_points.$index.altitude_meters")<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-sm btn-light" data-move-elevation="up" aria-label="Move stop up" title="Move up"><i class="ri-arrow-up-line"></i></button>
+                                    <button type="button" class="btn btn-sm btn-light" data-move-elevation="down" aria-label="Move stop down" title="Move down"><i class="ri-arrow-down-line"></i></button>
+                                    <button type="button" class="btn btn-sm btn-soft-danger" data-remove-elevation><i class="ri-delete-bin-line me-1"></i>Remove stop</button>
+                                    <button type="button" class="btn btn-sm btn-soft-primary" data-add-elevation><i class="ri-add-line me-1"></i>Add stop</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('elevation_points')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </section>
+
         <section class="package-wizard__panel" data-wizard-panel data-step-title="Package FAQs" data-step-description="Add common questions and clear answers travelers need before booking.">
             <div class="card mb-3">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -375,14 +426,14 @@
 
 @push('styles')
     <style>
-        .package-wizard__steps { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
+        .package-wizard__steps { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
         .package-wizard__step { display: flex; align-items: center; gap: .6rem; width: 100%; padding: .55rem .7rem; border: 1px solid var(--vz-border-color, #e9ebec); border-radius: .5rem; background: var(--vz-card-bg, #fff); color: var(--vz-secondary-color, #878a99); text-align: left; }
         .package-wizard__step span:first-child { display: grid; width: 1.7rem; height: 1.7rem; flex: 0 0 1.7rem; place-items: center; border-radius: 50%; background: #f3f6f9; font-size: .8rem; font-weight: 600; }
         .package-wizard__step.is-current { border-color: var(--vz-primary, #405189); color: var(--vz-primary, #405189); font-weight: 600; }
         .package-wizard__step.is-current span:first-child { background: var(--vz-primary, #405189); color: #fff; }
         .package-wizard__step:disabled { cursor: not-allowed; opacity: .6; }
         @media (max-width: 767.98px) {
-            .package-wizard__steps { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .35rem; }
+            .package-wizard__steps { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .35rem; }
             .package-wizard__step { justify-content: center; padding: .45rem .25rem; }
             .package-wizard__step span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
         }
@@ -440,6 +491,10 @@
             const faqEmpty = form.querySelector('[data-faq-empty]');
             const faqLimit = form.querySelector('[data-faq-limit]');
             const faqPanel = faqContainer.closest('[data-wizard-panel]');
+            const elevationContainer = form.querySelector('[data-elevation-points]');
+            const elevationEmpty = form.querySelector('[data-elevation-empty]');
+            const elevationLimit = form.querySelector('[data-elevation-limit]');
+            const elevationPanel = elevationContainer.closest('[data-wizard-panel]');
             const itineraryTemplate = document.createElement('template');
             itineraryTemplate.innerHTML = `<div class="border rounded p-3" data-itinerary-day>
                 <div class="d-flex justify-content-between align-items-center gap-2 mb-3"><h6 class="mb-0">Day <span data-day-number></span></h6></div>
@@ -470,6 +525,20 @@
                     <button type="button" class="btn btn-sm btn-light" data-move-faq="down" aria-label="Move question down"><i class="ri-arrow-down-line"></i></button>
                     <button type="button" class="btn btn-sm btn-soft-danger" data-remove-faq><i class="ri-delete-bin-line me-1"></i>Remove</button>
                     <button type="button" class="btn btn-sm btn-soft-primary" data-add-faq><i class="ri-add-line me-1"></i>Add question</button>
+                </div>
+            </div>`;
+            const elevationTemplate = document.createElement('template');
+            elevationTemplate.innerHTML = `<div class="border rounded p-3" data-elevation-row>
+                <div class="d-flex justify-content-between align-items-center gap-2 mb-2"><span class="small fw-semibold">Stop <span data-elevation-number></span></span></div>
+                <div class="row g-3">
+                    <div class="col-md-8"><label class="form-label" data-elevation-label="stop_name">Route stop <span class="text-danger">*</span></label><input data-field="stop_name" type="text" maxlength="255" class="form-control" placeholder="e.g. Namche Bazaar" required></div>
+                    <div class="col-md-4"><label class="form-label" data-elevation-label="altitude_meters">Elevation (m) <span class="text-danger">*</span></label><input data-field="altitude_meters" type="number" min="0" max="65535" class="form-control" placeholder="e.g. 3440" required></div>
+                </div>
+                <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-sm btn-light" data-move-elevation="up" aria-label="Move stop up"><i class="ri-arrow-up-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-light" data-move-elevation="down" aria-label="Move stop down"><i class="ri-arrow-down-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-soft-danger" data-remove-elevation><i class="ri-delete-bin-line me-1"></i>Remove stop</button>
+                    <button type="button" class="btn btn-sm btn-soft-primary" data-add-elevation><i class="ri-add-line me-1"></i>Add stop</button>
                 </div>
             </div>`;
             let current = 0;
@@ -632,6 +701,66 @@
                 if (moveButton) refreshItineraryDays();
             });
             refreshItineraryDays();
+
+            const refreshElevationPoints = () => {
+                const rows = [...elevationContainer.querySelectorAll('[data-elevation-row]')];
+                elevationEmpty.hidden = rows.length > 0;
+                elevationLimit.classList.toggle('d-none', rows.length < 100);
+                elevationPanel.querySelectorAll('[data-add-elevation]').forEach((button) => {
+                    button.disabled = rows.length >= 100;
+                    const buttonRow = button.closest('[data-elevation-row]');
+                    if (buttonRow) button.hidden = buttonRow !== rows[rows.length - 1];
+                });
+
+                rows.forEach((row, index) => {
+                    row.querySelector('[data-elevation-number]').textContent = String(index + 1);
+                    const idField = row.querySelector('[data-elevation-id]');
+                    if (idField) idField.name = `elevation_points[${index}][id]`;
+                    row.querySelector('[data-move-elevation="up"]').disabled = index === 0;
+                    row.querySelector('[data-move-elevation="down"]').disabled = index === rows.length - 1;
+                    row.querySelectorAll('[data-field]').forEach((field) => {
+                        field.name = `elevation_points[${index}][${field.dataset.field}]`;
+                        field.id = `elevation-${index}-${field.dataset.field}`;
+                        row.querySelector(`[data-elevation-label="${field.dataset.field}"]`)?.setAttribute('for', field.id);
+                    });
+                });
+            };
+
+            const addElevationPoint = (after = null) => {
+                if (elevationContainer.querySelectorAll('[data-elevation-row]').length >= 100) return;
+                const row = elevationTemplate.content.firstElementChild.cloneNode(true);
+                if (after) after.after(row);
+                else elevationContainer.append(row);
+                refreshElevationPoints();
+                row.querySelector('[data-field="stop_name"]')?.focus();
+            };
+
+            elevationPanel.addEventListener('click', (event) => {
+                const addButton = event.target.closest('[data-add-elevation]');
+                if (!addButton || addButton.disabled) return;
+                event.preventDefault();
+                addElevationPoint(addButton.closest('[data-elevation-row]'));
+            });
+
+            elevationContainer.addEventListener('click', (event) => {
+                if (event.target.closest('[data-add-elevation]')) return;
+                const row = event.target.closest('[data-elevation-row]');
+                if (!row) return;
+
+                if (event.target.closest('[data-remove-elevation]')) {
+                    row.remove();
+                } else {
+                    const moveButton = event.target.closest('[data-move-elevation]');
+                    if (moveButton?.dataset.moveElevation === 'up' && row.previousElementSibling) {
+                        elevationContainer.insertBefore(row, row.previousElementSibling);
+                    } else if (moveButton?.dataset.moveElevation === 'down' && row.nextElementSibling) {
+                        elevationContainer.insertBefore(row.nextElementSibling, row);
+                    }
+                }
+
+                refreshElevationPoints();
+            });
+            refreshElevationPoints();
 
             const refreshFaqRows = () => {
                 const rows = [...faqContainer.querySelectorAll('[data-faq-row]')];
