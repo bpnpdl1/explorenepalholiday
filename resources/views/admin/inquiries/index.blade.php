@@ -85,20 +85,7 @@
                                 <td>{{ $inquiry->package?->name ?? 'Package removed' }}</td>
                                 <td>{{ $inquiry->travelWindowLabel() }}</td>
                                 <td>{{ $inquiry->created_at->format('M j, Y') }}</td>
-                                <td>
-                                    <span class="badge bg-{{ $statusClasses[$inquiry->status->value] }}-subtle text-{{ $statusClasses[$inquiry->status->value] }}">{{ $inquiry->status->label() }}</span>
-                                    <form method="POST" action="{{ route('admin.inquiries.update-status', $inquiry) }}" class="d-flex gap-1 mt-2">
-                                        @csrf
-                                        @method('PATCH')
-                                        <label class="visually-hidden" for="inquiry-status-{{ $inquiry->id }}">Update inquiry {{ $inquiry->id }} status</label>
-                                        <select class="form-select form-select-sm" id="inquiry-status-{{ $inquiry->id }}" name="status">
-                                            @foreach ($statuses as $status)
-                                                <option value="{{ $status->value }}" @selected($status === $inquiry->status)>{{ $status->label() }}</option>
-                                            @endforeach
-                                        </select>
-                                        <button class="btn btn-sm btn-light" type="submit" aria-label="Save status for inquiry {{ $inquiry->id }}"><i class="ri-save-line" aria-hidden="true"></i></button>
-                                    </form>
-                                </td>
+                                <td><span class="badge bg-{{ $statusClasses[$inquiry->status->value] }}-subtle text-{{ $statusClasses[$inquiry->status->value] }}">{{ $inquiry->status->label() }}</span></td>
                                 <td class="text-end">
                                     <a class="btn btn-soft-primary btn-sm" href="{{ route('admin.inquiries.show', $inquiry) }}" aria-label="View inquiry {{ $inquiry->id }}">
                                         <i class="ri-eye-line align-bottom" aria-hidden="true"></i>
