@@ -37,6 +37,8 @@ abstract class PackageRequest extends FormRequest
             'currency' => ['required', 'string', 'size:3', 'regex:/^[A-Z]{3}$/'],
             'price_qualifier' => ['nullable', 'string', 'max:255'],
             'route_map_url' => ['nullable', 'url', 'max:2048'],
+            'route_map_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:10240', 'dimensions:max_width=12000,max_height=12000'],
+            'remove_route_map' => ['sometimes', 'boolean'],
             'accommodation' => ['nullable', 'string', 'max:10000'],
             'fitness_guidance' => ['nullable', 'string', 'max:20000'],
             'permit_notes' => ['nullable', 'string', 'max:20000'],

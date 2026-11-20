@@ -4,6 +4,7 @@
     $destination = $package->subcategory->category->destination;
     $category = $package->subcategory->category;
     $cover = $package->getFirstMedia('cover');
+    $routeMapImage = $package->getFirstMediaUrl('route_map');
     $galleryImages = collect([$cover])
         ->filter()
         ->concat($package->getMedia('gallery'))
@@ -212,7 +213,7 @@
                                 <a href="#itinerary" data-package-tab aria-label="Itinerary"><i class="package-tab-icon"
                                         data-lucide="list-ordered" aria-hidden="true"></i><span>Itinerary</span></a>
                             @endif
-                            @if ($package->route_map_url)
+                            @if ($routeMapImage || $package->route_map_url)
                                 <a href="#route-map" data-package-tab aria-label="Route map"><i class="package-tab-icon"
                                         data-lucide="map" aria-hidden="true"></i><span>Route map</span></a>
                             @endif
@@ -307,18 +308,22 @@
                         </section>
                     @endif
 
-                    @if ($package->route_map_url)
+                    @if ($routeMapImage || $package->route_map_url)
                         <section class="package-route-map" id="route-map" aria-labelledby="route-map-title">
                             <div class="package-section-heading">
                                 <div><span class="package-eyebrow">ROUTE MAP</span>
                                     <h2 id="route-map-title">Route map</h2>
                                 </div>
                             </div>
-                            <figure class="package-route-map__visual package-route-map__visual--link">
+                            @if ($routeMapImage)
+                                <figure class="package-route-map__visual package-route-map__visual--image">
+                                    <img src="{{ $routeMapImage }}" alt="Route map for {{ $package->name }}" loading="lazy">
+                                </figure>
+                            @endif
+                            @if ($package->route_map_url)
                                 <a href="{{ $package->route_map_url }}" target="_blank" rel="noopener noreferrer"
-                                    class="package-button package-button--orange">Open route map <span
-                                        aria-hidden="true">&#8599;</span></a>
-                            </figure>
+                                    class="package-button package-button--orange">{{ $routeMapImage ? 'Open interactive route map' : 'Open route map' }} <span aria-hidden="true">&#8599;</span></a>
+                            @endif
                         </section>
                     @endif
 

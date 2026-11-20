@@ -3975,6 +3975,11 @@ html {
   object-position: center;
 }
 
+.package-route-map__visual--image img {
+  object-fit: contain;
+  background: #f2f6f6;
+}
+
 .package-route-map__visual--link {
   display: grid;
   min-height: clamp(360px, 52cqi, 520px);

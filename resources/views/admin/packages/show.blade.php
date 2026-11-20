@@ -55,6 +55,13 @@
                 </div>
             @endif
 
+            @if ($package->getFirstMediaUrl('route_map'))
+                <div class="card">
+                    <div class="card-header"><h5 class="card-title mb-0">Route map image</h5></div>
+                    <div class="card-body"><img src="{{ $package->getFirstMediaUrl('route_map') }}" alt="Route map for {{ $package->name }}" class="img-fluid rounded" style="max-height: 420px; width: 100%; object-fit: contain"></div>
+                </div>
+            @endif
+
             @foreach ([
                 'Route map URL' => $package->route_map_url,
                 'Accommodation' => $package->accommodation,

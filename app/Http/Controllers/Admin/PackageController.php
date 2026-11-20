@@ -268,6 +268,12 @@ class PackageController extends Controller
             $this->mediaLibraryService->storeImage($package, $image, 'gallery');
         }
 
+        if ($routeMap = $request->file('route_map_image')) {
+            $this->mediaLibraryService->storeImage($package, $routeMap, 'route_map');
+        } elseif ($request->boolean('remove_route_map')) {
+            $package->getMedia('route_map')->each->delete();
+        }
+
         $removeIds = $request->validated('remove_gallery', []);
 
         if ($removeIds !== []) {

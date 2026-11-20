@@ -142,7 +142,19 @@
         <div class="card-header"><h5 class="card-title mb-0">Route information</h5></div>
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-12"><label for="route_map_url" class="form-label">Route map URL</label><input id="route_map_url" name="route_map_url" type="url" value="{{ old('route_map_url', $package->route_map_url) }}" class="form-control @error('route_map_url') is-invalid @enderror" placeholder="https://...">@error('route_map_url')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="col-md-6">
+                    <label for="route_map_image" class="form-label">Route map image</label>
+                    @if ($package->getFirstMediaUrl('route_map'))
+                        <div class="mb-2 p-2 border rounded bg-light"><img src="{{ $package->getFirstMediaUrl('route_map') }}" alt="Current route map for {{ $package->name }}" class="img-fluid rounded" style="max-height: 220px; width: 100%; object-fit: contain"></div>
+                    @endif
+                    <input id="route_map_image" name="route_map_image" type="file" accept="image/jpeg,image/png,image/webp,image/avif" class="form-control @error('route_map_image') is-invalid @enderror">
+                    <div class="form-text">Upload a JPG, PNG, WebP, or AVIF map image up to 10 MB. A new upload replaces the current image.</div>
+                    @error('route_map_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @if ($package->getFirstMedia('route_map'))
+                        <label class="form-check mt-2"><input type="checkbox" name="remove_route_map" value="1" class="form-check-input" @checked(old('remove_route_map'))><span class="form-check-label">Remove current route map image</span></label>
+                    @endif
+                </div>
+                <div class="col-md-6"><label for="route_map_url" class="form-label">External route map URL (optional)</label><input id="route_map_url" name="route_map_url" type="url" value="{{ old('route_map_url', $package->route_map_url) }}" class="form-control @error('route_map_url') is-invalid @enderror" placeholder="https://...">@error('route_map_url')<div class="invalid-feedback">{{ $message }}</div>@enderror<div class="form-text">Use this for a Google Maps, GPX, or other external route link.</div></div>
                 <div class="col-12"><label for="accommodation" class="form-label">Accommodation</label><textarea id="accommodation" name="accommodation" rows="2" class="form-control @error('accommodation') is-invalid @enderror">{{ old('accommodation', $package->accommodation) }}</textarea>@error('accommodation')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="col-md-6"><label for="fitness_guidance" class="form-label">Fitness guidance</label><textarea id="fitness_guidance" name="fitness_guidance" rows="4" class="form-control @error('fitness_guidance') is-invalid @enderror">{{ old('fitness_guidance', $package->fitness_guidance) }}</textarea>@error('fitness_guidance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="col-md-6"><label for="permit_notes" class="form-label">Permit notes</label><textarea id="permit_notes" name="permit_notes" rows="4" class="form-control @error('permit_notes') is-invalid @enderror">{{ old('permit_notes', $package->permit_notes) }}</textarea>@error('permit_notes')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>

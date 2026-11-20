@@ -19,6 +19,11 @@ trait HasTravelMedia
         $this->addMediaCollection('gallery')
             ->useDisk(config('media-library.disk_name'))
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
+
+        $this->addMediaCollection('route_map')
+            ->singleFile()
+            ->useDisk(config('media-library.disk_name'))
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
     }
 
     public function registerMediaConversions(?Media $media = null): void
