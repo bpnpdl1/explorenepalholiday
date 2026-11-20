@@ -114,6 +114,7 @@ class PackageController extends Controller
         $package = DB::transaction(function () use ($attributes, $validated): Package {
             $package = Package::create($attributes);
             $this->syncSeasons($package, $validated['seasons'] ?? []);
+            $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
 
             return $package;
         });
@@ -139,6 +140,7 @@ class PackageController extends Controller
     {
         $package->load([
             'seasons',
+            'itineraryDays',
             'media',
         ]);
 
@@ -159,6 +161,7 @@ class PackageController extends Controller
         DB::transaction(function () use ($package, $attributes, $validated): void {
             $package->update($attributes);
             $this->syncSeasons($package, $validated['seasons'] ?? []);
+            $this->syncItineraryDays($package, $validated['itinerary_days'] ?? []);
         });
 
         $this->storeMedia($request, $package);
@@ -185,6 +188,74 @@ class PackageController extends Controller
             fn (string $season): array => ['season' => $season],
             array_values(array_unique($seasons)),
         ));
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $itineraryDays
+     */
+    private function syncItineraryDays(Package $package, array $itineraryDays): void
+    {
+        $rows = array_values($itineraryDays);
+        $existingDays = $package->itineraryDays()->get()->keyBy('id');
+        $retainedIds = collect($rows)
+            ->pluck('id')
+            ->filter()
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $daysToDelete = $package->itineraryDays();
+
+        if ($retainedIds !== []) {
+            $daysToDelete->whereNotIn('id', $retainedIds);
+        }
+
+        $daysToDelete->delete();
+
+        $retainedDays = $existingDays->only($retainedIds);
+        $occupiedNumbers = $package->itineraryDays()->pluck('day_number')->all();
+        $desiredNumbers = $rows === [] ? [] : range(1, count($rows));
+        $blockedNumbers = array_fill_keys([...$occupiedNumbers, ...$desiredNumbers], true);
+        $temporaryNumbers = [];
+        $candidate = 65535;
+
+        foreach ($retainedDays as $day) {
+            while (isset($blockedNumbers[$candidate])) {
+                $candidate--;
+            }
+
+            $temporaryNumbers[] = $candidate;
+            $blockedNumbers[$candidate] = true;
+            $candidate--;
+        }
+
+        foreach ($retainedDays->values() as $index => $day) {
+            $day->update(['day_number' => $temporaryNumbers[$index]]);
+        }
+
+        foreach ($rows as $index => $row) {
+            $attributes = [
+                ...Arr::only($row, [
+                    'title',
+                    'location',
+                    'altitude_meters',
+                    'activity_label',
+                    'meal_plan',
+                    'description',
+                ]),
+                'day_number' => $index + 1,
+                'sort_order' => $index,
+            ];
+
+            $day = ! empty($row['id']) ? $existingDays->get((int) $row['id']) : null;
+
+            if ($day) {
+                $day->update($attributes);
+
+                continue;
+            }
+
+            $package->itineraryDays()->create($attributes);
+        }
     }
 
     private function storeMedia(StorePackageRequest|UpdatePackageRequest $request, Package $package): void

@@ -2,9 +2,18 @@
     $hasOldInput = session()->hasOldInput();
     $seasons = old('seasons', $package->seasons->map(fn ($season) => $season->season->value)->all());
     $tags = old('tags', $package->tags ?? []);
+    $itineraryDays = old('itinerary_days', $package->itineraryDays->map(fn ($day) => [
+        'id' => $day->id,
+        'title' => $day->title,
+        'location' => $day->location,
+        'altitude_meters' => $day->altitude_meters,
+        'activity_label' => $day->activity_label,
+        'meal_plan' => $day->meal_plan,
+        'description' => $day->description,
+    ])->all());
 @endphp
 
-<form action="{{ $action }}" method="POST" enctype="multipart/form-data">
+<form action="{{ $action }}" method="POST" enctype="multipart/form-data" data-package-wizard-form novalidate>
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -21,6 +30,28 @@
         </div>
     @endif
 
+    <div class="package-wizard mb-4" data-package-wizard>
+        <div class="package-wizard__header card mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <h5 class="mb-1" data-wizard-heading>Package basics</h5>
+                        <p class="text-muted mb-0" data-wizard-description>Set the package name, category, overview, and tags.</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary" data-wizard-count aria-live="polite">Step 1 of 5</span>
+                </div>
+                <div class="progress mb-3" role="progressbar" aria-label="Package form progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+                    <div class="progress-bar" data-wizard-progress style="width: 20%"></div>
+                </div>
+                <ol class="package-wizard__steps" aria-label="Package form steps">
+                    @foreach (['Package basics', 'Trip facts', 'Route details', 'Itinerary', 'Images & publishing'] as $stepLabel)
+                        <li><button type="button" class="package-wizard__step {{ $loop->first ? 'is-current' : '' }}" data-wizard-go="{{ $loop->index }}" @if (!$loop->first) disabled @endif aria-current="{{ $loop->first ? 'step' : 'false' }}"><span>{{ $loop->iteration }}</span><span>{{ $stepLabel }}</span></button></li>
+                    @endforeach
+                </ol>
+            </div>
+        </div>
+
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Package basics" data-step-description="Set the package name, category, overview, and tags.">
     <div class="card mb-3">
         <div class="card-header"><h5 class="card-title mb-0">Package details</h5></div>
         <div class="card-body">
@@ -75,6 +106,8 @@
         </div>
     </div>
 
+        </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Trip facts" data-step-description="Add duration, difficulty, group size, price, and the best seasons.">
     <div class="card mb-3">
         <div class="card-header"><h5 class="card-title mb-0">Trip facts and pricing</h5></div>
         <div class="card-body">
@@ -103,6 +136,8 @@
         </div>
     </div>
 
+        </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Route details" data-step-description="Add route links, accommodation information, and planning notes.">
     <div class="card mb-3">
         <div class="card-header"><h5 class="card-title mb-0">Route information</h5></div>
         <div class="card-body">
@@ -117,6 +152,52 @@
         </div>
     </div>
 
+        </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Itinerary" data-step-description="Build the ordered day-by-day route for this package.">
+    <div class="card mb-3">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h5 class="card-title mb-1">Day-by-day itinerary</h5>
+                <p class="text-muted mb-0">Add one row per day. Row order sets the day number on the public package page.</p>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" data-add-itinerary-day><i class="ri-add-line me-1"></i>Add day</button>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger d-none" data-itinerary-limit role="alert">A package can have up to 100 itinerary days.</div>
+            <div class="text-center py-4 text-muted" data-itinerary-empty @if (count($itineraryDays)) hidden @endif>
+                <i class="ri-route-line fs-2 d-block mb-2"></i>
+                <p class="mb-0">No itinerary added yet. Add a day to describe the route.</p>
+            </div>
+            <div class="d-grid gap-3" data-itinerary-days>
+                @foreach ($itineraryDays as $index => $day)
+                    <div class="border rounded p-3" data-itinerary-day>
+                        @if (!empty($day['id']))<input type="hidden" data-itinerary-id name="itinerary_days[{{ $index }}][id]" value="{{ $day['id'] }}">@endif
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                            <h6 class="mb-0">Day <span data-day-number>{{ $loop->iteration }}</span></h6>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label" for="itinerary-{{ $index }}-title">Day title <span class="text-danger">*</span></label><input data-field="title" id="itinerary-{{ $index }}-title" name="itinerary_days[{{ $index }}][title]" type="text" maxlength="255" value="{{ $day['title'] ?? '' }}" class="form-control @error("itinerary_days.$index.title") is-invalid @enderror" placeholder="e.g. Trek to Namche Bazaar" required>@error("itinerary_days.$index.title")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-6"><label class="form-label" for="itinerary-{{ $index }}-location">Location / route</label><input data-field="location" id="itinerary-{{ $index }}-location" name="itinerary_days[{{ $index }}][location]" type="text" maxlength="255" value="{{ $day['location'] ?? '' }}" class="form-control @error("itinerary_days.$index.location") is-invalid @enderror" placeholder="e.g. Phakding to Namche Bazaar">@error("itinerary_days.$index.location")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-4"><label class="form-label" for="itinerary-{{ $index }}-altitude">Altitude (meters)</label><input data-field="altitude_meters" id="itinerary-{{ $index }}-altitude" name="itinerary_days[{{ $index }}][altitude_meters]" type="number" min="0" max="65535" value="{{ $day['altitude_meters'] ?? '' }}" class="form-control @error("itinerary_days.$index.altitude_meters") is-invalid @enderror" placeholder="e.g. 3440">@error("itinerary_days.$index.altitude_meters")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-4"><label class="form-label" for="itinerary-{{ $index }}-activity">Activity label</label><input data-field="activity_label" id="itinerary-{{ $index }}-activity" name="itinerary_days[{{ $index }}][activity_label]" type="text" maxlength="255" value="{{ $day['activity_label'] ?? '' }}" class="form-control @error("itinerary_days.$index.activity_label") is-invalid @enderror" placeholder="e.g. 5–6 hours">@error("itinerary_days.$index.activity_label")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-md-4"><label class="form-label" for="itinerary-{{ $index }}-meals">Meals</label><input data-field="meal_plan" id="itinerary-{{ $index }}-meals" name="itinerary_days[{{ $index }}][meal_plan]" type="text" maxlength="255" value="{{ $day['meal_plan'] ?? '' }}" class="form-control @error("itinerary_days.$index.meal_plan") is-invalid @enderror" placeholder="e.g. Breakfast, lunch, dinner">@error("itinerary_days.$index.meal_plan")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="col-12"><label class="form-label" for="itinerary-{{ $index }}-description">Day details</label><textarea data-field="description" id="itinerary-{{ $index }}-description" name="itinerary_days[{{ $index }}][description]" rows="3" maxlength="100000" class="form-control @error("itinerary_days.$index.description") is-invalid @enderror" placeholder="Describe the route, key stops, and what travelers can expect.">{{ $day['description'] ?? '' }}</textarea>@error("itinerary_days.$index.description")<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                            <button type="button" class="btn btn-sm btn-light" data-move-day="up" aria-label="Move day up"><i class="ri-arrow-up-line"></i></button>
+                            <button type="button" class="btn btn-sm btn-light" data-move-day="down" aria-label="Move day down"><i class="ri-arrow-down-line"></i></button>
+                            <button type="button" class="btn btn-sm btn-soft-danger" data-remove-day><i class="ri-delete-bin-line me-1"></i>Remove day</button>
+                            <button type="button" class="btn btn-sm btn-soft-primary" data-add-day-after><i class="ri-add-line me-1"></i>Add day after</button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            @error('itinerary_days')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+        </div>
+    </div>
+
+        </section>
+        <section class="package-wizard__panel" data-wizard-panel data-step-title="Images & publishing" data-step-description="Manage trip images, search details, and package visibility.">
     <div class="card mb-3">
         <div class="card-header"><h5 class="card-title mb-0">Package images</h5></div>
         <div class="card-body">
@@ -153,6 +234,9 @@
         </div>
     </div>
 
+        </section>
+    </div>
+
     <div class="card mb-3">
         <div class="card-header"><h5 class="card-title mb-0">Visibility</h5></div>
         <div class="card-body d-flex flex-wrap gap-4">
@@ -161,11 +245,31 @@
         </div>
     </div>
 
-    <div class="d-flex flex-wrap justify-content-between gap-2 mb-4">
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-4" data-wizard-controls>
         <a href="{{ route('admin.packages.index') }}" class="btn btn-light">Cancel</a>
-        <button type="submit" class="btn btn-primary"><i class="ri-save-line me-1"></i>{{ $submitLabel }}</button>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-light" data-wizard-previous disabled><i class="ri-arrow-left-line me-1"></i>Previous</button>
+            <button type="button" class="btn btn-primary" data-wizard-next>Next<i class="ri-arrow-right-line ms-1"></i></button>
+            <button type="submit" class="btn btn-primary d-none" data-wizard-submit><i class="ri-save-line me-1"></i>{{ $submitLabel }}</button>
+        </div>
     </div>
 </form>
+
+@push('styles')
+    <style>
+        .package-wizard__steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
+        .package-wizard__step { display: flex; align-items: center; gap: .6rem; width: 100%; padding: .55rem .7rem; border: 1px solid var(--vz-border-color, #e9ebec); border-radius: .5rem; background: var(--vz-card-bg, #fff); color: var(--vz-secondary-color, #878a99); text-align: left; }
+        .package-wizard__step span:first-child { display: grid; width: 1.7rem; height: 1.7rem; flex: 0 0 1.7rem; place-items: center; border-radius: 50%; background: #f3f6f9; font-size: .8rem; font-weight: 600; }
+        .package-wizard__step.is-current { border-color: var(--vz-primary, #405189); color: var(--vz-primary, #405189); font-weight: 600; }
+        .package-wizard__step.is-current span:first-child { background: var(--vz-primary, #405189); color: #fff; }
+        .package-wizard__step:disabled { cursor: not-allowed; opacity: .6; }
+        @media (max-width: 767.98px) {
+            .package-wizard__steps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .35rem; }
+            .package-wizard__step { justify-content: center; padding: .45rem .25rem; }
+            .package-wizard__step span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script>
@@ -180,6 +284,175 @@
                 });
             }
         });
+
+        (() => {
+            const wizard = document.querySelector('[data-package-wizard]');
+            const form = document.querySelector('[data-package-wizard-form]');
+
+            if (!wizard || !form) return;
+
+            const panels = [...wizard.querySelectorAll('[data-wizard-panel]')];
+            const steps = [...wizard.querySelectorAll('[data-wizard-go]')];
+            const previous = form.querySelector('[data-wizard-previous]');
+            const next = form.querySelector('[data-wizard-next]');
+            const submit = form.querySelector('[data-wizard-submit]');
+            const heading = wizard.querySelector('[data-wizard-heading]');
+            const description = wizard.querySelector('[data-wizard-description]');
+            const count = wizard.querySelector('[data-wizard-count]');
+            const progress = wizard.querySelector('[data-wizard-progress]');
+            const progressTrack = progress?.parentElement;
+            const itineraryContainer = form.querySelector('[data-itinerary-days]');
+            const itineraryEmpty = form.querySelector('[data-itinerary-empty]');
+            const itineraryLimit = form.querySelector('[data-itinerary-limit]');
+            const itineraryAddButton = form.querySelector('[data-add-itinerary-day]');
+            const itineraryTemplate = document.createElement('template');
+            itineraryTemplate.innerHTML = `<div class="border rounded p-3" data-itinerary-day>
+                <div class="d-flex justify-content-between align-items-center gap-2 mb-3"><h6 class="mb-0">Day <span data-day-number></span></h6></div>
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Day title <span class="text-danger">*</span></label><input data-field="title" type="text" maxlength="255" class="form-control" placeholder="e.g. Trek to Namche Bazaar" required></div>
+                    <div class="col-md-6"><label class="form-label">Location / route</label><input data-field="location" type="text" maxlength="255" class="form-control" placeholder="e.g. Phakding to Namche Bazaar"></div>
+                    <div class="col-md-4"><label class="form-label">Altitude (meters)</label><input data-field="altitude_meters" type="number" min="0" max="65535" class="form-control" placeholder="e.g. 3440"></div>
+                    <div class="col-md-4"><label class="form-label">Activity label</label><input data-field="activity_label" type="text" maxlength="255" class="form-control" placeholder="e.g. 5–6 hours"></div>
+                    <div class="col-md-4"><label class="form-label">Meals</label><input data-field="meal_plan" type="text" maxlength="255" class="form-control" placeholder="e.g. Breakfast, lunch, dinner"></div>
+                    <div class="col-12"><label class="form-label">Day details</label><textarea data-field="description" rows="3" maxlength="100000" class="form-control" placeholder="Describe the route, key stops, and what travelers can expect."></textarea></div>
+                </div>
+                <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-sm btn-light" data-move-day="up" aria-label="Move day up"><i class="ri-arrow-up-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-light" data-move-day="down" aria-label="Move day down"><i class="ri-arrow-down-line"></i></button>
+                    <button type="button" class="btn btn-sm btn-soft-danger" data-remove-day><i class="ri-delete-bin-line me-1"></i>Remove day</button>
+                    <button type="button" class="btn btn-sm btn-soft-primary" data-add-day-after><i class="ri-add-line me-1"></i>Add day after</button>
+                </div>
+            </div>`;
+            let current = 0;
+
+            const invalidField = (panel) => [...panel.querySelectorAll('input, select, textarea')]
+                .find((field) => !field.disabled && !field.checkValidity());
+
+            const showStep = (index, focusHeading = false) => {
+                current = Math.max(0, Math.min(index, panels.length - 1));
+
+                panels.forEach((panel, panelIndex) => {
+                    panel.hidden = panelIndex !== current;
+                });
+
+                steps.forEach((step, stepIndex) => {
+                    step.disabled = stepIndex > current + 1;
+                    step.classList.toggle('is-current', stepIndex === current);
+                    if (stepIndex === current) step.setAttribute('aria-current', 'step');
+                    else step.removeAttribute('aria-current');
+                });
+
+                previous.disabled = current === 0;
+                next.classList.toggle('d-none', current === panels.length - 1);
+                submit.classList.toggle('d-none', current !== panels.length - 1);
+                heading.textContent = panels[current].dataset.stepTitle;
+                description.textContent = panels[current].dataset.stepDescription;
+                count.textContent = `Step ${current + 1} of ${panels.length}`;
+                progress.style.width = `${((current + 1) / panels.length) * 100}%`;
+                progressTrack.setAttribute('aria-valuenow', String(current + 1));
+
+                if (focusHeading) {
+                    heading.setAttribute('tabindex', '-1');
+                    heading.focus({ preventScroll: true });
+                    wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            const refreshItineraryDays = () => {
+                const rows = [...itineraryContainer.querySelectorAll('[data-itinerary-day]')];
+                itineraryEmpty.hidden = rows.length > 0;
+                itineraryLimit.classList.toggle('d-none', rows.length < 100);
+                itineraryAddButton.disabled = rows.length >= 100;
+
+                rows.forEach((row, index) => {
+                    row.querySelector('[data-day-number]').textContent = String(index + 1);
+                    const idField = row.querySelector('[data-itinerary-id]');
+                    if (idField) idField.name = `itinerary_days[${index}][id]`;
+                    row.querySelector('[data-move-day="up"]').disabled = index === 0;
+                    row.querySelector('[data-move-day="down"]').disabled = index === rows.length - 1;
+                    row.querySelector('[data-add-day-after]').disabled = rows.length >= 100;
+                    row.querySelectorAll('[data-field]').forEach((field) => {
+                        field.name = `itinerary_days[${index}][${field.dataset.field}]`;
+                        field.id = `itinerary-${index}-${field.dataset.field.replaceAll('_', '-')}`;
+                        field.labels[0]?.setAttribute('for', field.id);
+                    });
+                });
+            };
+
+            const addItineraryDay = (after = null) => {
+                if (itineraryContainer.querySelectorAll('[data-itinerary-day]').length >= 100) return;
+                const row = itineraryTemplate.content.firstElementChild.cloneNode(true);
+                if (after) after.after(row);
+                else itineraryContainer.append(row);
+                refreshItineraryDays();
+                row.querySelector('[data-field="title"]')?.focus();
+            };
+
+            itineraryAddButton.addEventListener('click', () => addItineraryDay());
+            itineraryContainer.addEventListener('click', (event) => {
+                const row = event.target.closest('[data-itinerary-day]');
+                if (!row) return;
+
+                if (event.target.closest('[data-add-day-after]')) {
+                    addItineraryDay(row);
+                    return;
+                }
+
+                if (event.target.closest('[data-remove-day]')) {
+                    row.remove();
+                    refreshItineraryDays();
+                    return;
+                }
+
+                const moveButton = event.target.closest('[data-move-day]');
+                if (moveButton?.dataset.moveDay === 'up' && row.previousElementSibling) {
+                    itineraryContainer.insertBefore(row, row.previousElementSibling);
+                } else if (moveButton?.dataset.moveDay === 'down' && row.nextElementSibling) {
+                    itineraryContainer.insertBefore(row.nextElementSibling, row);
+                }
+
+                if (moveButton) refreshItineraryDays();
+            });
+            refreshItineraryDays();
+
+            const validatePanel = (panel) => {
+                const field = invalidField(panel);
+                if (!field) return true;
+
+                if (field.id === 'subcategory_id' && window.jQuery && window.jQuery.fn.select2) {
+                    window.jQuery(field).select2('open');
+                } else {
+                    field.reportValidity();
+                }
+
+                return false;
+            };
+
+            previous.addEventListener('click', () => showStep(current - 1, true));
+            next.addEventListener('click', () => {
+                if (validatePanel(panels[current])) showStep(current + 1, true);
+            });
+
+            steps.forEach((step) => {
+                step.addEventListener('click', () => {
+                    const target = Number(step.dataset.wizardGo);
+                    if (target < current) showStep(target, true);
+                    else if (target === current + 1 && validatePanel(panels[current])) showStep(target, true);
+                });
+            });
+
+            form.addEventListener('submit', (event) => {
+                const invalidPanel = panels.findIndex((panel) => invalidField(panel));
+                if (invalidPanel === -1) return;
+
+                event.preventDefault();
+                showStep(invalidPanel, true);
+                requestAnimationFrame(() => validatePanel(panels[invalidPanel]));
+            });
+
+            const firstPanelWithErrors = panels.findIndex((panel) => panel.querySelector('.is-invalid, .invalid-feedback, .text-danger.small'));
+            showStep(firstPanelWithErrors === -1 ? 0 : firstPanelWithErrors);
+        })();
     </script>
 @endpush
 

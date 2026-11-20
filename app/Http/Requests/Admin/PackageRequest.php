@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\Season;
+use App\Models\Package;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -50,6 +51,20 @@ abstract class PackageRequest extends FormRequest
             'sort_order' => ['required', 'integer', 'between:0,65535'],
             'seasons' => ['nullable', 'array', 'max:4'],
             'seasons.*' => ['required', 'string', 'distinct', Rule::in($seasons)],
+            'itinerary_days' => ['nullable', 'array', 'max:100'],
+            'itinerary_days.*' => ['required', 'array:id,title,location,altitude_meters,activity_label,meal_plan,description'],
+            'itinerary_days.*.id' => [
+                'nullable',
+                'integer',
+                'distinct',
+                Rule::exists('package_itinerary_days', 'id')->where('package_id', $this->route('package') instanceof Package ? $this->route('package')->id : 0),
+            ],
+            'itinerary_days.*.title' => ['required', 'string', 'max:255'],
+            'itinerary_days.*.location' => ['nullable', 'string', 'max:255'],
+            'itinerary_days.*.altitude_meters' => ['nullable', 'integer', 'between:0,65535'],
+            'itinerary_days.*.activity_label' => ['nullable', 'string', 'max:255'],
+            'itinerary_days.*.meal_plan' => ['nullable', 'string', 'max:255'],
+            'itinerary_days.*.description' => ['nullable', 'string', 'max:100000'],
             'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
             'gallery' => ['nullable', 'array', 'max:20'],
             'gallery.*' => ['image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120', 'dimensions:max_width=12000,max_height=12000'],
