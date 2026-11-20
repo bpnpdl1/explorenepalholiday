@@ -21,8 +21,8 @@ use Spatie\Sluggable\SlugOptions;
 class Destination extends Model implements HasMedia
 {
     use HasFactory;
-    use HasTravelMedia;
     use HasSlug;
+    use HasTravelMedia;
 
     public function getSlugOptions(): SlugOptions
     {

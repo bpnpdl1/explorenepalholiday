@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\PackageBookingStatus;
 use App\Enums\PackageBookingLogEvent;
+use App\Enums\PackageBookingStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

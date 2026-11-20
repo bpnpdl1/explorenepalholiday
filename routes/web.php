@@ -3,14 +3,14 @@
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\GuestReviewController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PackageController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PackageBookingController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PackageInquiryController;
 use App\Http\Controllers\PackageListingController;
-use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\SiteInquiryController;
-use App\Http\Controllers\TeamPageController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\TeamPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -27,6 +27,12 @@ Route::post('/inquiries', [SiteInquiryController::class, 'store'])
 Route::post('/newsletter/subscriptions', [NewsletterSubscriptionController::class, 'store'])
     ->middleware('throttle:3,1')
     ->name('newsletter.subscriptions.store');
+Route::get('/newsletter/unsubscribe/{newsletterSubscriber}/{token}', [NewsletterSubscriptionController::class, 'confirmUnsubscribe'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('newsletter.unsubscribe.show');
+Route::post('/newsletter/unsubscribe/{newsletterSubscriber}/{token}', [NewsletterSubscriptionController::class, 'unsubscribe'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('newsletter.unsubscribe.destroy');
 Route::post('/packages/{package}/inquiries', [PackageInquiryController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('packages.inquiries.store');

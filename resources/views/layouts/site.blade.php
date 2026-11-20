@@ -31,10 +31,10 @@
     <script defer src="{{ asset('site/scripts/alpine.min.js') }}"></script>
 </head>
 <body class="antialiased @yield('body_class')" x-data="site()" :class="tripSearchOpen ? 'search-open' : ''" x-init="updateScrollUI()" @scroll.window="updateScrollUI()" @keydown.escape.window="closeOverlays()">
-    @if (session('site_inquiry_submitted') || session('newsletter_subscribed'))
+    @if (session('site_inquiry_submitted') || session('newsletter_subscribed') || session('newsletter_unsubscribed'))
         <div class="site-toast" data-site-toast role="status" aria-live="polite" aria-atomic="true">
             <i data-lucide="circle-check" aria-hidden="true"></i>
-            <p>{{ session('newsletter_subscribed') ? 'You are subscribed to Nepal travel updates.' : 'Thanks for your inquiry. Our team will be in touch.' }}</p>
+            <p>{{ session('newsletter_unsubscribed') ? 'You have been unsubscribed from newsletter emails.' : (session('newsletter_welcome_email_failed') ? 'You are subscribed, but we could not send the welcome email. Please try again later.' : (session('newsletter_subscribed') ? 'You are subscribed to Nepal travel updates.' : 'Thanks for your inquiry. Our team will be in touch.')) }}</p>
             <button type="button" data-site-toast-dismiss aria-label="Dismiss notification">&times;</button>
         </div>
     @endif

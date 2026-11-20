@@ -6,8 +6,8 @@ use App\Models\Concerns\HasTravelMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -43,8 +43,8 @@ use Spatie\Sluggable\SlugOptions;
 class Package extends Model implements HasMedia
 {
     use HasFactory;
-    use HasTravelMedia;
     use HasSlug;
+    use HasTravelMedia;
 
     public function getSlugOptions(): SlugOptions
     {

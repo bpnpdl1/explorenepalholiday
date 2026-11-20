@@ -4,6 +4,7 @@ namespace App\Actions\Admin\NewsletterSubscribers;
 
 use App\Enums\NewsletterSubscriberStatus;
 use App\Models\NewsletterSubscriber;
+use Illuminate\Support\Str;
 
 class UpdateNewsletterSubscriberStatusAction
 {
@@ -14,6 +15,8 @@ class UpdateNewsletterSubscriberStatusAction
 
         if ($status === NewsletterSubscriberStatus::Subscribed) {
             $subscriber->subscribed_at = now();
+            $subscriber->unsubscribe_token = Str::random(64);
+            $subscriber->welcome_email_sent_at = null;
         }
 
         $subscriber->save();

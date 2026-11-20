@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Actions\Packages\StorePackageBookingAction;
 use App\Http\Requests\StorePackageBookingRequest;
 use App\Models\Package;
-use App\Models\PackageBooking;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

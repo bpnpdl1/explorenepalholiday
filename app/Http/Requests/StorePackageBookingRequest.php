@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Package;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StorePackageBookingRequest extends FormRequest
 {
