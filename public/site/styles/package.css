@@ -923,6 +923,14 @@ html {
   background: #32b887;
   color: #fff;
 }
+.package-booking-full-link {
+  justify-self: center;
+  color: #2878b9;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .package-whatsapp-button__icon {
   width: 16px;
   height: 16px;

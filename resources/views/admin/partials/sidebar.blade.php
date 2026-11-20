@@ -44,13 +44,11 @@
                     </a>
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.bookings.*') ? 'show' : '' }}" id="sidebarBookings">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.bookings.index') && ! request()->query('stage') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">All bookings</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'new-inquiry' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'new-inquiry']) }}">New inquiries</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'pending-review' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'pending-review']) }}">Pending review</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'awaiting-payment' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'awaiting-payment']) }}">Awaiting payment</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'confirmed' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'confirmed']) }}">Confirmed</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'completed' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'completed']) }}">Completed</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('stage') === 'cancelled' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['stage' => 'cancelled']) }}">Cancelled</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.bookings.index') && ! request()->query('status') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">All bookings</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'new' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['status' => 'new']) }}">New</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'processing' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['status' => 'processing']) }}">Processing</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'confirmed' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['status' => 'confirmed']) }}">Confirmed</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->query('status') === 'canceled' && request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index', ['status' => 'canceled']) }}">Canceled</a></li>
                         </ul>
                     </div>
                 </li>

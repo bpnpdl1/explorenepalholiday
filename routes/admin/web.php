@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::view('dashboard', 'admin.dashboard')->name('dashboard');
     Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::patch('bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.update-status');
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('destinations', DestinationController::class)->except('show');
     Route::resource('faqs', FaqController::class)->except('show');

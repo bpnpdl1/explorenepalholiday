@@ -69,10 +69,10 @@
 
 @section('content')
     <a class="skip-link" href="#main">Skip to content</a>
-    @if (session('inquiry_submitted'))
+    @if (session('inquiry_submitted') || session('booking_reference'))
         <div class="package-toast is-visible" data-package-toast role="status" aria-live="polite">
             <i data-lucide="circle-check" aria-hidden="true"></i>
-            <p>Thanks for your inquiry. Our team will be in touch.</p>
+            <p>{{ session('booking_reference') ? 'Booking request '.session('booking_reference').' received. Our team will confirm availability with you.' : 'Thanks for your inquiry. Our team will be in touch.' }}</p>
             <button type="button" data-toast-dismiss aria-label="Dismiss notification">&times;</button>
         </div>
     @endif
@@ -625,35 +625,53 @@
                                 src="{{ asset('site/assets/icons/whatsapp.svg') }}" alt="">Instant Chat on WhatsApp</a>
                             <p class="package-form__status" role="status" hidden></p>
                         </form>
-                        <form class="package-conversion-form" id="sidebar-booking-form" data-package-slug="{{ $package->slug }}"
-                            x-show="sidebarForm === 'booking'" @submit.prevent="saveBookingDraft($event)"
-                            role="tabpanel">
-                            <label for="sidebar-booking-name">Your full name <b>*</b></label><input
-                                id="sidebar-booking-name" name="sidebar-booking-name" type="text" autocomplete="name"
-                                required placeholder="Your name">
+                        <form class="package-conversion-form" id="sidebar-booking-form"
+                            action="{{ route('packages.bookings.store', $package) }}" method="POST"
+                            x-show="sidebarForm === 'booking'" role="tabpanel">
+                            @csrf
+                            <input type="hidden" name="booking_source" value="package">
+                            <label for="sidebar-booking-name">Your full name <b>*</b></label>
+                            <input id="sidebar-booking-name" name="customer_name" type="text" autocomplete="name"
+                                value="{{ old('customer_name') }}" required placeholder="Your name">
+                            @error('customer_name') <small class="text-danger">{{ $message }}</small> @enderror
                             <div class="package-conversion-form__row">
-                                <div><label for="sidebar-booking-email">Email address <b>*</b></label><input
-                                        id="sidebar-booking-email" name="sidebar-booking-email" type="email"
-                                        autocomplete="email" required placeholder="you@example.com"></div>
-                                <div><label for="sidebar-booking-phone">WhatsApp / phone <b>*</b></label><input
-                                        id="sidebar-booking-phone" name="sidebar-booking-phone" type="tel"
-                                        autocomplete="tel" required placeholder="+1 555-0199"></div>
+                                <div>
+                                    <label for="sidebar-booking-email">Email address <b>*</b></label>
+                                    <input id="sidebar-booking-email" name="email" type="email" autocomplete="email"
+                                        value="{{ old('email') }}" required placeholder="you@example.com">
+                                    @error('email') <small class="text-danger">{{ $message }}</small> @enderror
+                                </div>
+                                <div>
+                                    <label for="sidebar-booking-phone">WhatsApp / phone <b>*</b></label>
+                                    <input id="sidebar-booking-phone" name="phone" type="tel" autocomplete="tel"
+                                        value="{{ old('phone') }}" required placeholder="+1 555-0199">
+                                    @error('phone') <small class="text-danger">{{ $message }}</small> @enderror
+                                </div>
                             </div>
-                            <label for="sidebar-booking-window">Preferred travel window <b>*</b></label><select
-                                id="sidebar-booking-window" name="travel_window" required>
-                                <option value="">Choose a season or date</option>
-                                @foreach ($travelWindows as $window)
-                                    <option value="{{ $window['value'] }}">{{ $window['label'] }}</option>
-                                @endforeach
-                            </select>
-                            <label for="sidebar-booking-travellers">Number of travellers</label><select
-                                id="sidebar-booking-travellers" name="travellers">
+                            <label for="sidebar-booking-date">Preferred departure date <b>*</b></label>
+                            <input id="sidebar-booking-date" name="travel_date" type="date"
+                                min="{{ now()->toDateString() }}" value="{{ old('travel_date') }}" required>
+                            @error('travel_date') <small class="text-danger">{{ $message }}</small> @enderror
+                            <label for="sidebar-booking-guests">Number of travellers <b>*</b></label>
+                            <select id="sidebar-booking-guests" name="guests" required>
+                                <option value="">Select group size</option>
                                 @foreach ($travellerOptions as $travellers)
-                                    <option value="{{ $travellers }}">{{ $travellers }} {{ \Illuminate\Support\Str::plural('traveller', $travellers) }}</option>
+                                    <option value="{{ $travellers }}" @selected((string) old('guests') === (string) $travellers)>{{ $travellers }} {{ \Illuminate\Support\Str::plural('traveller', $travellers) }}</option>
                                 @endforeach
                             </select>
-                            <button class="package-conversion-submit" type="submit">Continue to booking details <span
-                                    aria-hidden="true">&#8599;</span></button><a class="package-whatsapp-button"
+                            @error('guests') <small class="text-danger">{{ $message }}</small> @enderror
+                            <label for="sidebar-booking-notes">Special requests</label>
+                            <textarea id="sidebar-booking-notes" name="special_requests" rows="3" maxlength="10000"
+                                placeholder="Anything else we should know?">{{ old('special_requests') }}</textarea>
+                            @error('special_requests') <small class="text-danger">{{ $message }}</small> @enderror
+                            <label class="package-checkbox package-booking-consent" for="sidebar-booking-consent">
+                                <input id="sidebar-booking-consent" type="checkbox" name="consent" value="1" required @checked(old('consent'))>
+                                <span>Our team may use these details to reply to your request. <b>*</b></span>
+                            </label>
+                            @error('consent') <small class="text-danger">{{ $message }}</small> @enderror
+                            <button class="package-conversion-submit" type="submit">Send booking request <span aria-hidden="true">&#8599;</span></button>
+                            <a class="package-booking-full-link" href="{{ route('packages.bookings.create', $package) }}">Open the full booking form <span aria-hidden="true">&#8599;</span></a>
+                            <a class="package-whatsapp-button"
                                 href="https://wa.me/?text={{ rawurlencode('I am ready to discuss booking '.$package->name.'.') }}"
                                 target="_blank" rel="noopener noreferrer"><img
                                 class="package-icon-image package-whatsapp-button__icon"

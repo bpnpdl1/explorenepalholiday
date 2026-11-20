@@ -1,38 +1,6 @@
 function packageBookingSidebar() {
   return {
-    sidebarForm: 'inquiry',
-    saveBookingDraft(event) {
-      const form = event.currentTarget;
-      if (!form.reportValidity()) return;
-      const data = new FormData(form);
-      const draft = {
-        tripId: form.dataset.packageSlug || window.location.pathname.split('/').filter(Boolean).pop(),
-        packageSlug: form.dataset.packageSlug || '',
-        name: data.get('sidebar-booking-name'),
-        email: data.get('sidebar-booking-email'),
-        phone: data.get('sidebar-booking-phone'),
-        travelWindow: data.get('travel_window'),
-        travellers: data.get('travellers'),
-        savedAt: new Date().toISOString()
-      };
-      try {
-        window.localStorage.setItem('enhBookingDraft', JSON.stringify(draft));
-        const status = form.querySelector('.package-form__status');
-        if (status) {
-          status.textContent = 'Your trip details are saved as a draft in this browser. No booking has been submitted.';
-          status.hidden = false;
-          status.setAttribute('tabindex', '-1');
-          status.focus();
-        }
-      } catch (_error) {
-        const status = form.querySelector('.package-form__status');
-        if (status) {
-          status.textContent = 'We could not save your details in this browser. Check your browser storage settings and try again.';
-          status.hidden = false;
-          status.focus();
-        }
-      }
-    }
+    sidebarForm: 'booking'
   };
 }
 
