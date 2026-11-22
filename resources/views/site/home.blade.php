@@ -160,6 +160,7 @@
           <span class="text-amber-500 text-xs font-bold tracking-widest uppercase mb-2 block">The planning difference</span>
           <h2 id="why-choose-title" class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Why Travelers Choose Explore Nepal Holidays</h2>
           <p class="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">Good travel design is not decoration. It is clear pacing, realistic routes, honest preparation and enough local context to choose well.</p>
+          <a href="{{ route('why-choose-us') }}" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-amber-700 transition hover:text-amber-800">See why choose us <span aria-hidden="true">&rarr;</span></a>
         </div>
 
         <!-- 4-Column Feature Card Grid -->

@@ -17,6 +17,16 @@
                         @error('question')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Topic <span class="text-danger">*</span></label>
+                        <select id="category" name="category" class="form-select @error('category') is-invalid @enderror" required>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->value }}" @selected(old('category', $faq->categoryEnum()->value) === $category->value)>{{ $category->label() }}</option>
+                            @endforeach
+                        </select>
+                        @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
                     <div>
                         <label for="answer" class="form-label">Answer <span class="text-danger">*</span></label>
                         <textarea id="answer" name="answer" rows="10" maxlength="100000" class="form-control @error('answer') is-invalid @enderror" placeholder="Write a clear answer for travelers..." required>{{ old('answer', $faq->answer) }}</textarea>

@@ -1,15 +1,15 @@
-<x-admin-layouts::app :title="__('Why travel with us')">
+<x-admin-layouts::app :title="__('Why Choose Us')">
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <div>
-                    <h4 class="mb-sm-0">Why travel with us</h4>
-                    <p class="text-muted mb-0 mt-1">Manage the feature cards shown on the homepage.</p>
+                    <h4 class="mb-sm-0">Why Choose Us</h4>
+                    <p class="text-muted mb-0 mt-1">Manage the reasons shown on the Why Choose Us page and homepage.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <ol class="breadcrumb m-0 d-none d-md-flex">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                        <li class="breadcrumb-item active">Why travel with us</li>
+                        <li class="breadcrumb-item active">Why Choose Us</li>
                     </ol>
                     <a href="{{ route('admin.why-travel-reasons.create') }}" class="btn btn-primary"><i class="ri-add-line me-1"></i>Add reason</a>
                 </div>
@@ -19,7 +19,7 @@
 
     <div class="row row-cols-1 row-cols-sm-2 g-3 mb-3">
         <div class="col"><x-admin::stat-card label="Total reasons" :value="$reasonCount" change="All records" icon="ri-lightbulb-line" tone="primary" /></div>
-        <div class="col"><x-admin::stat-card label="Published" :value="$publishedCount" change="Visible on homepage" icon="ri-checkbox-circle-line" tone="success" /></div>
+        <div class="col"><x-admin::stat-card label="Published" :value="$publishedCount" change="Visible on site" icon="ri-checkbox-circle-line" tone="success" /></div>
     </div>
 
     <div class="card">

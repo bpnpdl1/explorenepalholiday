@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\FaqPageController;
 use App\Http\Controllers\GuestReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterSubscriptionController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\PackageListingController;
 use App\Http\Controllers\SiteInquiryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\TeamPageController;
+use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -18,8 +20,9 @@ Route::get('/destinations/{destination}', [DestinationController::class, 'show']
 Route::get('/subcategories/{subcategory:slug}', [SubcategoryController::class, 'show'])->name('subcategories.show');
 Route::view('/about-us', 'site.about')->name('about');
 Route::get('/our-team', TeamPageController::class)->name('team');
+Route::get('/why-choose-us', WhyChooseUsController::class)->name('why-choose-us');
 Route::get('/guest-reviews', GuestReviewController::class)->name('guest-reviews');
-Route::view('/faq', 'site.faq')->name('faq');
+Route::get('/faq', FaqPageController::class)->name('faq');
 Route::view('/contact-us', 'site.contact')->name('contact');
 Route::post('/inquiries', [SiteInquiryController::class, 'store'])
     ->middleware('throttle:5,1')

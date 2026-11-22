@@ -60,6 +60,7 @@
                     <thead class="table-light text-muted">
                         <tr>
                             <th scope="col">Question and answer</th>
+                            <th scope="col">Topic</th>
                             <th scope="col">Order</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-end">Actions</th>
@@ -72,6 +73,7 @@
                                     <div class="fw-medium">{{ $faq->question }}</div>
                                     <small class="text-muted">{{ \Illuminate\Support\Str::limit($faq->answer, 180) }}</small>
                                 </td>
+                                <td>{{ $faq->categoryEnum()->label() }}</td>
                                 <td>{{ $faq->sort_order }}</td>
                                 <td><span class="badge bg-{{ $faq->is_published ? 'success' : 'warning' }}-subtle text-{{ $faq->is_published ? 'success' : 'warning' }}">{{ $faq->is_published ? 'Published' : 'Draft' }}</span></td>
                                 <td class="text-end">
@@ -84,7 +86,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="text-center py-5 text-muted">No FAQs found. <a href="{{ route('admin.faqs.create') }}">Add your first FAQ</a>.</td></tr>
+                            <tr><td colspan="5" class="text-center py-5 text-muted">No FAQs found. <a href="{{ route('admin.faqs.create') }}">Add your first FAQ</a>.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

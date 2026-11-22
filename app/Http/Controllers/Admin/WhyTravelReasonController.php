@@ -53,7 +53,7 @@ class WhyTravelReasonController extends Controller
         $saveReason->handle($data, $request->boolean('is_published'), $request->file('icon_image'));
 
         return to_route('admin.why-travel-reasons.index')
-            ->with('success', 'Why travel with us item created successfully.');
+            ->with('success', 'Why Choose Us reason created successfully.');
     }
 
     public function edit(WhyTravelReason $whyTravelReason): View
@@ -72,7 +72,7 @@ class WhyTravelReasonController extends Controller
         $saveReason->handle($data, $request->boolean('is_published'), $request->file('icon_image'), $whyTravelReason);
 
         return to_route('admin.why-travel-reasons.index')
-            ->with('success', 'Why travel with us item updated successfully.');
+            ->with('success', 'Why Choose Us reason updated successfully.');
     }
 
     public function destroy(WhyTravelReason $whyTravelReason): RedirectResponse
@@ -80,6 +80,6 @@ class WhyTravelReasonController extends Controller
         $whyTravelReason->delete();
 
         return to_route('admin.why-travel-reasons.index')
-            ->with('success', 'Why travel with us item deleted successfully.');
+            ->with('success', 'Why Choose Us reason deleted successfully.');
     }
 }

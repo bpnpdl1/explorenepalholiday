@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\Admin\Faqs\ListFaqsAction;
+use App\Enums\FaqCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreFaqRequest;
 use App\Http\Requests\Admin\UpdateFaqRequest;
@@ -20,12 +21,15 @@ class FaqController extends Controller
 
     public function create(): View
     {
-        return view('admin.faqs.create', ['faq' => new Faq]);
+        return view('admin.faqs.create', [
+            'faq' => new Faq,
+            'categories' => FaqCategory::cases(),
+        ]);
     }
 
     public function store(StoreFaqRequest $request): RedirectResponse
     {
-        $data = $request->safe()->only(['question', 'answer', 'sort_order']);
+        $data = $request->safe()->only(['question', 'answer', 'category', 'sort_order']);
         $data['is_published'] = $request->boolean('is_published');
 
         Faq::create($data);
@@ -36,12 +40,15 @@ class FaqController extends Controller
 
     public function edit(Faq $faq): View
     {
-        return view('admin.faqs.edit', compact('faq'));
+        return view('admin.faqs.edit', [
+            'faq' => $faq,
+            'categories' => FaqCategory::cases(),
+        ]);
     }
 
     public function update(UpdateFaqRequest $request, Faq $faq): RedirectResponse
     {
-        $data = $request->safe()->only(['question', 'answer', 'sort_order']);
+        $data = $request->safe()->only(['question', 'answer', 'category', 'sort_order']);
         $data['is_published'] = $request->boolean('is_published');
         $faq->update($data);
 

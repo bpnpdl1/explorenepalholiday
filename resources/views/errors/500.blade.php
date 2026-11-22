@@ -42,7 +42,7 @@
           <h2>Explore Nepal</h2>
           <a href="{{ route('about') }}">About Us</a>
           <a href="{{ route('team') }}">Our Team</a>
-          <a href="{{ route('home') }}#why-choose">Why travel with us</a>
+          <a href="{{ route('why-choose-us') }}">Why Choose Us</a>
           <a href="{{ route('contact') }}">Contact Us</a>
           <a href="{{ route('home') }}#journeys">Featured journeys</a>
           <a href="{{ route('home') }}#experiences">Ways to travel</a>

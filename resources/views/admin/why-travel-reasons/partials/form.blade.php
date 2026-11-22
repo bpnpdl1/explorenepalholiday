@@ -43,7 +43,7 @@
                         <input type="hidden" name="is_published" value="0">
                         <input id="is_published" name="is_published" type="checkbox" value="1" class="form-check-input" @checked(old('is_published', $reason->is_published))>
                         <label for="is_published" class="form-check-label">Published</label>
-                        <div class="form-text">Published reasons appear on the homepage.</div>
+                        <div class="form-text">Published reasons appear on the Why Choose Us page and homepage.</div>
                     </div>
                     <div>
                         <label for="sort_order" class="form-label">Display order</label>

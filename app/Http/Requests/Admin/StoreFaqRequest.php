@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\FaqCategory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreFaqRequest extends FormRequest
 {
@@ -25,6 +27,7 @@ class StoreFaqRequest extends FormRequest
         return [
             'question' => ['required', 'string', 'max:255'],
             'answer' => ['required', 'string', 'max:100000'],
+            'category' => ['required', Rule::enum(FaqCategory::class)],
             'sort_order' => ['required', 'integer', 'between:0,65535'],
             'is_published' => ['sometimes', 'boolean'],
         ];

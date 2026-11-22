@@ -12,12 +12,11 @@
           <h2>Explore Nepal</h2>
           <a href="{{ route('about') }}">About Us</a>
           <a href="{{ route('team') }}">Our Team</a>
-          <a href="{{ route('home') }}#why-choose">Why travel with us</a>
+          <a href="{{ route('why-choose-us') }}">Why Choose Us</a>
           <a href="{{ route('contact') }}">Contact Us</a>
           <a href="{{ route('home') }}#journeys">Featured journeys</a>
           <a href="{{ route('home') }}#expeditions">Flagship expeditions</a>
           <a href="{{ route('home') }}#regions">Regions</a>
-          <a href="{{ route('home') }}#why-choose">Why choose us</a>
           <a href="{{ route('guest-reviews') }}">Guest reviews</a>
           <a href="{{ route('home') }}#newsletter">Newsletter</a>
           <a href="{{ route('faq') }}">FAQs</a>
