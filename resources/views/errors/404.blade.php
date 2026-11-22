@@ -46,7 +46,7 @@
           <a href="{{ route('contact') }}">Contact Us</a>
           <a href="{{ route('home') }}#journeys">Featured journeys</a>
           <a href="{{ route('home') }}#experiences">Ways to travel</a>
-          <a href="{{ route('home') }}#why-nepal">Our approach</a>
+          <a href="{{ route('approach') }}">Our approach</a>
           <a href="{{ route('home') }}#testimonials">Traveller stories</a>
           <a href="{{ route('home') }}#newsletter">Newsletter</a>
           <a href="{{ route('faq') }}">FAQs</a>

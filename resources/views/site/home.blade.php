@@ -45,7 +45,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
               </svg>
             </a>
-            <a href="#why-nepal" class="hero-cta-secondary">
+            <a href="{{ route('approach') }}" class="hero-cta-secondary">
               <span>Plan a custom trip</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -518,7 +518,7 @@
                 <p>Tell us what matters to you and we can discuss a journey shaped around it.</p>
               </div>
             </div>
-          </div><a class="btn btn-navy" href="#plan">Let's plan something memorable ↗</a>
+          </div><a class="btn btn-navy" href="{{ route('approach') }}">Read our approach <span aria-hidden="true">&rarr;</span></a>
         </div>
       </div>
     </section>

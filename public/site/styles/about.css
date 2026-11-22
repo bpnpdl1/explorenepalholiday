@@ -67,6 +67,7 @@
   margin-top: 0;
 }
 
+.about-richtext h1,
 .about-richtext h2,
 .about-richtext h3,
 .about-richtext h4 {
@@ -75,6 +76,11 @@
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.2;
+}
+
+.about-richtext h1 {
+  margin: 0 0 0.7em;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
 }
 
 .about-richtext h2 {
@@ -215,6 +221,12 @@
   margin: 0;
   color: #536878;
   font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.about-review-empty {
+  margin: 0;
+  color: #536878;
   line-height: 1.7;
 }
 

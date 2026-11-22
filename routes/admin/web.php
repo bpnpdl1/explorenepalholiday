@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AboutPageController;
+use App\Http\Controllers\Admin\ApproachPageController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -38,6 +40,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::resource('why-travel-reasons', WhyTravelReasonController::class)
         ->except('show')
         ->parameters(['why-travel-reasons' => 'whyTravelReason']);
+    Route::get('about-page', [AboutPageController::class, 'edit'])->name('about-page.edit');
+    Route::put('about-page', [AboutPageController::class, 'update'])->name('about-page.update');
+    Route::get('approach-page', [ApproachPageController::class, 'edit'])->name('approach-page.edit');
+    Route::put('approach-page', [ApproachPageController::class, 'update'])->name('approach-page.update');
     Route::get('site-settings', [SiteSettingController::class, 'edit'])->name('site-settings.edit');
     Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AboutPageController;
+use App\Http\Controllers\ApproachPageController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\FaqPageController;
 use App\Http\Controllers\GuestReviewController;
@@ -18,7 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class)->name('home');
 Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
 Route::get('/subcategories/{subcategory:slug}', [SubcategoryController::class, 'show'])->name('subcategories.show');
-Route::view('/about-us', 'site.about')->name('about');
+Route::get('/about-us', AboutPageController::class)->name('about');
+Route::get('/our-approach', ApproachPageController::class)->name('approach');
 Route::get('/our-team', TeamPageController::class)->name('team');
 Route::get('/why-choose-us', WhyChooseUsController::class)->name('why-choose-us');
 Route::get('/guest-reviews', GuestReviewController::class)->name('guest-reviews');

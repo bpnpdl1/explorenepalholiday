@@ -4,31 +4,23 @@
 @section('meta_description', 'See how Explore Nepal Holidays helps you plan a thoughtful Nepal journey, with clear pacing, local context and practical preparation.')
 @section('og_title', 'Why Choose Us | '.($siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays')))
 @section('og_image', asset('site/assets/annapurna-sunrise.jpg'))
-@section('body_class', 'bg-paper text-ink font-sans')
+@section('body_class', 'bg-paper text-ink font-sans about-page')
+
+@push('page_styles')
+<link rel="stylesheet" href="{{ asset('site/styles/about.css') }}">
+@endpush
 
 @section('content')
 <a class="skip-link" href="#main">Skip to content</a>
 @include('site.partials.header')
 
 <main id="main">
-    <section class="relative isolate overflow-hidden bg-slate-950 text-white" aria-labelledby="why-choose-us-title">
-        <img src="{{ asset('site/assets/annapurna-sunrise.jpg') }}" alt="Sunrise over the Himalayan mountains" class="absolute inset-0 -z-20 h-full w-full object-cover" fetchpriority="high">
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/90 via-slate-950/65 to-slate-950/25"></div>
-        <div class="container py-20 md:py-28 lg:py-32">
-            <nav class="mb-8 flex items-center gap-2 text-sm text-white/75" aria-label="Breadcrumb">
-                <a class="transition hover:text-white" href="{{ route('home') }}">Home</a>
-                <span aria-hidden="true">/</span>
-                <span aria-current="page" class="text-white">Why Choose Us</span>
+    <section class="about-banner" aria-labelledby="why-choose-us-title">
+        <div class="container">
+            <nav class="about-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a><span aria-hidden="true">/</span><span>Why Choose Us</span>
             </nav>
-            <div class="max-w-3xl">
-                <span class="mb-4 inline-block text-xs font-bold uppercase tracking-[.2em] text-amber-300">The planning difference</span>
-                <h1 id="why-choose-us-title" class="mb-5 font-[Outfit] text-4xl font-extrabold leading-tight text-white md:text-6xl">A Nepal journey shaped around you</h1>
-                <p class="max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">Good travel design means clear pacing, realistic routes, honest preparation and local context. Here is what guides the way we help you plan.</p>
-                <a href="{{ route('contact') }}" class="mt-8 inline-flex items-center gap-3 rounded-lg bg-amber-400 px-6 py-3 font-bold text-slate-950 transition hover:bg-amber-300">
-                    Talk with our team
-                    <span aria-hidden="true">&rarr;</span>
-                </a>
-            </div>
+            <h1 id="why-choose-us-title">Why Choose Us</h1>
         </div>
     </section>
 

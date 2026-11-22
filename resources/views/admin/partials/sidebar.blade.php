@@ -89,10 +89,10 @@
 
                 <li class="menu-title"><span>Website content &amp; settings</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*') ? 'active' : 'collapsed' }}" href="#sidebarContent" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*') ? 'true' : 'false' }}" aria-controls="sidebarContent">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'active' : 'collapsed' }}" href="#sidebarContent" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'true' : 'false' }}" aria-controls="sidebarContent">
                         <i class="ri-pages-line"></i><span>Content &amp; settings</span><span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.site-settings.*') ? 'show' : '' }}" id="sidebarContent">
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'show' : '' }}" id="sidebarContent">
                         <ul class="nav nav-sm flex-column">
                             <li class="menu-title"><span>Travel structure</span></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}" href="{{ route('admin.destinations.index') }}">Destinations</a></li>
@@ -103,6 +103,8 @@
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.guest-reviews.*') ? 'active' : '' }}" href="{{ route('admin.guest-reviews.index') }}">Guest reviews</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.team-members.*') ? 'active' : '' }}" href="{{ route('admin.team-members.index') }}">Team members</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.why-travel-reasons.*') ? 'active' : '' }}" href="{{ route('admin.why-travel-reasons.index') }}">Why Choose Us</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.about-page.*') ? 'active' : '' }}" href="{{ route('admin.about-page.edit') }}">About Us page</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.approach-page.*') ? 'active' : '' }}" href="{{ route('admin.approach-page.edit') }}">Our Approach page</a></li>
                             <li class="menu-title"><span>Configuration</span></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.site-settings.*') ? 'active' : '' }}" href="{{ route('admin.site-settings.edit') }}">Site settings</a></li>
                         </ul>

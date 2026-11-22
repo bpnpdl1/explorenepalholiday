@@ -1,6 +1,7 @@
 (() => {
       const reviewElement = document.querySelector('.about-review-swiper');
-      if (reviewElement && window.Swiper) {
+      const reviewCount = reviewElement?.querySelectorAll('.swiper-slide').length ?? 0;
+      if (reviewElement && window.Swiper && reviewCount > 0) {
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         new window.Swiper(reviewElement, {
           a11y: {
@@ -14,7 +15,7 @@
             pauseOnMouseEnter: true
           },
           keyboard: { enabled: true },
-          loop: true,
+          loop: reviewCount > 3,
           navigation: {
             nextEl: '.about-review-next',
             prevEl: '.about-review-prev'
