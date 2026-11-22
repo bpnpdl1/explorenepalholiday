@@ -22,6 +22,7 @@ class StoreSubcategoryRequest extends FormRequest
             'summary' => ['nullable', 'string', 'max:2000'],
             'description' => ['nullable', 'string', 'max:100000'],
             'is_published' => ['sometimes', 'boolean'],
+            'is_featured' => ['sometimes', 'boolean'],
             'sort_order' => ['required', 'integer', 'between:0,65535'],
         ];
     }

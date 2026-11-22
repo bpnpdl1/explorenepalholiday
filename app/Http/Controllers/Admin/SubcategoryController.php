@@ -35,9 +35,11 @@ class SubcategoryController extends Controller
             'name',
             'summary',
             'description',
+            'is_featured',
             'sort_order',
         ]);
         $data['is_published'] = $request->boolean('is_published');
+        $data['is_featured'] = $request->boolean('is_featured');
 
         Subcategory::create($data);
 
@@ -60,9 +62,11 @@ class SubcategoryController extends Controller
             'name',
             'summary',
             'description',
+            'is_featured',
             'sort_order',
         ]);
         $data['is_published'] = $request->boolean('is_published');
+        $data['is_featured'] = $request->boolean('is_featured');
 
         $subcategory->update($data);
 

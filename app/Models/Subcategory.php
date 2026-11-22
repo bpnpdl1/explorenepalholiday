@@ -16,6 +16,7 @@ use Spatie\Sluggable\SlugOptions;
     'summary',
     'description',
     'is_published',
+    'is_featured',
     'sort_order',
 ])]
 class Subcategory extends Model
@@ -50,6 +51,7 @@ class Subcategory extends Model
     {
         return [
             'is_published' => 'boolean',
+            'is_featured' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

@@ -13,6 +13,7 @@ class ListSubcategoriesAction
     {
         $search = trim($request->string('search')->toString());
         $status = $request->string('status')->toString();
+        $featured = $request->string('featured')->toString();
         $categoryId = $request->integer('category_id');
 
         $subcategories = Subcategory::query()
@@ -26,6 +27,8 @@ class ListSubcategoriesAction
             })
             ->when($status === 'published', fn ($query) => $query->where('is_published', true))
             ->when($status === 'draft', fn ($query) => $query->where('is_published', false))
+            ->when($featured === 'yes', fn ($query) => $query->where('is_featured', true))
+            ->when($featured === 'no', fn ($query) => $query->where('is_featured', false))
             ->when($categoryId > 0, fn ($query) => $query->where('category_id', $categoryId))
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -40,9 +43,11 @@ class ListSubcategoriesAction
                 ->get(['id', 'destination_id', 'name']),
             'search' => $search,
             'status' => in_array($status, ['published', 'draft'], true) ? $status : '',
+            'featured' => in_array($featured, ['yes', 'no'], true) ? $featured : '',
             'categoryId' => $categoryId,
             'subcategoryCount' => Subcategory::query()->count(),
             'publishedCount' => Subcategory::query()->where('is_published', true)->count(),
+            'featuredCount' => Subcategory::query()->where('is_featured', true)->count(),
         ];
     }
 }

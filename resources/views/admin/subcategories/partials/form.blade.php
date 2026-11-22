@@ -53,6 +53,12 @@
                 <div class="card-header"><h5 class="card-title mb-0">Visibility and order</h5></div>
                 <div class="card-body">
                     <div class="form-check form-switch mb-3">
+                        <input type="hidden" name="is_featured" value="0">
+                        <input id="is_featured" name="is_featured" type="checkbox" value="1" class="form-check-input" @checked(old('is_featured', $subcategory->is_featured))>
+                        <label for="is_featured" class="form-check-label">Featured</label>
+                        <div class="form-text">Featured subcategories are prioritized in the homepage trip-area section.</div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
                         <input type="hidden" name="is_published" value="0">
                         <input id="is_published" name="is_published" type="checkbox" value="1" class="form-check-input" @checked(old('is_published', $subcategory->is_published))>
                         <label for="is_published" class="form-check-label">Published</label>

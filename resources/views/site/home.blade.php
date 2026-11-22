@@ -329,6 +329,9 @@
                 <img src="{{ $regionImage }}" alt="{{ $region->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
                 <div class="bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent absolute inset-0"></div>
                 <div class="absolute inset-0 p-6 flex flex-col justify-end text-left z-10">
+                  @if ($region->is_featured)
+                    <span class="inline-flex w-fit items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-950"><i class="ri-star-fill" aria-hidden="true"></i>Featured area</span>
+                  @endif
                   <span class="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">{{ $region->category->name }} · {{ $region->published_packages_count }} {{ \Illuminate\Support\Str::plural('trip', $region->published_packages_count) }}</span>
                   <h3 class="text-xl font-bold text-white mb-2">{{ $region->name }}</h3>
                   <p class="text-slate-300 text-sm leading-relaxed mb-3">{{ $region->summary ?: 'Explore published trips in '.$region->name.'.' }}</p>

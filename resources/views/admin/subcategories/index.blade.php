@@ -17,22 +17,23 @@
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 g-3 mb-3">
+    <div class="row row-cols-1 row-cols-sm-3 g-3 mb-3">
         <div class="col"><x-admin::stat-card label="Total subcategories" :value="$subcategoryCount" change="All records" icon="ri-list-check-2" tone="primary" /></div>
         <div class="col"><x-admin::stat-card label="Published" :value="$publishedCount" change="Visible to travelers" icon="ri-checkbox-circle-line" tone="success" /></div>
+        <div class="col"><x-admin::stat-card label="Featured" :value="$featuredCount" change="Prioritized on the homepage" icon="ri-star-line" tone="warning" /></div>
     </div>
 
     <div class="card">
         <div class="card-header align-items-center d-flex flex-wrap gap-3">
             <div class="flex-grow-1">
                 <h4 class="card-title mb-1">All subcategories</h4>
-                <p class="text-muted mb-0">Search subcategories and parent categories, or filter by category and status.</p>
+                <p class="text-muted mb-0">Search subcategories and parent categories, or filter by category, status, and featured placement.</p>
             </div>
             <span class="badge bg-primary-subtle text-primary">{{ $subcategories->total() }} subcategories</span>
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('admin.subcategories.index') }}" class="row g-2 mb-3">
-                <div class="col-md-5 col-lg-4">
+                <div class="col-md-4">
                     <label class="visually-hidden" for="subcategory-search">Search subcategories</label>
                     <div class="search-box">
                         <input id="subcategory-search" type="search" name="search" value="{{ $search }}" class="form-control" placeholder="Search subcategory or category...">
@@ -56,9 +57,17 @@
                         <option value="draft" @selected($status === 'draft')>Draft</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex gap-2">
+                <div class="col-md-2">
+                    <label class="visually-hidden" for="subcategory-featured">Filter by featured placement</label>
+                    <select id="subcategory-featured" name="featured" class="form-select">
+                        <option value="">Featured or not</option>
+                        <option value="yes" @selected($featured === 'yes')>Featured</option>
+                        <option value="no" @selected($featured === 'no')>Not featured</option>
+                    </select>
+                </div>
+                <div class="col-md-auto d-flex flex-wrap gap-2">
                     <button type="submit" class="btn btn-primary">Filter</button>
-                    @if ($search !== '' || $status !== '' || $categoryId > 0)
+                    @if ($search !== '' || $status !== '' || $featured !== '' || $categoryId > 0)
                         <a href="{{ route('admin.subcategories.index') }}" class="btn btn-light">Clear</a>
                     @endif
                 </div>
@@ -71,6 +80,7 @@
                             <th scope="col">Subcategory</th>
                             <th scope="col">Category</th>
                             <th scope="col">Destination</th>
+                            <th scope="col">Featured</th>
                             <th scope="col">Order</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-end">Actions</th>
@@ -85,6 +95,13 @@
                                 </td>
                                 <td>{{ $subcategory->category->name }}</td>
                                 <td>{{ $subcategory->category->destination->name }}</td>
+                                <td>
+                                    @if ($subcategory->is_featured)
+                                        <span class="badge bg-warning-subtle text-warning"><i class="ri-star-fill me-1" aria-hidden="true"></i>Featured</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
                                 <td>{{ $subcategory->sort_order }}</td>
                                 <td><span class="badge bg-{{ $subcategory->is_published ? 'success' : 'warning' }}-subtle text-{{ $subcategory->is_published ? 'success' : 'warning' }}">{{ $subcategory->is_published ? 'Published' : 'Draft' }}</span></td>
                                 <td class="text-end">
@@ -97,7 +114,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="text-center py-5 text-muted">No subcategories found. <a href="{{ route('admin.subcategories.create') }}">Add your first subcategory</a>.</td></tr>
+                            <tr><td colspan="7" class="text-center py-5 text-muted">No subcategories found. <a href="{{ route('admin.subcategories.create') }}">Add your first subcategory</a>.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

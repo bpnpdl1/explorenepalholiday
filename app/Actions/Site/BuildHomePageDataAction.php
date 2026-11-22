@@ -39,6 +39,7 @@ class BuildHomePageDataAction
                     ->orderBy('name')
                     ->limit(1),
             ])
+            ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();

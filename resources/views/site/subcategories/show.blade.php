@@ -27,6 +27,9 @@
                     <span aria-current="page">{{ $subcategory->name }}</span>
                 </nav>
                 <div class="subcategory-hero__copy">
+                    @if ($subcategory->is_featured)
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wide text-slate-950"><i class="ri-star-fill" aria-hidden="true"></i>Featured trip area</span>
+                    @endif
                     <p class="subcategory-hero__eyebrow">{{ $subcategory->category->name }} <span aria-hidden="true">&middot;</span> {{ $subcategory->category->destination->name }}</p>
                     <h1 id="subcategory-title">{{ $subcategory->name }}</h1>
                     @if ($subcategory->summary)
