@@ -65,6 +65,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
         ->name('newsletter-subscribers.export');
     Route::patch('newsletter-subscribers/{newsletterSubscriber}/status', [NewsletterSubscriberController::class, 'updateStatus'])
         ->name('newsletter-subscribers.update-status');
+    Route::get('packages/categories', [PackageController::class, 'categoriesForDestination'])
+        ->name('packages.categories');
+    Route::get('packages/subcategories', [PackageController::class, 'subcategoriesForCategory'])
+        ->name('packages.subcategories');
     Route::resource('packages', PackageController::class);
     Route::get('package-reviews/package/{package}', [PackageReviewController::class, 'forPackage'])
         ->name('package-reviews.package');
@@ -76,7 +80,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::resource('package-departures', PackageDepartureController::class)
         ->except('show')
         ->parameters(['package-departures' => 'packageDeparture']);
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::resource('users', UserController::class)->except('show');
     Route::post('rich-content/images', RichContentImageController::class)
         ->middleware('throttle:30,1')
         ->name('rich-content.images.store');

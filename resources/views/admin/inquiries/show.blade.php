@@ -91,7 +91,7 @@
                         @csrf
                         @method('PATCH')
                         <label for="inquiry-status" class="form-label">Status</label>
-                        <select class="form-select mb-3" id="inquiry-status" name="status">
+                        <select class="form-select mb-3" id="inquiry-status" name="status" required>
                             @foreach ($statuses as $status)
                                 <option value="{{ $status->value }}" @selected($status === $inquiry->status)>{{ $status->label() }}</option>
                             @endforeach

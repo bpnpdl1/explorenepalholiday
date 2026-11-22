@@ -30,6 +30,7 @@
                         :value="$contentValue"
                         placeholder="Write useful travel information for visitors..."
                         maxlength="100000"
+                        required
                         help="Use headings, text, lists, links, tables, photos, and video embeds. Content is sanitized before it is saved."
                     />
                 </div>

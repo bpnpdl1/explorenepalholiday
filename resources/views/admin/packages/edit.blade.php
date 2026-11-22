@@ -5,7 +5,6 @@
     </div>
     @include('admin.packages.partials.form', [
         'package' => $package,
-        'subcategories' => $subcategories,
         'action' => route('admin.packages.update', $package),
         'method' => 'PUT',
         'submitLabel' => 'Save changes',

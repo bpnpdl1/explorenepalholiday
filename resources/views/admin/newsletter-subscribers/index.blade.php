@@ -44,7 +44,7 @@
                                     <form method="POST" action="{{ route('admin.newsletter-subscribers.update-status', $subscriber) }}" class="d-inline-flex align-items-center gap-2">
                                         @csrf
                                         @method('PATCH')
-                                        <select class="form-select form-select-sm" name="status" aria-label="Status for {{ $subscriber->email }}">
+                                        <select class="form-select form-select-sm" name="status" aria-label="Status for {{ $subscriber->email }}" required>
                                             @foreach ($statuses as $status)<option value="{{ $status->value }}" @selected($subscriber->status === $status)>{{ $status->label() }}</option>@endforeach
                                         </select>
                                         <button class="btn btn-soft-primary btn-sm" type="submit">Save</button>

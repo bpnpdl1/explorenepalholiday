@@ -8,11 +8,14 @@ use App\Actions\Admin\Packages\SyncPackageMediaAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePackageRequest;
 use App\Http\Requests\Admin\UpdatePackageRequest;
+use App\Models\Category;
+use App\Models\Destination;
 use App\Models\Package;
 use App\Models\Subcategory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PackageController extends Controller
@@ -32,7 +35,7 @@ class PackageController extends Controller
                 'currency' => 'USD',
                 'sort_order' => 0,
             ]),
-            'subcategories' => $this->subcategoriesForForm(),
+            'destinations' => $this->destinationsForForm(),
         ]);
     }
 
@@ -63,9 +66,38 @@ class PackageController extends Controller
         return view('admin.packages.show', compact('package'));
     }
 
+    public function categoriesForDestination(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'destination_id' => ['required', 'integer', 'exists:destinations,id'],
+        ]);
+
+        $categories = Category::query()
+            ->where('destination_id', $validated['destination_id'])
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return response()->json(['data' => $categories]);
+    }
+
+    public function subcategoriesForCategory(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+        ]);
+
+        $subcategories = Subcategory::query()
+            ->where('category_id', $validated['category_id'])
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return response()->json(['data' => $subcategories]);
+    }
+
     public function edit(Package $package): View
     {
         $package->load([
+            'subcategory.category',
             'seasons',
             'features',
             'itineraryDays',
@@ -76,7 +108,7 @@ class PackageController extends Controller
 
         return view('admin.packages.edit', [
             'package' => $package,
-            'subcategories' => $this->subcategoriesForForm(),
+            'destinations' => $this->destinationsForForm(),
         ]);
     }
 
@@ -128,5 +160,12 @@ class PackageController extends Controller
             ->with(['category:id,destination_id,name', 'category.destination:id,name'])
             ->orderBy('name')
             ->get(['id', 'category_id', 'name']);
+    }
+
+    private function destinationsForForm(): Collection
+    {
+        return Destination::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 }

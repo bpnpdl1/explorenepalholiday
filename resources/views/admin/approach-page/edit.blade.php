@@ -34,6 +34,7 @@
                     :value="$contentValue"
                     placeholder="Write the Our Approach page content..."
                     maxlength="100000"
+                    required
                     help="Changes appear on the public Our Approach page after saving. Images are uploaded through the editor."
                 />
             </div>

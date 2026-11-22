@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('admin/velzon/css/custom.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/velzon/libs/toastify-js/toastify.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/velzon/libs/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/form-validation.css') }}">
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
     @stack('styles')
     <script src="{{ asset('admin/velzon/js/layout.js') }}"></script>
@@ -50,7 +51,7 @@
     <script src="{{ asset('admin/velzon/libs/toastify-js/toastify.js') }}"></script>
     <script src="{{ asset('admin/velzon/libs/sweetalert2/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('admin/velzon/js/app.js') }}"></script>
-    <script src="{{ asset('admin/js/form-validation.init.js') }}"></script>
+    <script src="{{ asset('js/form-validation.js') }}"></script>
     @include('admin.partials.toast-listener')
     @stack('scripts')
 </body>

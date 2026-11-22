@@ -1,0 +1,26 @@
+.client-validation-message {
+    color: #b42318;
+    display: none;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    margin-top: 0.35rem;
+}
+
+.client-validation-message.is-visible {
+    display: block;
+}
+
+.client-invalid {
+    border-color: #b42318 !important;
+    box-shadow: 0 0 0 0.18rem rgb(180 35 24 / 14%) !important;
+}
+
+[data-rich-editor-surface].client-invalid {
+    outline: 2px solid rgb(180 35 24 / 45%);
+    outline-offset: 2px;
+}
+
+.select2-container.client-invalid .select2-selection {
+    border-color: #b42318 !important;
+    box-shadow: 0 0 0 0.18rem rgb(180 35 24 / 14%);
+}

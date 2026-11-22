@@ -29,9 +29,18 @@
         'question' => $faq->question,
         'answer' => $faq->answer,
     ])->values()->all());
+    $currentSubcategory = $package->exists ? $package->subcategory : null;
+    $selectedSubcategoryId = (string) old('subcategory_id', $package->subcategory_id ?? '');
+    $selectedCategoryId = (string) old('category_id', $currentSubcategory?->category_id ?? '');
+    $selectedDestinationId = (string) old('destination_id', $currentSubcategory?->category?->destination_id ?? '');
 @endphp
 
-<form action="{{ $action }}" method="POST" enctype="multipart/form-data" data-package-wizard-form novalidate>
+<form action="{{ $action }}" method="POST" enctype="multipart/form-data" data-package-wizard-form
+    data-categories-url="{{ route('admin.packages.categories') }}"
+    data-subcategories-url="{{ route('admin.packages.subcategories') }}"
+    data-selected-category="{{ $selectedCategoryId }}"
+    data-selected-subcategory="{{ $selectedSubcategoryId }}"
+    novalidate>
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -74,17 +83,31 @@
         <div class="card-header"><h5 class="card-title mb-0">Package details</h5></div>
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-12">
-                    <label for="subcategory_id" class="form-label">Trip category <span class="text-danger">*</span></label>
-                    <select id="subcategory_id" name="subcategory_id" class="form-select js-select2 @error('subcategory_id') is-invalid @enderror" data-placeholder="Choose a destination and category" required>
-                        <option value="">Choose a destination and category</option>
-                        @foreach ($subcategories as $subcategory)
-                            <option value="{{ $subcategory->id }}" @selected((string) old('subcategory_id', $package->subcategory_id) === (string) $subcategory->id)>
-                                {{ $subcategory->category->destination->name }} / {{ $subcategory->category->name }} / {{ $subcategory->name }}
-                            </option>
+                <div class="col-md-4">
+                    <label for="destination_id" class="form-label">Destination <span class="text-danger">*</span></label>
+                    <select id="destination_id" name="destination_id" class="form-select js-select2 @error('destination_id') is-invalid @enderror" data-placeholder="Choose a destination" required>
+                        <option value="">Choose a destination</option>
+                        @foreach ($destinations as $destination)
+                            <option value="{{ $destination->id }}" @selected($selectedDestinationId === (string) $destination->id)>{{ $destination->name }}</option>
                         @endforeach
                     </select>
+                    @error('destination_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                    <select id="category_id" name="category_id" class="form-select js-select2 @error('category_id') is-invalid @enderror" data-placeholder="Choose a category" required @disabled($selectedDestinationId === '')>
+                        <option value="">Choose a category</option>
+                    </select>
+                    @error('category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text" data-category-status aria-live="polite">{{ $selectedDestinationId === '' ? 'Choose a destination first.' : 'Loading categories…' }}</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="subcategory_id" class="form-label">Trip type <span class="text-danger">*</span></label>
+                    <select id="subcategory_id" name="subcategory_id" class="form-select js-select2 @error('subcategory_id') is-invalid @enderror" data-placeholder="Choose a trip type" required @disabled($selectedCategoryId === '')>
+                        <option value="">Choose a trip type</option>
+                    </select>
                     @error('subcategory_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text" data-subcategory-status aria-live="polite">{{ $selectedCategoryId === '' ? 'Choose a category first.' : 'Loading trip types…' }}</div>
                 </div>
                 <div class="col-md-8">
                     <label for="name" class="form-label">Package name <span class="text-danger">*</span></label>
@@ -443,13 +466,15 @@
 @push('scripts')
     <script>
         jQuery(function ($) {
-            const $subcategory = $('#subcategory_id');
+            if ($.fn.select2) {
+                $('.js-select2').each(function () {
+                    const $select = $(this);
 
-            if ($subcategory.length && $.fn.select2) {
-                $subcategory.select2({
-                    width: '100%',
-                    placeholder: $subcategory.data('placeholder'),
-                    allowClear: true,
+                    $select.select2({
+                        width: '100%',
+                        placeholder: $select.data('placeholder'),
+                        allowClear: true,
+                    });
                 });
             }
         });
@@ -470,6 +495,15 @@
             const count = wizard.querySelector('[data-wizard-count]');
             const progress = wizard.querySelector('[data-wizard-progress]');
             const progressTrack = progress?.parentElement;
+            const destinationSelect = form.querySelector('#destination_id');
+            const categorySelect = form.querySelector('#category_id');
+            const subcategorySelect = form.querySelector('#subcategory_id');
+            const categoryStatus = form.querySelector('[data-category-status]');
+            const subcategoryStatus = form.querySelector('[data-subcategory-status]');
+            const minGroupSize = form.querySelector('#min_group_size');
+            const maxGroupSize = form.querySelector('#max_group_size');
+            const startingPrice = form.querySelector('#price_from');
+            const compareAtPrice = form.querySelector('#compare_at_price');
             const featureLists = [...form.querySelectorAll('[data-feature-list]')];
             const featureTemplate = document.createElement('template');
             featureTemplate.innerHTML = `<div class="border rounded p-3" data-feature-row>
@@ -543,8 +577,178 @@
             </div>`;
             let current = 0;
 
+            let categoriesRequest;
+            let subcategoriesRequest;
+            let categoriesRequestId = 0;
+            let subcategoriesRequestId = 0;
+
+            const resetSelect = (select, placeholder) => {
+                select.replaceChildren(new Option(placeholder, ''));
+                select.value = '';
+
+                if (window.jQuery && window.jQuery.fn.select2) {
+                    window.jQuery(select).trigger('change.select2');
+                }
+            };
+
+            const setLookupStatus = (element, message, isError = false) => {
+                element.textContent = message;
+                element.classList.toggle('text-danger', isError);
+            };
+
+            const fetchOptions = async (url, key, value, signal) => {
+                const endpoint = new URL(url, window.location.origin);
+                endpoint.searchParams.set(key, value);
+
+                const response = await fetch(endpoint, {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin',
+                    signal,
+                });
+
+                if (!response.headers.get('content-type')?.includes('application/json')) {
+                    throw new Error('Unable to load options. Refresh the page and sign in again.');
+                }
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Unable to load options. Please try again.');
+                }
+
+                return Array.isArray(result.data) ? result.data : [];
+            };
+
+            const loadSubcategories = async (categoryId, selectedId = '') => {
+                const requestId = ++subcategoriesRequestId;
+                subcategoriesRequest?.abort();
+                subcategoriesRequest = categoryId ? new AbortController() : null;
+
+                resetSelect(subcategorySelect, 'Choose a trip type');
+                subcategorySelect.disabled = categoryId === '';
+
+                if (!categoryId) {
+                    setLookupStatus(subcategoryStatus, 'Choose a category first.');
+                    return;
+                }
+
+                setLookupStatus(subcategoryStatus, 'Loading trip types…');
+
+                try {
+                    const options = await fetchOptions(
+                        form.dataset.subcategoriesUrl,
+                        'category_id',
+                        categoryId,
+                        subcategoriesRequest.signal,
+                    );
+
+                    if (requestId !== subcategoriesRequestId) return;
+
+                    options.forEach((option) => subcategorySelect.add(new Option(option.name, String(option.id))));
+                    subcategorySelect.value = options.some((option) => String(option.id) === selectedId) ? selectedId : '';
+
+                    if (window.jQuery && window.jQuery.fn.select2) {
+                        window.jQuery(subcategorySelect).trigger('change.select2');
+                    }
+
+                    setLookupStatus(
+                        subcategoryStatus,
+                        options.length ? `${options.length} trip type${options.length === 1 ? '' : 's'} available.` : 'No trip types are set up for this category yet.',
+                    );
+
+                    if (form.dataset.validationAttempted) {
+                        window.FormValidation.validateControl(subcategorySelect);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError' || requestId !== subcategoriesRequestId) return;
+
+                    setLookupStatus(subcategoryStatus, error.message, true);
+                }
+            };
+
+            const loadCategories = async (destinationId, selectedCategoryId = '', selectedSubcategoryId = '') => {
+                const requestId = ++categoriesRequestId;
+                categoriesRequest?.abort();
+                categoriesRequest = destinationId ? new AbortController() : null;
+                ++subcategoriesRequestId;
+                subcategoriesRequest?.abort();
+                subcategoriesRequest = null;
+
+                resetSelect(categorySelect, 'Choose a category');
+                resetSelect(subcategorySelect, 'Choose a trip type');
+                categorySelect.disabled = destinationId === '';
+                subcategorySelect.disabled = true;
+
+                if (!destinationId) {
+                    setLookupStatus(categoryStatus, 'Choose a destination first.');
+                    setLookupStatus(subcategoryStatus, 'Choose a category first.');
+                    return;
+                }
+
+                setLookupStatus(categoryStatus, 'Loading categories…');
+                setLookupStatus(subcategoryStatus, 'Choose a category first.');
+
+                try {
+                    const options = await fetchOptions(
+                        form.dataset.categoriesUrl,
+                        'destination_id',
+                        destinationId,
+                        categoriesRequest.signal,
+                    );
+
+                    if (requestId !== categoriesRequestId) return;
+
+                    options.forEach((option) => categorySelect.add(new Option(option.name, String(option.id))));
+                    categorySelect.value = options.some((option) => String(option.id) === selectedCategoryId) ? selectedCategoryId : '';
+
+                    if (window.jQuery && window.jQuery.fn.select2) {
+                        window.jQuery(categorySelect).trigger('change.select2');
+                    }
+
+                    setLookupStatus(
+                        categoryStatus,
+                        options.length ? `${options.length} categor${options.length === 1 ? 'y' : 'ies'} available.` : 'No categories are set up for this destination yet.',
+                    );
+
+                    await loadSubcategories(categorySelect.value, categorySelect.value === selectedCategoryId ? selectedSubcategoryId : '');
+
+                    if (form.dataset.validationAttempted) {
+                        window.FormValidation.validateControl(categorySelect);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError' || requestId !== categoriesRequestId) return;
+
+                    setLookupStatus(categoryStatus, error.message, true);
+                    setLookupStatus(subcategoryStatus, 'Categories must load before trip types can be selected.');
+                }
+            };
+
+            loadCategories(
+                destinationSelect.value,
+                form.dataset.selectedCategory || '',
+                form.dataset.selectedSubcategory || '',
+            );
+
+            const syncCrossFieldValidity = () => {
+                const minGroupValue = Number(minGroupSize.value);
+                const maxGroupValue = Number(maxGroupSize.value);
+                const startingPriceValue = Number(startingPrice.value);
+                const compareAtPriceValue = Number(compareAtPrice.value);
+
+                maxGroupSize.setCustomValidity(
+                    minGroupSize.value !== '' && maxGroupSize.value !== '' && maxGroupValue < minGroupValue
+                        ? 'Maximum group size must be at least the minimum group size.'
+                        : '',
+                );
+                compareAtPrice.setCustomValidity(
+                    startingPrice.value !== '' && compareAtPrice.value !== '' && compareAtPriceValue < startingPriceValue
+                        ? 'Previous price must be at least the starting price.'
+                        : '',
+                );
+            };
+
             const invalidField = (panel) => [...panel.querySelectorAll('input, select, textarea')]
-                .find((field) => !field.disabled && !field.checkValidity());
+                .find((field) => !field.disabled && !field.validity.valid);
 
             const showStep = (index, focusHeading = false) => {
                 current = Math.max(0, Math.min(index, panels.length - 1));
@@ -823,20 +1027,66 @@
             refreshFaqRows();
 
             const validatePanel = (panel) => {
-                const field = invalidField(panel);
-                if (!field) return true;
+                syncCrossFieldValidity();
 
-                if (field.id === 'subcategory_id' && window.jQuery && window.jQuery.fn.select2) {
+                const invalidFields = window.FormValidation.validateControls(
+                    [...panel.querySelectorAll('input, select, textarea')].filter((field) => !field.disabled),
+                );
+                if (invalidFields.length === 0) return true;
+
+                const field = invalidFields[0];
+                if (window.jQuery && window.jQuery.fn.select2 && window.jQuery(field).hasClass('select2-hidden-accessible')) {
                     window.jQuery(field).select2('open');
                 } else {
-                    field.reportValidity();
+                    window.FormValidation.focusControl(field);
                 }
 
                 return false;
             };
 
+            const revalidateChangedField = (event) => {
+                const field = event.target;
+
+                if (!field.matches('input, select, textarea') || field.disabled) return;
+
+                syncCrossFieldValidity();
+
+                if (!form.dataset.validationAttempted) return;
+
+                window.FormValidation.validateControl(field);
+
+                if (field === destinationSelect) {
+                    window.FormValidation.validateControl(categorySelect);
+                    window.FormValidation.validateControl(subcategorySelect);
+                } else if (field === categorySelect) {
+                    window.FormValidation.validateControl(subcategorySelect);
+                }
+
+                if (field === minGroupSize || field === maxGroupSize) {
+                    window.FormValidation.validateControl(minGroupSize);
+                    window.FormValidation.validateControl(maxGroupSize);
+                }
+
+                if (field === startingPrice || field === compareAtPrice) {
+                    window.FormValidation.validateControl(startingPrice);
+                    window.FormValidation.validateControl(compareAtPrice);
+                }
+            };
+
+            if (window.jQuery) {
+                window.jQuery(destinationSelect).on('change.packageTaxonomy', () => loadCategories(destinationSelect.value));
+                window.jQuery(categorySelect).on('change.packageTaxonomy', () => loadSubcategories(categorySelect.value));
+                window.jQuery(form).on('input.packageValidation change.packageValidation', 'input, select, textarea', revalidateChangedField);
+            } else {
+                destinationSelect.addEventListener('change', () => loadCategories(destinationSelect.value));
+                categorySelect.addEventListener('change', () => loadSubcategories(categorySelect.value));
+                form.addEventListener('input', revalidateChangedField);
+                form.addEventListener('change', revalidateChangedField);
+            }
+
             previous.addEventListener('click', () => showStep(current - 1, true));
             next.addEventListener('click', () => {
+                form.dataset.validationAttempted = 'true';
                 if (validatePanel(panels[current])) showStep(current + 1, true);
             });
 
@@ -848,6 +1098,8 @@
             });
 
             form.addEventListener('submit', (event) => {
+                form.dataset.validationAttempted = 'true';
+                syncCrossFieldValidity();
                 const invalidPanel = panels.findIndex((panel) => invalidField(panel));
                 if (invalidPanel === -1) return;
 

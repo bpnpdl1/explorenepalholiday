@@ -27,6 +27,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('site/scripts/tailwind-config.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('site/styles/site.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/form-validation.css') }}">
     @stack('page_styles')
     <script defer src="{{ asset('site/scripts/alpine.min.js') }}"></script>
 </head>
@@ -41,6 +42,7 @@
     @yield('content')
     @include('site.partials.trip-search-modal')
 
+    <script src="{{ asset('js/form-validation.js') }}"></script>
     <script src="{{ asset('site/scripts/site.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>

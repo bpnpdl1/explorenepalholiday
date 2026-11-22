@@ -4,14 +4,16 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <div>
                     <h4 class="mb-sm-0">Users</h4>
-                    <p class="text-muted mb-0 mt-1">Review admin accounts and traveler registrations.</p>
+                    <p class="text-muted mb-0 mt-1">Manage administrator access and traveler accounts.</p>
                 </div>
                 <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
+                    <div class="d-flex align-items-center gap-3">
+                    <ol class="breadcrumb m-0 d-none d-md-flex">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                        <li class="breadcrumb-item">Privilege</li>
                         <li class="breadcrumb-item active">Users</li>
                     </ol>
+                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary"><i class="ri-user-add-line me-1"></i>Add user</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,6 +73,7 @@
                             <th scope="col">Account type</th>
                             <th scope="col">Email status</th>
                             <th scope="col">Joined</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,10 +105,24 @@
                                     @endif
                                 </td>
                                 <td class="text-muted">{{ $user->created_at?->format('M j, Y') ?? '—' }}</td>
+                                <td class="text-end">
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-soft-primary btn-sm" aria-label="Edit user: {{ $user->name }}" title="Edit user"><i class="ri-pencil-line align-bottom"></i></a>
+                                    @if (auth()->id() === $user->id)
+                                        <button type="button" class="btn btn-soft-danger btn-sm" aria-label="You cannot delete your own account" title="You cannot delete your own account" disabled><i class="ri-delete-bin-line align-bottom"></i></button>
+                                    @elseif ($user->is_admin && $adminCount <= 1)
+                                        <button type="button" class="btn btn-soft-danger btn-sm" aria-label="The last administrator cannot be deleted" title="The last administrator cannot be deleted" disabled><i class="ri-delete-bin-line align-bottom"></i></button>
+                                    @else
+                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this user account? This action cannot be undone.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-soft-danger btn-sm" aria-label="Delete user: {{ $user->name }}" title="Delete user"><i class="ri-delete-bin-line align-bottom"></i></button>
+                                        </form>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-5">
+                                <td colspan="5" class="text-center py-5">
                                     <div class="avatar-md mx-auto mb-3">
                                         <span class="avatar-title rounded-circle bg-primary-subtle text-primary fs-2"><i class="ri-user-search-line"></i></span>
                                     </div>
