@@ -37,6 +37,12 @@ class SiteSettingController extends Controller
             'canonical_url',
             'og_title',
             'og_description',
+            'footer_resources_eyebrow',
+            'footer_resources_title',
+            'footer_resources_description',
+            'footer_resources',
+            'footer_payment_title',
+            'footer_payment_description',
         ]);
         $updateSiteSettings->handle(
             $siteSetting,
@@ -44,6 +50,7 @@ class SiteSettingController extends Controller
             $request->file('logo'),
             $request->file('favicon'),
             $request->file('footer_logo'),
+            $request->file('footer_payment_options'),
         );
 
         return to_route('admin.site-settings.edit')

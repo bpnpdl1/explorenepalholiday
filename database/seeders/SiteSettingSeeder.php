@@ -27,6 +27,18 @@ class SiteSettingSeeder extends Seeder
             'canonical_url' => 'https://explorenepalholidays.com/',
             'og_title' => 'Explore Nepal Holidays | Treks, Tours & Tailor-Made Journeys',
             'og_description' => 'Explore Nepal\'s mountain trails, cultural cities and wild lowlands. Discover handpicked journeys and plan a trip shaped around you.',
+            'footer_resources_eyebrow' => 'PLAN WITH GOOD INFORMATION',
+            'footer_resources_title' => 'Nepal travel resources',
+            'footer_resources_description' => 'External organizations for travel, conservation and trekking guidance.',
+            'footer_resources' => [
+                ['name' => 'Government of Nepal tourism ministry', 'url' => 'https://tourism.gov.np/', 'logo' => '/site/assets/nepal-goverment.svg', 'alt' => 'Government of Nepal tourism ministry'],
+                ['name' => 'Nepal Tourism Board', 'url' => 'https://ntb.gov.np/', 'logo' => '/site/assets/ntb.svg', 'alt' => 'Nepal Tourism Board'],
+                ['name' => 'Nepal Mountaineering Association', 'url' => 'https://www.nepalmountaineering.org/', 'logo' => '/site/assets/nma.svg', 'alt' => 'Nepal Mountaineering Association'],
+                ['name' => "Trekking Agencies' Association of Nepal", 'url' => 'https://www.taan.org.np/', 'logo' => '/site/assets/taan.svg', 'alt' => "Trekking Agencies' Association of Nepal"],
+                ['name' => 'Kathmandu Environmental Education Project', 'url' => 'https://keepnepal.org/', 'logo' => '/site/assets/keep.webp', 'alt' => 'Kathmandu Environmental Education Project'],
+            ],
+            'footer_payment_title' => 'PAYMENT OPTIONS',
+            'footer_payment_description' => 'Card networks shown as examples. Accepted methods are confirmed before you pay.',
         ];
 
         $siteSetting = SiteSetting::query()->first();

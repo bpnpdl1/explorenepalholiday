@@ -18,11 +18,13 @@ class UpdateSiteSettingsAction
         ?UploadedFile $logo = null,
         ?UploadedFile $favicon = null,
         ?UploadedFile $footerLogo = null,
+        ?UploadedFile $footerPaymentOptions = null,
     ): void {
         $attributes['social_links'] = array_filter(
             $attributes['social_links'] ?? [],
             fn (?string $url): bool => filled($url),
         );
+        $attributes['footer_resources'] = array_values($attributes['footer_resources'] ?? []);
 
         $siteSetting->update($attributes);
         Cache::forget(SiteSetting::CACHE_KEY);
@@ -37,6 +39,10 @@ class UpdateSiteSettingsAction
 
         if ($footerLogo) {
             $this->mediaLibraryService->storeImage($siteSetting, $footerLogo, 'footer-logo');
+        }
+
+        if ($footerPaymentOptions) {
+            $this->mediaLibraryService->storeImage($siteSetting, $footerPaymentOptions, 'footer-payment-options');
         }
 
         Cache::forget(SiteSetting::CACHE_KEY);

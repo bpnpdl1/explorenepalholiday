@@ -24,7 +24,15 @@
                     </a>
                 </li>
 
-                <li class="menu-title"><span>Operations</span></li>
+                <li class="menu-title"><span>Trip management</span></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="ri-map-2-line"></i><span>Packages</span></a></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.package-departures.*') ? 'active' : '' }}" href="{{ route('admin.package-departures.index') }}"><i class="ri-calendar-event-line"></i><span>Departures</span></a></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.package-reviews.*') ? 'active' : '' }}" href="{{ route('admin.package-reviews.index') }}"><i class="ri-chat-quote-line"></i><span>Package reviews</span></a></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}" href="{{ route('admin.destinations.index') }}"><i class="ri-map-pin-line"></i><span>Destinations</span></a></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}"><i class="ri-price-tag-3-line"></i><span>Categories</span></a></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.subcategories.*') ? 'active' : '' }}" href="{{ route('admin.subcategories.index') }}"><i class="ri-list-check-2"></i><span>Subcategories</span></a></li>
+
+                <li class="menu-title"><span>Bookings &amp; inquiries</span></li>
                 @php
                     $isInquirySection = request()->routeIs('admin.inquiries.*', 'admin.site-inquiries.*');
                     $isWebsiteInquirySection = request()->query('source') === 'website' || request()->routeIs('admin.site-inquiries.*');
@@ -63,11 +71,6 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->routeIs('admin.newsletter-subscribers.*') ? 'active' : '' }}" href="{{ route('admin.newsletter-subscribers.index') }}">
-                        <i class="ri-mail-send-line"></i><span>Newsletter subscribers</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.bookings.*') ? 'active' : 'collapsed' }}" href="#sidebarBookings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.bookings.*') ? 'true' : 'false' }}" aria-controls="sidebarBookings">
                         <i class="ri-calendar-check-line"></i><span>Bookings</span><span class="menu-arrow"></span>
                     </a>
@@ -81,37 +84,34 @@
                         </ul>
                     </div>
                 </li>
-
-                <li class="menu-title"><span>Package management</span></li>
-                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}"><i class="ri-map-2-line"></i><span>Packages</span></a></li>
-                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.package-departures.*') ? 'active' : '' }}" href="{{ route('admin.package-departures.index') }}"><i class="ri-calendar-event-line"></i><span>Departures</span></a></li>
-                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.package-reviews.*') ? 'active' : '' }}" href="{{ route('admin.package-reviews.index') }}"><i class="ri-chat-quote-line"></i><span>Package reviews</span></a></li>
-
-                <li class="menu-title"><span>Website content &amp; settings</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'active' : 'collapsed' }}" href="#sidebarContent" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'true' : 'false' }}" aria-controls="sidebarContent">
-                        <i class="ri-pages-line"></i><span>Content &amp; settings</span><span class="menu-arrow"></span>
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.newsletter-subscribers.*') ? 'active' : '' }}" href="{{ route('admin.newsletter-subscribers.index') }}">
+                        <i class="ri-mail-send-line"></i><span>Newsletter subscribers</span>
                     </a>
-                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.master.*', 'admin.categories.*', 'admin.subcategories.*', 'admin.destinations.*', 'admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*', 'admin.site-settings.*') ? 'show' : '' }}" id="sidebarContent">
+                </li>
+
+                <li class="menu-title"><span>Website content</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*') ? 'active' : 'collapsed' }}" href="#sidebarContent" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*') ? 'true' : 'false' }}" aria-controls="sidebarContent">
+                        <i class="ri-pages-line"></i><span>Pages &amp; content</span><span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.faqs.*', 'admin.guest-reviews.*', 'admin.team-members.*', 'admin.travel-info-pages.*', 'admin.why-travel-reasons.*', 'admin.about-page.*', 'admin.approach-page.*') ? 'show' : '' }}" id="sidebarContent">
                         <ul class="nav nav-sm flex-column">
-                            <li class="menu-title"><span>Travel structure</span></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}" href="{{ route('admin.destinations.index') }}">Destinations</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">Categories</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.subcategories.*') ? 'active' : '' }}" href="{{ route('admin.subcategories.index') }}">Subcategories</a></li>
-                            <li class="menu-title"><span>Site content</span></li>
+                            <li class="menu-title"><span>Pages</span></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.about-page.*') ? 'active' : '' }}" href="{{ route('admin.about-page.edit') }}">About Us</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.approach-page.*') ? 'active' : '' }}" href="{{ route('admin.approach-page.edit') }}">Our Approach</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.why-travel-reasons.*') ? 'active' : '' }}" href="{{ route('admin.why-travel-reasons.index') }}">Why Choose Us</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.travel-info-pages.*') ? 'active' : '' }}" href="{{ route('admin.travel-info-pages.index') }}">Travel information</a></li>
+                            <li class="menu-title"><span>Travelers</span></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">FAQs</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.guest-reviews.*') ? 'active' : '' }}" href="{{ route('admin.guest-reviews.index') }}">Guest reviews</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.team-members.*') ? 'active' : '' }}" href="{{ route('admin.team-members.index') }}">Team members</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.travel-info-pages.*') ? 'active' : '' }}" href="{{ route('admin.travel-info-pages.index') }}">Travel information pages</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.why-travel-reasons.*') ? 'active' : '' }}" href="{{ route('admin.why-travel-reasons.index') }}">Why Choose Us</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.about-page.*') ? 'active' : '' }}" href="{{ route('admin.about-page.edit') }}">About Us page</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.approach-page.*') ? 'active' : '' }}" href="{{ route('admin.approach-page.edit') }}">Our Approach page</a></li>
-                            <li class="menu-title"><span>Configuration</span></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.site-settings.*') ? 'active' : '' }}" href="{{ route('admin.site-settings.edit') }}">Site settings</a></li>
                         </ul>
                     </div>
                 </li>
 
+                <li class="menu-title"><span>Settings</span></li>
+                <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.site-settings.*') ? 'active' : '' }}" href="{{ route('admin.site-settings.edit') }}"><i class="ri-settings-3-line"></i><span>Site settings</span></a></li>
                 <li class="menu-title"><span>Access</span></li>
                 <li class="nav-item"><a class="nav-link menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}"><i class="ri-shield-user-line"></i><span>Users</span></a></li>
             </ul>

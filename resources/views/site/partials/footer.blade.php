@@ -57,35 +57,30 @@
     </div>
     <div class="footer-resources">
       <div class="container footer-resources-grid">
-        <div class="footer-resource-intro"><span class="eyebrow dark">PLAN WITH GOOD INFORMATION</span>
-          <h2>Nepal travel resources</h2>
-          <p>External organizations for travel, conservation and trekking guidance.</p>
+        <div class="footer-resource-intro"><span class="eyebrow dark">{{ $siteSetting?->footer_resources_eyebrow ?: 'PLAN WITH GOOD INFORMATION' }}</span>
+          <h2>{{ $siteSetting?->footer_resources_title ?: 'Nepal travel resources' }}</h2>
+          <p>{{ $siteSetting?->footer_resources_description ?: 'External organizations for travel, conservation and trekking guidance.' }}</p>
         </div>
         <div class="resource-logos" aria-label="Independent Nepal travel organizations">
-          <a href="https://tourism.gov.np/" target="_blank" rel="noopener noreferrer"
-            title="Government of Nepal tourism ministry"><img src="{{ asset('site/assets/nepal-goverment.svg') }}"
-              alt="Government of Nepal tourism ministry" width="226" height="194" loading="lazy"></a>
-          <a href="https://ntb.gov.np/" target="_blank" rel="noopener noreferrer" title="Nepal Tourism Board"><img
-              src="{{ asset('site/assets/ntb.svg') }}" alt="Nepal Tourism Board" width="169" height="172" loading="lazy"></a>
-          <a href="https://www.nepalmountaineering.org/" target="_blank" rel="noopener noreferrer"
-            title="Nepal Mountaineering Association"><img src="{{ asset('site/assets/nma.svg') }}" alt="Nepal Mountaineering Association"
-              width="248" height="212" loading="lazy"></a>
-          <a href="https://www.taan.org.np/" target="_blank" rel="noopener noreferrer"
-            title="Trekking Agencies' Association of Nepal"><img src="{{ asset('site/assets/taan.svg') }}"
-              alt="Trekking Agencies' Association of Nepal" width="158" height="213" loading="lazy"></a>
-          <a href="https://keepnepal.org/" target="_blank" rel="noopener noreferrer"
-            title="Kathmandu Environmental Education Project"><img src="{{ asset('site/assets/keep.webp') }}"
-              alt="Kathmandu Environmental Education Project" width="124" height="48" loading="lazy"></a>
+          @foreach ($siteSetting?->footer_resources ?? [] as $resource)
+            @php
+              $resourceLogo = $resource['logo'] ?? '';
+              $resourceLogoUrl = str_starts_with($resourceLogo, '/') ? asset(ltrim($resourceLogo, '/')) : $resourceLogo;
+            @endphp
+            <a href="{{ $resource['url'] }}" target="_blank" rel="noopener noreferrer" title="{{ $resource['name'] }}">
+              <img src="{{ $resourceLogoUrl }}" alt="{{ $resource['alt'] }}" loading="lazy">
+            </a>
+          @endforeach
         </div>
       </div>
     </div>
     <div class="footer-base">
       <div class="container footer-base-top">
-        <div><span class="footer-base-label">PAYMENT OPTIONS</span>
-          <p>Card networks shown as examples. Accepted methods are confirmed before you pay.</p>
-        </div><img src="{{ asset('site/assets/pay-cards01.svg') }}"
-          alt="Examples of card networks: Visa, Mastercard, American Express and UnionPay" width="276" height="38"
-          loading="lazy">
+        <div><span class="footer-base-label">{{ $siteSetting?->footer_payment_title ?: 'PAYMENT OPTIONS' }}</span>
+          <p>{{ $siteSetting?->footer_payment_description ?: 'Card networks shown as examples. Accepted methods are confirmed before you pay.' }}</p>
+        </div>
+        <img src="{{ $siteSetting?->footer_payment_options_url ?: asset('site/assets/pay-cards01.svg') }}"
+          alt="Examples of common payment card networks" width="276" height="38" loading="lazy">
       </div>
       <div class="container footer-base-bottom"><span>&copy; {{ now()->year }} {{ $siteSetting?->name ?? config('app.name', 'Explore Nepal Holidays') }}.</span><a href="{{ route('home') }}#top">Back to top
           <span aria-hidden="true">↑</span></a></div>

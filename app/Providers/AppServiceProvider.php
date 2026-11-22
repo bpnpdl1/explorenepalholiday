@@ -47,8 +47,15 @@ class AppServiceProvider extends ServiceProvider
                     'canonical_url' => $siteSetting->canonical_url,
                     'og_title' => $siteSetting->og_title,
                     'og_description' => $siteSetting->og_description,
+                    'footer_resources_eyebrow' => $siteSetting->footer_resources_eyebrow,
+                    'footer_resources_title' => $siteSetting->footer_resources_title,
+                    'footer_resources_description' => $siteSetting->footer_resources_description,
+                    'footer_resources' => $siteSetting->footer_resources,
+                    'footer_payment_title' => $siteSetting->footer_payment_title,
+                    'footer_payment_description' => $siteSetting->footer_payment_description,
                     'logo_url' => $siteSetting->getFirstMediaUrl('logo'),
                     'footer_logo_url' => $siteSetting->getFirstMediaUrl('footer-logo'),
+                    'footer_payment_options_url' => $siteSetting->getFirstMediaUrl('footer-payment-options'),
                     'favicon_url' => $siteSetting->getFirstMediaUrl('favicon'),
                 ];
             });
