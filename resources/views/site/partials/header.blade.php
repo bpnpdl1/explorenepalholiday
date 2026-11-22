@@ -66,10 +66,13 @@
           @focusout="if(!$el.contains($event.relatedTarget)) openNav=null"><button type="button" data-nav-trigger="info"
             @click="openNav='info'" :aria-expanded="(openNav==='info').toString()" aria-controls="nav-info">Travel Info
             <span class="nav-chevron" aria-hidden="true"></span></button>
-          <div id="nav-info" class="nav-panel dropdown-panel" x-show="openNav==='info'" x-cloak><a href="{{ route('faq') }}#planning"
-              @click="closeNav()">Best time to visit ↗</a><a href="{{ route('faq') }}#trekking" @click="closeNav()">Trekking
-              experience ↗</a><a href="{{ route('home') }}#combine-trips" @click="closeNav()">Combining experiences ↗</a><a href="{{ route('faq') }}"
-              @click="closeNav()">Frequently asked questions ↗</a></div>
+          <div id="nav-info" class="nav-panel dropdown-panel" x-show="openNav==='info'" x-cloak>
+            <a href="{{ route('travel-info.index') }}" @click="closeNav()">All travel information ↗</a>
+            @foreach ($travelInfoPages as $travelInfoPage)
+              <a href="{{ route('travel-info.show', $travelInfoPage->slug) }}" @click="closeNav()" @if (request()->routeIs('travel-info.show') && request()->route('slug') === $travelInfoPage->slug) aria-current="page" @endif>{{ $travelInfoPage->title }} ↗</a>
+            @endforeach
+            <a href="{{ route('faq') }}" @click="closeNav()">Frequently asked questions ↗</a>
+          </div>
         </div>
         <a class="nav-contact" href="{{ route('contact') }}" @mouseenter="openNav=null">Contact Us <span aria-hidden="true">↗</span></a>
         <button class="nav-find" type="button" @click="openTripSearch()" aria-label="Find a trip">
@@ -114,9 +117,13 @@
       <div class="mobile-nav-group"><button type="button" @click="toggleMobileSection('info')"
           :aria-expanded="(mobileSection==='info').toString()" aria-controls="mobile-info">Travel Info <span
             aria-hidden="true">+</span></button>
-        <div id="mobile-info" class="mobile-subnav" x-show="mobileSection==='info'" x-cloak><a href="{{ route('faq') }}#planning"
-            @click="menuOpen=false">Best time to visit</a><a href="{{ route('faq') }}#trekking" @click="menuOpen=false">Trekking
-            experience</a><a href="{{ route('faq') }}" @click="menuOpen=false">All FAQs</a></div>
+        <div id="mobile-info" class="mobile-subnav" x-show="mobileSection==='info'" x-cloak>
+          <a href="{{ route('travel-info.index') }}" @click="menuOpen=false">All travel information</a>
+          @foreach ($travelInfoPages as $travelInfoPage)
+            <a href="{{ route('travel-info.show', $travelInfoPage->slug) }}" @click="menuOpen=false" @if (request()->routeIs('travel-info.show') && request()->route('slug') === $travelInfoPage->slug) aria-current="page" @endif>{{ $travelInfoPage->title }}</a>
+          @endforeach
+          <a href="{{ route('faq') }}" @click="menuOpen=false">Frequently asked questions</a>
+        </div>
       </div>
       <a class="mobile-contact" href="{{ route('contact') }}" @click="menuOpen=false">Contact Us <span aria-hidden="true">↗</span></a>
     </nav>

@@ -4,6 +4,7 @@ namespace App\View\Composers;
 
 use App\Models\Category;
 use App\Models\Package;
+use App\Models\TravelInfoPage;
 use Illuminate\Contracts\View\View;
 
 class SiteNavigationComposer
@@ -89,7 +90,14 @@ class SiteNavigationComposer
             ])
             ->all();
 
+        $travelInfoPages = TravelInfoPage::query()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get(['title', 'slug']);
+
         $view->with('navigationCategories', $navigationCategories)
-            ->with('packageSearchItems', $packageSearchItems);
+            ->with('packageSearchItems', $packageSearchItems)
+            ->with('travelInfoPages', $travelInfoPages);
     }
 }

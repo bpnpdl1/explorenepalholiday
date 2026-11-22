@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SiteInquiryController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\TravelInfoPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WhyTravelReasonController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
     Route::resource('team-members', TeamMemberController::class)
         ->except('show')
         ->parameters(['team-members' => 'teamMember']);
+    Route::resource('travel-info-pages', TravelInfoPageController::class)
+        ->except('show')
+        ->parameters(['travel-info-pages' => 'travelInfoPage']);
     Route::resource('why-travel-reasons', WhyTravelReasonController::class)
         ->except('show')
         ->parameters(['why-travel-reasons' => 'whyTravelReason']);

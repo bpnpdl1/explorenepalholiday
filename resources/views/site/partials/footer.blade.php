@@ -14,6 +14,7 @@
           <a href="{{ route('team') }}">Our Team</a>
           <a href="{{ route('approach') }}">Our Approach</a>
           <a href="{{ route('why-choose-us') }}">Why Choose Us</a>
+          <a href="{{ route('travel-info.index') }}">Travel Information</a>
           <a href="{{ route('contact') }}">Contact Us</a>
           <a href="{{ route('home') }}#journeys">Featured journeys</a>
           <a href="{{ route('home') }}#expeditions">Flagship expeditions</a>

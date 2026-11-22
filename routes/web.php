@@ -14,6 +14,7 @@ use App\Http\Controllers\PackageListingController;
 use App\Http\Controllers\SiteInquiryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\TeamPageController;
+use App\Http\Controllers\TravelInfoController;
 use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,8 @@ Route::get('/our-approach', ApproachPageController::class)->name('approach');
 Route::get('/our-team', TeamPageController::class)->name('team');
 Route::get('/why-choose-us', WhyChooseUsController::class)->name('why-choose-us');
 Route::get('/guest-reviews', GuestReviewController::class)->name('guest-reviews');
+Route::get('/travel-info', [TravelInfoController::class, 'index'])->name('travel-info.index');
+Route::get('/travel-info/{slug}', [TravelInfoController::class, 'show'])->name('travel-info.show');
 Route::get('/faq', FaqPageController::class)->name('faq');
 Route::view('/contact-us', 'site.contact')->name('contact');
 Route::post('/inquiries', [SiteInquiryController::class, 'store'])
